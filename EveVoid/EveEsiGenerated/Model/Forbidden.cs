@@ -1,0 +1,54 @@
+using System;
+using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
+using Newtonsoft.Json;
+
+namespace IO.Swagger.Model {
+
+  /// <summary>
+  /// Forbidden model
+  /// </summary>
+  [DataContract]
+  public class Forbidden {
+    /// <summary>
+    /// Forbidden message
+    /// </summary>
+    /// <value>Forbidden message</value>
+    [DataMember(Name="error", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "error")]
+    public string Error { get; set; }
+
+    /// <summary>
+    /// status code received from SSO
+    /// </summary>
+    /// <value>status code received from SSO</value>
+    [DataMember(Name="sso_status", EmitDefaultValue=false)]
+    [JsonProperty(PropertyName = "sso_status")]
+    public int? SsoStatus { get; set; }
+
+
+    /// <summary>
+    /// Get the string presentation of the object
+    /// </summary>
+    /// <returns>String presentation of the object</returns>
+    public override string ToString()  {
+      var sb = new StringBuilder();
+      sb.Append("class Forbidden {\n");
+      sb.Append("  Error: ").Append(Error).Append("\n");
+      sb.Append("  SsoStatus: ").Append(SsoStatus).Append("\n");
+      sb.Append("}\n");
+      return sb.ToString();
+    }
+
+    /// <summary>
+    /// Get the JSON string presentation of the object
+    /// </summary>
+    /// <returns>JSON string presentation of the object</returns>
+    public string ToJson() {
+      return JsonConvert.SerializeObject(this, Formatting.Indented);
+    }
+
+}
+}
