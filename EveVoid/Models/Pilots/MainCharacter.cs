@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.Pilots
 {
-    public class MainCharacter: EsiEntity, HasUpdateTime
+    public class MainCharacter: EsiEntity, IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

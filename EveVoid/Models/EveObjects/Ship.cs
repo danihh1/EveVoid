@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.EveObjects
 {
-    public class Ship: HasUpdateTime
+    public class Ship: IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

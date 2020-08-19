@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EveVoid.Migrations
 {
     [DbContext(typeof(EveVoidContext))]
-    [Migration("20200818164128_InitialCreate")]
+    [Migration("20200819160255_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -507,7 +507,7 @@ namespace EveVoid.Migrations
                     b.HasOne("EveVoid.Models.EveObjects.Ship", "Ship")
                         .WithMany()
                         .HasForeignKey("ShipId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("EveVoid.Models.Navigation.MapObjects.Stargate", "Stargate")

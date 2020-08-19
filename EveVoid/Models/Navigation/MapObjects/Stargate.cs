@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EveVoid.Models.Navigation.MapObjects
 {
-    public class Stargate: HasUpdateTime
+    public class Stargate: IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

@@ -363,8 +363,7 @@ namespace EveVoid.Migrations
                         name: "FK_StargateJumps_Ships_ShipId",
                         column: x => x.ShipId,
                         principalTable: "Ships",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_StargateJumps_Stargates_StargateId",
                         column: x => x.StargateId,

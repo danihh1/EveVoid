@@ -24,7 +24,8 @@ namespace EveVoid.Data.Mappings
             modelBuilder.Entity<Signature>()
                 .HasOne(x => x.LeadsTo)
                 .WithMany()
-                .HasForeignKey(x => x.LeadsToId);
+                .HasForeignKey(x => x.LeadsToId)
+                .IsRequired(false);
         }
     }
 }

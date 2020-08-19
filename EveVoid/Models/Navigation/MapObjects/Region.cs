@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.Navigation.MapObjects
 {
-    public class Region : HasUpdateTime
+    public class Region : IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

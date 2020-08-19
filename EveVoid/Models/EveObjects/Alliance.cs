@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.EveObjects
 {
-    public class Alliance: HasUpdateTime
+    public class Alliance: IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

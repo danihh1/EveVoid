@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.Navigation.MapObjects
 {
-    public class SolarSystem : HasUpdateTime
+    public class SolarSystem : IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

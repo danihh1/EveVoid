@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EveVoid.Models.Navigation.MapObjects
 {
-    public class Constellation : HasUpdateTime
+    public class Constellation : IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

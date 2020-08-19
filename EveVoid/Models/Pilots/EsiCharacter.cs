@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EveVoid.Models.Pilots
 {
-    public class EsiCharacter: EsiEntity, HasUpdateTime
+    public class EsiCharacter: EsiEntity, IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }

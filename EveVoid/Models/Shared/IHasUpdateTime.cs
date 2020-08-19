@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.Shared
 {
-    public interface HasUpdateTime
+    public interface IHasUpdateTime
     {
         public DateTime LastUpdate { get;set; }
     }

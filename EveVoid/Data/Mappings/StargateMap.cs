@@ -25,7 +25,8 @@ namespace EveVoid.Data.Mappings
             modelBuilder.Entity<Stargate>()
                 .HasOne(x => x.Destination)
                 .WithMany()
-                .HasForeignKey(x => x.DestinationId);
+                .HasForeignKey(x => x.DestinationId)
+                .IsRequired(false);
             modelBuilder.Entity<Stargate>()
                 .HasOne(x => x.SolarSystem)
                 .WithMany(x => x.Gates)

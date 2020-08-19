@@ -59,9 +59,9 @@ namespace EveVoid.Data
 
             foreach (var entity in added)
             {
-                if (entity is HasUpdateTime)
+                if (entity is IHasUpdateTime)
                 {
-                    var track = entity as HasUpdateTime;
+                    var track = entity as IHasUpdateTime;
                     track.LastUpdate = DateTime.Now;
                 }
             }
@@ -73,9 +73,9 @@ namespace EveVoid.Data
 
             foreach (var entity in modified)
             {
-                if (entity is HasUpdateTime)
+                if (entity is IHasUpdateTime)
                 {
-                    var track = entity as HasUpdateTime;
+                    var track = entity as IHasUpdateTime;
                     track.LastUpdate = DateTime.Now;
                 }
             }
