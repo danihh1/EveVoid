@@ -25,7 +25,6 @@ import { EsiCharacterComponent } from './esi-character/esi-character.component';
     EsiCharacterComponent
   ],
   imports: [
-    FlexLayoutModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
