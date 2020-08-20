@@ -1,0 +1,8 @@
+<div fxLayout="row" fxLayoutAlign="space-between start">
+  <img [src]="portrait" alt="esiChar.name">
+  <div fxLayout="column" fxLayoutAlign="space-between start">
+    <h3>{{esiChar.name}}</h3>
+    <p>{{esiChar.corporationName}}</p>
+    <p *ngIf="esiChar.allianceName != null">{{esiChar.allianceName}}</p>
+  </div>
+</div>

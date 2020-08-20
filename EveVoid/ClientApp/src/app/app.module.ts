@@ -1,3 +1,4 @@
+import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +11,8 @@ import { HomeComponent } from './home/home.component';
 import { CallbackComponent } from './callback/callback.component';
 import { IndexComponent } from './index/index.component';
 import { CallbackEsiComponent } from './callback-esi/callback-esi.component';
+import { MainCharacterComponent } from './main-character/main-character.component';
+import { EsiCharacterComponent } from './esi-character/esi-character.component';
 
 @NgModule({
   declarations: [
@@ -18,9 +21,12 @@ import { CallbackEsiComponent } from './callback-esi/callback-esi.component';
     HomeComponent,
     CallbackComponent,
     IndexComponent,
-    CallbackEsiComponent
+    CallbackEsiComponent,
+    MainCharacterComponent,
+    EsiCharacterComponent
   ],
   imports: [
+    FlexLayoutModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,

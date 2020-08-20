@@ -1,0 +1,12 @@
+<div fxLayout="column">
+  <div fxLayout="row">
+    <img [src]="portrait" alt="mainChar.name">
+    <div fxLayout="column" fxLayoutAlign="space-between start">
+      <h3>{{mainChar.name}}</h3>
+      <p>{{mainChar.corporationName}}</p>
+      <p *ngIf="mainChar.allianceName != null">{{mainChar.allianceName}}</p>
+    </div>
+  </div>
+
+  <app-esi-character *ngFor="let esiChar of mainChar.esiCharacterDtos" [esiChar]="esiChar"></app-esi-character>
+</div>
