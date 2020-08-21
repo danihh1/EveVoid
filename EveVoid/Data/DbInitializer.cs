@@ -9,11 +9,14 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using NLog;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace EveVoid.Data
 {
     public class DbInitializer
     {
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
         public static void Initialize(EveVoidContext context)
         {
             var universeApi = new UniverseApi();
@@ -113,6 +116,73 @@ namespace EveVoid.Data
                 }));
                 context.SaveChanges();
             }
+            if (!context.Stargates.Any())
+            {
+                context.Stargates.AddRange(json.stargates.Select(x => new Stargate
+                {
+                    Id = int.Parse(x.Key),
+                    SystemId = x.Value.systemId
+                }));
+                context.SaveChanges();
+                var stargates = context.Stargates.ToDictionary(x => x.Id, x => x);
+                foreach (var stargate in json.stargates)
+                {
+                    stargates[int.Parse(stargate.Key)].DestinationId = stargate.Value.destinationId;
+                }
+                context.SaveChanges();
+            }
+            //var _universeApi = new UniverseApi();
+            //var index = 1;
+            //foreach (var systemId in json.systems.Keys)
+            //{
+            //    var didTimeout = true;
+            //    while (didTimeout)
+            //    {
+            //        try { 
+            //            _logger.Info(index++ + "/" + json.systems.Count);
+            //            var esiResult = _universeApi.GetUniverseSystemsSystemId(int.Parse(systemId), "en-us", null, null, "en-us");
+            //            if (esiResult.Stargates != null)
+            //            {
+            //                foreach (var gateId in esiResult.Stargates)
+            //                {
+            //                    if (gateId.HasValue)
+            //                    {
+            //                        var gate = context.Stargates.FirstOrDefault(x => x.Id == gateId);
+            //                        if (gate == null)
+            //                        {
+            //                            var esiResult2 = _universeApi.GetUniverseStargatesStargateId(gateId, null, null);
+            //                            var desto = new Stargate
+            //                            {
+            //                                Id = esiResult2.Destination.StargateId.Value,
+            //                                SystemId = esiResult2.Destination.SystemId.Value,
+
+            //                            };
+            //                            context.Stargates.Add(desto);
+            //                            gate = new Stargate
+            //                            {
+            //                                Id = gateId.Value,
+            //                                SystemId = esiResult2.SystemId.Value,
+            //                            };
+            //                            context.Stargates.Add(gate);
+            //                            context.SaveChanges();
+            //                            desto.DestinationId = gate.Id;
+            //                            gate.DestinationId = desto.Id;
+            //                            context.SaveChanges();
+            //                        }
+            //                    }
+            //                }
+            //            }
+            //            didTimeout = false;
+            //        }
+            //        catch(Exception e)
+            //        {
+            //            if (!e.Message.Contains("timeout"))
+            //            {
+            //                didTimeout = false;
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         public static string getSystemTypeForCombine(CombineSystem system)

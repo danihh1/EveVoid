@@ -13,6 +13,7 @@ namespace EveVoid.Models.Combine
         public Dictionary<string, CombineName> factions { get; set; }
         public Dictionary<string, CombineWormhole> wormholes { get; set; }
         public Dictionary<string, List<CombineWormholeEffect>> effects { get; set; }
+        public Dictionary<string, CombineStargate> stargates { get; set; }
     }
 
     public class CombineSystem
@@ -45,5 +46,10 @@ namespace EveVoid.Models.Combine
     public class CombineName
     {
         public string name { get; set; }
+    }
+    public class CombineStargate
+    {
+        public int systemId { get; set; }
+        public int? destinationId { get; set; }
     }
 }

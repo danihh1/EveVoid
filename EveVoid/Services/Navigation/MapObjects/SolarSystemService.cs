@@ -122,5 +122,11 @@ namespace EveVoid.Services.Navigation.MapObjects
             }
             return _context.SystemTypes.FirstOrDefault(x => x.Name == "Null-Sec").Id;
         }
+
+        public IEnumerable<SolarSystem> GetConnectedSystems(int id)
+        {
+            var system = GetSystemById(id);
+            return system.Gates.Select(x => x.Destination.SolarSystem).Union(system.Signatures.Where(x => x.LeadsToId != null).Select(x => x.LeadsTo.System));
+        }
     }
 }

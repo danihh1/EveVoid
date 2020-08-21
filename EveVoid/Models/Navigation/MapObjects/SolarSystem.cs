@@ -23,6 +23,7 @@ namespace EveVoid.Models.Navigation.MapObjects
         public virtual List<EsiCharacter> Pilots { get; set; }
         public virtual List<Stargate> Gates { get; set; }
         public virtual Constellation Constellaion { get; set; }
+
         public SolarSystem()
         {
             Signatures = new List<Signature>();
