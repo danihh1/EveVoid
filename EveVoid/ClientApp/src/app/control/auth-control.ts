@@ -1,8 +1,9 @@
+
 import { Observable, Subject, of } from "rxjs";
-import { SSOService } from "../api/services";
 import { Injectable } from "@angular/core";
-import { MainLoginDto } from "../api/models";
 import { map } from "rxjs/operators";
+import { MainLoginDto } from "../api/models";
+import { SSOService } from "../api/services";
 
 const ACCSESS_TOKEN_KEY = 'access_token';
 const CHARACTER_ID_KEY = 'character_id';

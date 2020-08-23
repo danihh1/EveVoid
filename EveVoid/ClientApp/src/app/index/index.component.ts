@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { MainCharacterDto } from '../api/models';
 import { AuthControl } from '../control/auth-control';
-import { CharacterService, AppDataService } from '../api/services';
+import { MainCharacterDto } from '../api/models';
+import { AppDataService, CharacterService } from '../api/services';
 
 @Component({
   selector: 'app-index',
@@ -16,7 +16,7 @@ export class IndexComponent implements OnInit {
 
   constructor(private authConrol: AuthControl,
     private appDataService: AppDataService,
-    private characterService: CharacterService) { 
+    private characterService: CharacterService) {
       this.mainDto = {} as MainCharacterDto;
       if (this.authConrol.isLoggedIn()){
         this.characterService.getApiCharacterGetMainCharacter(this.authConrol.getMainToken())

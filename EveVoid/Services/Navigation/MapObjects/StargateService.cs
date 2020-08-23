@@ -47,5 +47,10 @@ namespace EveVoid.Services.Navigation.MapObjects
             }
             return gate;
         }
+
+        public Stargate GetStargateByOriginAndDestoId(int originId, int destoId)
+        {
+            return _context.Stargates.FirstOrDefault(x => x.SystemId == originId && x.DestinationId != null && x.Destination.SystemId == destoId);
+        }
     }
 }

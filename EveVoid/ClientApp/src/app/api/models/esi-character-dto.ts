@@ -4,8 +4,9 @@ export interface EsiCharacterDto {
   allianceName?: string;
   corporationId?: number;
   corporationName?: string;
-  currentShipId?: number;
   currentShipName?: string;
+  currentShipTypeId?: number;
+  currentShipTypeName?: string;
   currentSystemId?: number;
   currentSystemName?: string;
   esiToken?: string;

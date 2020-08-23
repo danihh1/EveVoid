@@ -184,8 +184,9 @@ namespace EveVoid.Migrations
                     AccessToken = table.Column<string>(nullable: true),
                     RefreshToken = table.Column<string>(nullable: true),
                     MainCharacterId = table.Column<int>(nullable: false),
-                    CurrentSystemId = table.Column<int>(nullable: false),
-                    CurrentShipId = table.Column<int>(nullable: false),
+                    CurrentSystemId = table.Column<int>(nullable: true),
+                    CurrentShipTypeId = table.Column<int>(nullable: true),
+                    CurrentShipName = table.Column<string>(nullable: true),
                     LastUpdate = table.Column<DateTime>(nullable: false),
                     TokenExpiresIn = table.Column<DateTime>(nullable: false)
                 },
@@ -199,17 +200,17 @@ namespace EveVoid.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EsiCharacters_Ships_CurrentShipId",
-                        column: x => x.CurrentShipId,
+                        name: "FK_EsiCharacters_Ships_CurrentShipTypeId",
+                        column: x => x.CurrentShipTypeId,
                         principalTable: "Ships",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EsiCharacters_SolarSystems_CurrentSystemId",
                         column: x => x.CurrentSystemId,
                         principalTable: "SolarSystems",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_EsiCharacters_MainCharacters_MainCharacterId",
                         column: x => x.MainCharacterId,
@@ -232,7 +233,7 @@ namespace EveVoid.Migrations
                     ExpiryDate = table.Column<DateTime>(nullable: false),
                     SignatureType = table.Column<int>(nullable: false),
                     LeadsToId = table.Column<int>(nullable: true),
-                    TypeId = table.Column<int>(nullable: false)
+                    TypeId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -387,9 +388,9 @@ namespace EveVoid.Migrations
                 column: "CorporationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_EsiCharacters_CurrentShipId",
+                name: "IX_EsiCharacters_CurrentShipTypeId",
                 table: "EsiCharacters",
-                column: "CurrentShipId");
+                column: "CurrentShipTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EsiCharacters_CurrentSystemId",

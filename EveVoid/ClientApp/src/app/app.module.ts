@@ -1,3 +1,5 @@
+import { environment } from './../environments/environment';
+import { ApiModule } from './eve-esi-api/api.module';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -13,6 +15,9 @@ import { IndexComponent } from './index/index.component';
 import { CallbackEsiComponent } from './callback-esi/callback-esi.component';
 import { MainCharacterComponent } from './main-character/main-character.component';
 import { EsiCharacterComponent } from './esi-character/esi-character.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -26,6 +31,9 @@ import { EsiCharacterComponent } from './esi-character/esi-character.component';
     EsiCharacterComponent
   ],
   imports: [
+    ApiModule,
+    MatCardModule,
+    MatButtonModule,
     FlexLayoutModule,
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
@@ -35,7 +43,8 @@ import { EsiCharacterComponent } from './esi-character/esi-character.component';
       { path: 'callback', component: CallbackComponent },
       { path: 'callback-esi', component: CallbackEsiComponent },
       { path: 'index', component: IndexComponent},
-    ])
+    ]),
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

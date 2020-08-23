@@ -19,10 +19,6 @@
         class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse"
         [ngClass]="{ show: isExpanded }">
         <ul class="navbar-nav flex-grow">
-          <li *ngIf="auth.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
-            <a (click)="confirm()">Confirm
-            </a>
-          </li>
           <li *ngIf="!fetchingLink && !auth.isLoggedIn()" class="nav-item" [routerLinkActive]="['link-active']">
             <a [href]="ssoLink"><img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-black-large.png" alt="Holesale">
             </a>

@@ -17,10 +17,12 @@ namespace EveVoid.Models.Pilots
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
         public int MainCharacterId { get; set; }
-        public int CurrentSystemId { get; set; }
-        public int CurrentShipId { get; set; }
+        public int? CurrentSystemId { get; set; }
+        public int? CurrentShipTypeId { get; set; }
+        public string CurrentShipName { get; set; }
         public DateTime LastUpdate { get; set; }
         public DateTime TokenExpiresIn { get; set; }
+
         public virtual List<Jump> Jumps { get; set; }
         public virtual MainCharacter MainCharacter { get; set; }
         public virtual Corporation Corporation { get; set; }

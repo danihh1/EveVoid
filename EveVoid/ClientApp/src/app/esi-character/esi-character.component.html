@@ -1,8 +1,14 @@
-<div fxLayout="row" fxLayoutAlign="space-between start">
-  <img [src]="portrait" alt="esiChar.name">
-  <div fxLayout="column" fxLayoutAlign="space-between start">
-    <h3>{{esiChar.name}}</h3>
-    <p>{{esiChar.corporationName}}</p>
-    <p *ngIf="esiChar.allianceName != null">{{esiChar.allianceName}}</p>
+<mat-card style="margin-bottom: 5px;">
+  <div fxLayout="row" fxLayoutAlign="start start">
+    <img [src]="portrait" alt="esiChar.name" style="width:64px; height:64px;">
+    <mat-card-header>
+        <mat-card-title>{{esiChar.name}}</mat-card-title>
+        <mat-card-subtitle>{{esiChar.corporationName}}</mat-card-subtitle>
+        <mat-card-subtitle *ngIf="esiChar.allianceName != null">{{esiChar.allianceName}}</mat-card-subtitle>
+        <mat-card-subtitle>{{esiChar.currentShipName}}</mat-card-subtitle>
+        <mat-card-subtitle><a href="">{{esiChar.currentSystemName}}</a></mat-card-subtitle>
+    </mat-card-header>
   </div>
-</div>
+  <mat-card-title *ngIf="this._charLocation != null" >{{this._charLocation | json}}</mat-card-title>
+</mat-card>
+

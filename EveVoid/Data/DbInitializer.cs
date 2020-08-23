@@ -106,7 +106,7 @@ namespace EveVoid.Data
                     Id = int.Parse(x.Key),
                     Name = x.Value.name,
                     Class = x.Value.wClass == null ? 0 : int.Parse(x.Value.wClass),
-                    Statics = x.Value.statics == null ? null : x.Value.statics.Select(s => new WormholeStatic
+                    Statics = x.Value.statics?.Select(s => new WormholeStatic
                     {
                         SystemId = int.Parse(x.Key),
                         WormholeTypeId = context.WormholeTypes.FirstOrDefault(e => e.Name == s).Id

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthControl } from '../control/auth-control';
-import { SSOService } from '../api/services';
 import { MainCharacterDto, EsiLoginDto } from '../api/models';
+import { SSOService } from '../api/services';
 
 @Component({
   selector: 'app-callback-esi',
@@ -18,7 +18,7 @@ export class CallbackEsiComponent implements OnInit {
   constructor(private activatedRoute: ActivatedRoute,
     private authConrol: AuthControl,
     private ssoService: SSOService,
-    private router: Router) { 
+    private router: Router) {
       this.activatedRoute.queryParams.subscribe(params => {
           let code = params['code'];
           this._code = code;

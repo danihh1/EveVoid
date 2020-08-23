@@ -13,9 +13,10 @@ namespace EveVoid.Dto
         public string CorporationName { get; set; }
         public int? AllianceId { get; set; }
         public string AllianceName { get; set; }
-        public int CurrentSystemId { get; set; }
+        public int? CurrentSystemId { get; set; }
         public string CurrentSystemName { get; set; }
-        public int CurrentShipId { get; set; }
+        public int? CurrentShipTypeId { get; set; }
+        public string CurrentShipTypeName { get; set; }
         public string CurrentShipName { get; set; }
         public string EsiToken { get; set; }
     }

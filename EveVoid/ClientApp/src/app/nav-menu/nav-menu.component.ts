@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { AppDataService } from '../api/services';
 import { AuthControl } from '../control/auth-control';
+import { AppDataService } from '../api/services';
 
 @Component({
   selector: 'app-nav-menu',

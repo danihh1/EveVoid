@@ -20,7 +20,8 @@ namespace EveVoid.Data.Mappings
                 .HasOne(x => x.WormholeType)
                 .WithMany()
                 .HasForeignKey(x => x.TypeId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .OnDelete(DeleteBehavior.NoAction)
+                .IsRequired(false);
             modelBuilder.Entity<Signature>()
                 .HasOne(x => x.LeadsTo)
                 .WithMany()

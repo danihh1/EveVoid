@@ -240,7 +240,7 @@ namespace EveVoid.Migrations
                     b.Property<int>("SystemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TypeId")
+                    b.Property<int?>("TypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -349,10 +349,13 @@ namespace EveVoid.Migrations
                     b.Property<int?>("CorporationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CurrentShipId")
+                    b.Property<string>("CurrentShipName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("CurrentShipTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CurrentSystemId")
+                    b.Property<int?>("CurrentSystemId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
@@ -374,7 +377,7 @@ namespace EveVoid.Migrations
 
                     b.HasIndex("CorporationId");
 
-                    b.HasIndex("CurrentShipId");
+                    b.HasIndex("CurrentShipTypeId");
 
                     b.HasIndex("CurrentSystemId");
 
@@ -490,8 +493,7 @@ namespace EveVoid.Migrations
                     b.HasOne("EveVoid.Models.Navigation.WormholeType", "WormholeType")
                         .WithMany()
                         .HasForeignKey("TypeId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.StargateJump", b =>
@@ -547,15 +549,11 @@ namespace EveVoid.Migrations
 
                     b.HasOne("EveVoid.Models.EveObjects.Ship", "CurrentShip")
                         .WithMany()
-                        .HasForeignKey("CurrentShipId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CurrentShipTypeId");
 
                     b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "CurrentSystem")
                         .WithMany("Pilots")
-                        .HasForeignKey("CurrentSystemId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CurrentSystemId");
 
                     b.HasOne("EveVoid.Models.Pilots.MainCharacter", "MainCharacter")
                         .WithMany("EsiCharacters")

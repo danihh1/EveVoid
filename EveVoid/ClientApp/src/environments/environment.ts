@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   imageBaseUrl: 'https://images.evetech.net',
+  api_url: '',
 };
 
 /*

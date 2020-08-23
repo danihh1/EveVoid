@@ -18,7 +18,7 @@ namespace EveVoid.Models.Navigation
         public DateTime ExpiryDate { get; set; }
         public SignatureType SignatureType { get; set; }
         public int? LeadsToId { get; set; }
-        public int TypeId { get; set; }
+        public int? TypeId { get; set; }
         public double TotalMass
         {
             get

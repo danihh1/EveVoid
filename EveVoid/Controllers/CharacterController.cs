@@ -1,5 +1,6 @@
 ﻿using EveVoid.Dto;
 using EveVoid.Models.Pilots;
+using EveVoid.Services;
 using EveVoid.Services.Pilots;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -14,15 +15,30 @@ namespace EveVoid.Controllers
     public class CharacterController : ControllerBase
     {
         private readonly ICharacterService _characterService;
+        private readonly ITokenService _tokenService;
 
-        public CharacterController(ICharacterService characterService)
+        public CharacterController(ICharacterService characterService, 
+            ITokenService tokenService)
         {
             _characterService = characterService;
+            _tokenService = tokenService;
         }
         [HttpGet("GetMainCharacter")]
-        public MainCharacterDto GetMainCharacter(string token)
+        public ActionResult<MainCharacterDto> GetMainCharacter(string token)
         {
-            return Map(_characterService.GetMainCharacterByToken(token));
+            return Ok(Map(_characterService.GetMainCharacterByToken(token)));
+        }
+
+        [HttpPost("GetEsiCharacter")]
+        public ActionResult<EsiCharacterDto> GetEsiCharacter(string mainToken, string esiToken)
+        {
+            return Ok(Map(_characterService.GetEsiCharacterWithActiveToken(mainToken, esiToken)));
+        }
+
+        [HttpPost("UpdateEsiCharacter")]
+        public ActionResult<EsiCharacterDto> UpdateEsiCharacter(string mainToken, EsiCharacterDto dto)
+        {
+            return Ok(Map(_characterService.UpdateEsiCharacter(mainToken, dto)));
         }
 
         private MainCharacterDto Map(MainCharacter mainCharacter)
@@ -35,21 +51,27 @@ namespace EveVoid.Controllers
                 CorporationName = mainCharacter.Corporation.Name,
                 AllianceId = mainCharacter.Corporation.AllianceId,
                 AllianceName = mainCharacter.Corporation.Alliance.Name,
-                EsiCharacterDtos = mainCharacter.EsiCharacters.Select(x => new EsiCharacterDto
-                {
-                    Id = x.Id,
-                    Name = x.Name,
-                    CorporationId = x.CorporationId,
-                    CorporationName = x.Corporation.Name,
-                    AllianceId = x.Corporation.AllianceId,
-                    AllianceName = x.Corporation.Alliance == null ? null : x.Corporation.Alliance.Name,
-                    CurrentSystemId = x.CurrentSystemId,
-                    CurrentSystemName = x.CurrentSystem.Name,
-                    CurrentShipId = x.CurrentShipId,
-                    CurrentShipName = x.CurrentShip.Name,
-                    EsiToken = x.AccessToken
-                    
-                }).ToList()
+                EsiCharacterDtos = mainCharacter.EsiCharacters.Select(x => Map(x)).ToList()
+            };
+            return dto;
+        }
+
+        private EsiCharacterDto Map(EsiCharacter esiCharacter)
+        {
+            var dto = new EsiCharacterDto
+            {
+                Id = esiCharacter.Id,
+                Name = esiCharacter.Name,
+                CorporationId = esiCharacter.CorporationId,
+                CorporationName = esiCharacter.Corporation.Name,
+                AllianceId = esiCharacter.Corporation.AllianceId,
+                AllianceName = esiCharacter.Corporation.Alliance?.Name,
+                CurrentSystemId = esiCharacter.CurrentSystemId,
+                CurrentSystemName = esiCharacter.CurrentSystem?.Name,
+                CurrentShipTypeId = esiCharacter.CurrentShipTypeId,
+                CurrentShipTypeName = esiCharacter.CurrentShip?.Name,
+                CurrentShipName = esiCharacter.CurrentShipName,
+                EsiToken = esiCharacter.AccessToken
             };
             return dto;
         }

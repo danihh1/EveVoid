@@ -13,6 +13,7 @@ using EveVoid.Services;
 using EveVoid.Services.EveObjects;
 using EveVoid.Services.Pilots;
 using EveVoid.Services.Navigation.MapObjects;
+using EveVoid.Services.Navigation;
 
 namespace EveVoid
 {
@@ -45,6 +46,7 @@ namespace EveVoid
             services.AddScoped<ISolarSystemService, SolarSystemService>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ILocationApi, LocationApi>();
+            services.AddScoped<ISignatureService, SignatureService>();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

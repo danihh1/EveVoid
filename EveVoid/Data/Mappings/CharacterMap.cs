@@ -29,12 +29,14 @@ namespace EveVoid.Data.Mappings
             modelBuilder.Entity<EsiCharacter>()
                 .HasOne(e => e.CurrentSystem)
                 .WithMany(e => e.Pilots)
-                .HasForeignKey(x => x.CurrentSystemId);
+                .HasForeignKey(x => x.CurrentSystemId)
+                .IsRequired(false);
 
             modelBuilder.Entity<EsiCharacter>()
                 .HasOne(e => e.CurrentShip)
                 .WithMany()
-                .HasForeignKey(x => x.CurrentShipId);
+                .HasForeignKey(x => x.CurrentShipTypeId)
+                .IsRequired(false);
         }
     }
 }

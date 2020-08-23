@@ -14,6 +14,12 @@ export class MainCharacterComponent implements OnInit {
   get portrait(): string {
     return this.imageControl.getPortraitForCharacter(this.mainChar.id, this.portraitSize);
   }
+  get corpLogo(): string {
+    return this.imageControl.getCorpLogo(this.mainChar.id, this.portraitSize/2);
+  }
+  get allianceLogo(): string {
+    return this.imageControl.getAllianceLogo(this.mainChar.id, this.portraitSize/2);
+  }
   constructor(private imageControl: ImageControl) { }
 
   ngOnInit() {

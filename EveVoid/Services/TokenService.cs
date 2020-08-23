@@ -33,36 +33,30 @@ namespace EveVoid.Services
 
         public async Task<OAuthToken> GetOAuthToken(string code, string version = "")
         {
-            using (HttpClient client = new HttpClient { BaseAddress = new Uri(OAUTH_TOKEN_URL) })
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", _authString(version));
+            using HttpClient client = new HttpClient { BaseAddress = new Uri(OAUTH_TOKEN_URL) };
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", _authString(version));
 
-                var response = await client.PostAsync("/oauth/token", new StringContent("grant_type=authorization_code&code=" + code, Encoding.UTF8, "application/x-www-form-urlencoded"));
-                return JsonSerializer.Deserialize<OAuthToken>(response.Content.ReadAsStringAsync().Result);
-            }
+            var response = await client.PostAsync("/oauth/token", new StringContent("grant_type=authorization_code&code=" + code, Encoding.UTF8, "application/x-www-form-urlencoded"));
+            return JsonSerializer.Deserialize<OAuthToken>(response.Content.ReadAsStringAsync().Result);
         }
 
         public async Task<OAuthVerify> GetOAuthVerify(string token)
         {
-            using (HttpClient client = new HttpClient { BaseAddress = new Uri(OAUTH_TOKEN_URL) })
-            {
-                client.DefaultRequestHeaders.Add("User-Agent", "Basic");
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                var response = await client.GetAsync("/oauth/verify");
-                var result = response.Content.ReadAsStringAsync().Result;
-                return JsonSerializer.Deserialize<OAuthVerify>(result);
-            }
+            using HttpClient client = new HttpClient { BaseAddress = new Uri(OAUTH_TOKEN_URL) };
+            client.DefaultRequestHeaders.Add("User-Agent", "Basic");
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync("/oauth/verify");
+            var result = response.Content.ReadAsStringAsync().Result;
+            return JsonSerializer.Deserialize<OAuthVerify>(result);
         }
 
         public async Task<OAuthToken> GetTokenFromRefreshToken(string refreshToken, string version = "")
         {
-            using (HttpClient client = new HttpClient { BaseAddress = new Uri(OAUTH_TOKEN_URL) })
-            {
-                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", _authString(version));
+            using HttpClient client = new HttpClient { BaseAddress = new Uri(OAUTH_TOKEN_URL) };
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", _authString(version));
 
-                var response = await client.PostAsync("/oauth/token", new StringContent("grant_type=refresh_token&refresh_token=" + refreshToken, Encoding.UTF8, "application/x-www-form-urlencoded"));
-                return JsonSerializer.Deserialize<OAuthToken>(response.Content.ReadAsStringAsync().Result);
-            }
+            var response = await client.PostAsync("/oauth/token", new StringContent("grant_type=refresh_token&refresh_token=" + refreshToken, Encoding.UTF8, "application/x-www-form-urlencoded"));
+            return JsonSerializer.Deserialize<OAuthToken>(response.Content.ReadAsStringAsync().Result);
         }
     }
 }

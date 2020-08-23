@@ -1,5 +1,7 @@
 {{mainDto | json}}
+<div style="height: 500px;">
 <app-main-character [mainChar]="mainDto"></app-main-character>
+</div>
 <div *ngIf="!fetchingLink">
     <a [href]="ssoLink"><img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-black-large.png" alt="Holesale"></a>
 </div>
