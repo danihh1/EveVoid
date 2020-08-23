@@ -52,7 +52,7 @@ namespace EveVoid.Services.Pilots
         public MainCharacter CreateOrUpdateMain(MainLoginDto dto)
         {
             var character = _context.MainCharacters.FirstOrDefault(x => x.Id == dto.CharacterId);
-            if (character == null || character.ShouldUpdate())
+            if (character == null || character.PassedMoreThan())
             {
                 var esiResult = _characterApi.GetCharactersCharacterId(dto.CharacterId, null, null);
                 if (esiResult.CorporationId.HasValue)
@@ -105,7 +105,7 @@ namespace EveVoid.Services.Pilots
                 return null;
             }
             var esiChar = _context.EsiCharacters.FirstOrDefault(x => x.Id == authVerify.CharacterID);
-            if (esiChar == null || esiChar.ShouldUpdate() || esiChar.TokenExpiresIn <= DateTime.Now)
+            if (esiChar == null || esiChar.PassedMoreThan() || esiChar.TokenExpiresIn <= DateTime.Now)
             {
                 var esiResult = _characterApi.GetCharactersCharacterId(authVerify.CharacterID, null, null);
                 if (esiResult.CorporationId.HasValue)

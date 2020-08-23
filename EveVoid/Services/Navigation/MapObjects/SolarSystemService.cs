@@ -29,7 +29,7 @@ namespace EveVoid.Services.Navigation.MapObjects
         public SolarSystem GetSystemById(int id)
         {
             var system = _context.SolarSystems.FirstOrDefault(x => x.Id == id);
-            if (system == null || system.ShouldUpdate())
+            if (system == null || system.PassedMoreThan())
             {
                 var esiResult = _universeApi.GetUniverseSystemsSystemId(id, "en-us", null, null, "en-us");
                 var wClass = 0;

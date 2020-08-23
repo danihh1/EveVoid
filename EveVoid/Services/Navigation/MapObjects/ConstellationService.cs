@@ -25,7 +25,7 @@ namespace EveVoid.Services.Navigation.MapObjects
         public Constellation GetConstellationById(int id)
         {
             var constellation = _context.Constellaions.FirstOrDefault(x => x.Id == id);
-            if (constellation == null || constellation.ShouldUpdate())
+            if (constellation == null || constellation.PassedMoreThan())
             {
                 var esiResult = _universeApi.GetUniverseConstellationsConstellationId(id, "en-us", null, null, "en-us");
                 if (esiResult.RegionId.HasValue)

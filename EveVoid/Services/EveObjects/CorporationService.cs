@@ -27,7 +27,7 @@ namespace EveVoid.Services.EveObjects
         public Corporation GetCorporationById(int id)
         {
             var corp = _context.Corporations.FirstOrDefault(x => x.Id == id);
-            if (corp == null || corp.ShouldUpdate())
+            if (corp == null || corp.PassedMoreThan())
             {
                 var esiResult = _corporationApi.GetCorporationsCorporationId(id, null, null);
                 if (esiResult.AllianceId.HasValue)

@@ -24,7 +24,7 @@ namespace EveVoid.Services.Navigation.MapObjects
         public Region GetRegionById(int id)
         {
             var region = _context.Regions.FirstOrDefault(x => x.Id == id);
-            if (region == null || region.ShouldUpdate(days: 7))
+            if (region == null || region.PassedMoreThan(days: 7))
             {
                 var esiResult = _universeApi.GetUniverseRegionsRegionId(id, "en-us", null, null, "en-us");
                 if (region == null)

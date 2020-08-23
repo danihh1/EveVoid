@@ -23,7 +23,7 @@ namespace EveVoid.Services.EveObjects
         public Ship GetShipById(int id)
         {
             var ship = _context.Ships.FirstOrDefault(x => x.Id == id);
-            if (ship == null || ship.ShouldUpdate(days: 7))
+            if (ship == null || ship.PassedMoreThan(days: 7))
             {
                 var esiResult = _universeApi.GetUniverseTypesTypeId(id, "en-us", null, null, "en-us");
                 if (ship == null)
