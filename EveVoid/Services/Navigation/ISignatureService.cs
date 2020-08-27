@@ -4,6 +4,6 @@ namespace EveVoid.Services.Navigation
 {
     public interface ISignatureService
     {
-        Signature GetOrAddWormholeByOriginAndDestoId(int originId, int destoId);
+        Signature GetOrAddWormholeByOriginAndDestoId(int originId, int destoId, int maskId);
     }
 }

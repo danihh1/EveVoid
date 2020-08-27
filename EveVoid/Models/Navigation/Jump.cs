@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.Navigation
 {
-    public class Jump
+    public class Jump: IHasCreationTime
     {
         public int Id { get; set; }
         public int ShipId { get; set; }
         public int WormholeId { get; set; }
         public int EsiCharacterId { get; set; }
-        public DateTime JumpDate { get; set; }
+        public DateTime CreationDate { get; set; }
 
         public virtual Signature Wormhole { get; set; }
         public virtual EsiCharacter EsiCharacter { get; set; }

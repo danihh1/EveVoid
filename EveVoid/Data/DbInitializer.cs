@@ -105,6 +105,7 @@ namespace EveVoid.Data
                 {
                     Id = int.Parse(x.Key),
                     Name = x.Value.name,
+                    Security = x.Value.security == null ? 0 : double.Parse(x.Value.security),
                     Class = x.Value.wClass == null ? 0 : int.Parse(x.Value.wClass),
                     Statics = x.Value.statics?.Select(s => new WormholeStatic
                     {

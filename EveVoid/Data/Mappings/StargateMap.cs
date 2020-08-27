@@ -22,6 +22,11 @@ namespace EveVoid.Data.Mappings
                 .WithMany()
                 .HasForeignKey(x => x.ShipId)
                 .OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<StargateJump>()
+                .HasOne(x => x.Mask)
+                .WithMany()
+                .HasForeignKey(x => x.MaskId)
+                .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Stargate>()
                 .HasOne(x => x.Destination)
                 .WithMany()

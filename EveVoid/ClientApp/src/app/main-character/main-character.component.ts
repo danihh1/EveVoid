@@ -10,7 +10,7 @@ import { MainCharacterDto } from '../api/models';
 export class MainCharacterComponent implements OnInit {
 
   @Input() mainChar: MainCharacterDto;
-  portraitSize = 128;
+  portraitSize = 64;
   get portrait(): string {
     return this.imageControl.getPortraitForCharacter(this.mainChar.id, this.portraitSize);
   }

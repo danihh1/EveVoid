@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace EveVoid.Models.Shared
 {
-    public interface EsiEntity
+    public interface IEsiEntity
     {
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }

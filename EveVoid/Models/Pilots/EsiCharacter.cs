@@ -5,10 +5,11 @@ using EveVoid.Models.Shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using EveVoid.Models.Navigation.Masks;
 
 namespace EveVoid.Models.Pilots
 {
-    public class EsiCharacter: EsiEntity, IHasUpdateTime
+    public class EsiCharacter: IEsiEntity, IHasUpdateTime
     {
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
@@ -28,5 +29,10 @@ namespace EveVoid.Models.Pilots
         public virtual Corporation Corporation { get; set; }
         public virtual SolarSystem CurrentSystem { get; set; }
         public virtual Ship CurrentShip { get; set; }
+
+        public EsiCharacter()
+        {
+            Jumps = new List<Jump>();
+        }
     }
 }

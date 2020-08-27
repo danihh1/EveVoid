@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EveVoid.Models.Navigation.Masks;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,5 +15,6 @@ namespace EveVoid.Dto
         public int? AllianceId { get; set; }
         public string AllianceName { get; set; }
         public List<EsiCharacterDto> EsiCharacterDtos { get; set; }
+        public MaskType MaskType { get; set; }
     }
 }

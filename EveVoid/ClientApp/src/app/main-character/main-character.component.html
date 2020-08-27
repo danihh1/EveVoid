@@ -1,13 +1,18 @@
-<mat-card>
-  <div fxLayout="row" fxLayoutAlign="start start">
-    <img [src]="portrait" alt="mainChar.name" style="width:128px; height:128px;">
-    <mat-card-header>
-      <mat-card-title>{{mainChar.name}}</mat-card-title>
-      <mat-card-subtitle>{{mainChar.corporationName}}</mat-card-subtitle>
-      <mat-card-subtitle *ngIf="mainChar.allianceName != null">{{mainChar.allianceName}}</mat-card-subtitle>
-    </mat-card-header>
-  </div>
-  <mat-card-content>
-    <app-esi-character *ngFor="let esiChar of mainChar.esiCharacterDtos" [esiChar]="esiChar"></app-esi-character>
-  </mat-card-content>
-</mat-card>
+<div fxLayout="row" fxLayoutAlign="start start">
+  <img [src]="portrait" alt="mainChar.name" style="width:60px; height:60px; border-radius: 5px; margin:2px;">
+  <table style="height: 64px; font-size: 14px; line-height: initial;">
+    <tr style="height:50%;">
+      <th>{{mainChar.name}}</th>
+    </tr>
+    <tr>
+      <td>
+        {{mainChar.corporationName}}
+      </td>
+    </tr>
+    <tr *ngIf="mainChar.allianceName != null">
+      <td>
+        {{mainChar.allianceName}}
+      </td>
+    </tr>
+  </table>
+</div>

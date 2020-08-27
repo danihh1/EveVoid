@@ -1,14 +1,34 @@
-<mat-card style="margin-bottom: 5px;">
+<div fxLayout="column">
   <div fxLayout="row" fxLayoutAlign="start start">
-    <img [src]="portrait" alt="esiChar.name" style="width:64px; height:64px;">
-    <mat-card-header>
-        <mat-card-title>{{esiChar.name}}</mat-card-title>
-        <mat-card-subtitle>{{esiChar.corporationName}}</mat-card-subtitle>
-        <mat-card-subtitle *ngIf="esiChar.allianceName != null">{{esiChar.allianceName}}</mat-card-subtitle>
-        <mat-card-subtitle>{{esiChar.currentShipName}}</mat-card-subtitle>
-        <mat-card-subtitle><a href="">{{esiChar.currentSystemName}}</a></mat-card-subtitle>
-    </mat-card-header>
+    <img [src]="portrait" alt="esiChar.name" style="width:64px; height:64px; border-radius: 5px; margin:2px;">
+    <div style="width:10px;"></div>
+    <table style="height: 64px; font-size: 14px; line-height: initial;">
+      <tr style="height:50%;">
+        <th>{{esiChar.name}}</th>
+      </tr>
+      <tr>
+        <td>
+          {{esiChar.corporationName}}
+        </td>
+      </tr>
+      <tr *ngIf="esiChar.allianceName != null">
+        <td>
+          {{esiChar.allianceName}}
+        </td>
+      </tr>
+      <tr *ngIf="esiChar.currentShipName != null">
+        <td>
+          {{esiChar.currentShipTypeName}} - {{esiChar.currentShipName}}
+        </td>
+      </tr>
+      <tr *ngIf="esiChar.currentSystemName != null">
+        <td>
+          <a routerLink="{{esiChar.currentSystemId}}">{{esiChar.currentSystemName}}</a>
+        </td>
+      </tr>
+    </table>
+    <div style="width:10px;"></div>
   </div>
-  <mat-card-title *ngIf="this._charLocation != null" >{{this._charLocation | json}}</mat-card-title>
-</mat-card>
+</div>
+
 

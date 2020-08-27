@@ -1,9 +1,6 @@
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
-a {
-  color: #0366d6;
-}
 
 code {
   color: #e01a76;
@@ -17,3 +14,35 @@ code {
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+a:link {
+  color: white;
+  font-weight: bold;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:visited {
+  color: white;
+  font-weight: bold;
+  background-color: transparent;
+  text-decoration: none;
+}
+
+a:hover {
+  color: white;
+  font-weight: bold;
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+a:active {
+  color: white;
+  font-weight: bold;
+  background-color: transparent;
+  text-decoration: underline;
+}

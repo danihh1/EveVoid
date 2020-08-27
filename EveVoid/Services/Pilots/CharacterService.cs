@@ -3,6 +3,7 @@ using EveVoid.Dto;
 using EveVoid.Extensions;
 using EveVoid.Models.Navigation;
 using EveVoid.Models.Navigation.MapObjects;
+using EveVoid.Models.Navigation.Masks;
 using EveVoid.Models.Pilots;
 using EveVoid.Models.Responses;
 using EveVoid.Services.EveObjects;
@@ -11,7 +12,9 @@ using EveVoid.Services.Navigation.MapObjects;
 using IO.Swagger.Api;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EveVoid.Services.Pilots
@@ -52,48 +55,49 @@ namespace EveVoid.Services.Pilots
         public MainCharacter CreateOrUpdateMain(MainLoginDto dto)
         {
             var character = _context.MainCharacters.FirstOrDefault(x => x.Id == dto.CharacterId);
-            if (character == null || character.PassedMoreThan())
+            var esiResult = _characterApi.GetCharactersCharacterId(dto.CharacterId, null, null);
+            if (character == null)
             {
-                var esiResult = _characterApi.GetCharactersCharacterId(dto.CharacterId, null, null);
                 if (esiResult.CorporationId.HasValue)
                 {
                     _corporationService.GetCorporationById(esiResult.CorporationId.Value);
                 }
-                if (character == null)
+                character = new MainCharacter
                 {
-                    character = new MainCharacter
-                    {
-                        Id = dto.CharacterId,
-                        Name = dto.CharacterName,
-                        AccessToken = dto.AccessToken,
-                        RefreshToken = null,
-                        CorporationId = esiResult.CorporationId
-                    };
-                    _context.MainCharacters.Add(character);
-                }
-                else
-                {
-                    character.CorporationId = esiResult.CorporationId;
-                    character.AccessToken = dto.AccessToken;
-                }
-                _context.SaveChanges();
+                    Id = dto.CharacterId,
+                    Name = dto.CharacterName,
+                    AccessToken = dto.AccessToken,
+                    RefreshToken = null,
+                    CorporationId = esiResult.CorporationId,
+                    MaskType = esiResult.AllianceId.HasValue ? MaskType.Alliance : MaskType.Corp
+                };
+                _context.MainCharacters.Add(character);
             }
+            else
+            {
+                character.CorporationId = esiResult.CorporationId;
+                character.AccessToken = dto.AccessToken;
+            }
+            _context.SaveChanges();
             return character;
         }
 
         public MainCharacter GetMainCharacterByToken(string token)
         {
             var main = _context.MainCharacters.FirstOrDefault(x => x.AccessToken == token);
-            foreach (var esi in main.EsiCharacters)
+            if (main != null)
             {
-                if (esi.AccessToken == null || esi.TokenExpiresIn <= DateTime.Now)
+                foreach (var esi in main.EsiCharacters)
                 {
-                    var newToken = _tokenService.GetTokenFromRefreshToken(esi.RefreshToken, version: "Location").Result;
-                    esi.AccessToken = newToken.access_token;
-                    esi.TokenExpiresIn = DateTime.Now.AddSeconds(newToken.expires_in);
+                    if (esi.AccessToken == null || esi.TokenExpiresIn <= DateTime.Now)
+                    {
+                        var newToken = _tokenService.GetTokenFromRefreshToken(esi.RefreshToken, version: "Location").Result;
+                        esi.AccessToken = newToken.access_token;
+                        esi.TokenExpiresIn = DateTime.Now.AddSeconds(newToken.expires_in);
+                    }
                 }
+                _context.SaveChanges();
             }
-            _context.SaveChanges();
             return main;
         }
 
@@ -162,19 +166,20 @@ namespace EveVoid.Services.Pilots
             {
                 return null;
             }
-            if (esi.PassedLessThan(seconds: 11))
+            if (esi.CurrentSystemId != null && esi.PassedLessThan(seconds: 11))
             {
                 if (esi.CurrentSystemId != dto.CurrentSystemId)
                 {
+                    var maskId = esi.MainCharacter.MaskType == MaskType.Alliance ? esi.MainCharacter.Corporation.Alliance.MaskId : esi.MainCharacter.Corporation.MaskId;
                     var destoSystem = _solarSystemService.GetSystemById(dto.CurrentSystemId.GetValueOrDefault());
                     var connection = _stargateService.GetStargateByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault());
                     if (connection == null)
                     {
-                        var wormhole = _signatureService.GetOrAddWormholeByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault());
+                        var wormhole = _signatureService.GetOrAddWormholeByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault(), maskId);
                         wormhole.Jumps.Add(new Jump
                         {
                             EsiCharacterId = esi.Id,
-                            JumpDate = DateTime.Now,
+                            CreationDate = DateTime.Now,
                             ShipId = dto.CurrentShipTypeId.GetValueOrDefault(),
                         });
                     }
@@ -183,9 +188,10 @@ namespace EveVoid.Services.Pilots
                         connection.StargateJumps.Add(new StargateJump
                         {
                             EsiCharacterId = esi.Id,
-                            JumpDate = DateTime.Now,
+                            CreationDate = DateTime.Now,
                             ShipId = dto.CurrentShipTypeId.GetValueOrDefault(),
-                            StargateId = connection.Id
+                            StargateId = connection.Id,
+                            MaskId = maskId
                         });
                     }
                 }
@@ -201,7 +207,14 @@ namespace EveVoid.Services.Pilots
                 _solarSystemService.GetSystemById(dto.CurrentSystemId.Value);
                 esi.CurrentSystemId = dto.CurrentSystemId;
             }
-            esi.CurrentShipName = dto.CurrentShipName;
+            esi.CurrentShipName = /*dto.CurrentShipName.StartsWith("u'") && dto.CurrentShipName.EndsWith("'") ? 
+                Regex.Replace(
+                dto.CurrentShipName.Substring(2, dto.CurrentShipName.Length - 3),
+                @"\\u(?<Value>[a-zA-Z0-9]{4})",
+                m => {
+                    return ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString();
+                }) : */
+                dto.CurrentShipName;
             _context.SaveChanges();
             return esi;
         }

@@ -11,9 +11,9 @@ export class ImageControl {
     return environment.imageBaseUrl + '/characters/' + id + '/portrait?size=' + size;
   }
   getCorpLogo(id: number, size: number): string {
-    return environment.imageBaseUrl + '/corporations/' + id + '/portrait?size=' + size;
+    return environment.imageBaseUrl + '/corporations/' + id + '/logo?size=' + size;
   }
   getAllianceLogo(id: number, size: number): string {
-    return environment.imageBaseUrl + '/alliances/' + id + '/portrait?size=' + size;
+    return environment.imageBaseUrl + '/alliances/' + id + '/logo?size=' + size;
   }
 }

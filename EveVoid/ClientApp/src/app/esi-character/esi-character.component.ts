@@ -1,5 +1,5 @@
 import { AuthControl } from './../control/auth-control';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ImageControl } from '../control/image-control';
 import { Observable, interval, Subscription, combineLatest } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -13,21 +13,20 @@ import { LocationService } from '../eve-esi-api/services';
   templateUrl: './esi-character.component.html',
   styleUrls: ['./esi-character.component.css']
 })
-export class EsiCharacterComponent implements OnInit {
+export class EsiCharacterComponent implements OnInit, OnDestroy {
   @Input() esiChar: EsiCharacterDto;
   portraitSize = 64;
   locationObserver: Subscription;
-  _charLocation: any;
   reportingLocation = false;
 
   get portrait(): string {
     return this.imageControl.getPortraitForCharacter(this.esiChar.id, this.portraitSize);
   }
   get corpLogo(): string {
-    return this.imageControl.getCorpLogo(this.esiChar.id, this.portraitSize/2);
+    return this.imageControl.getCorpLogo(this.esiChar.id, this.portraitSize / 2);
   }
   get allianceLogo(): string {
-    return this.imageControl.getAllianceLogo(this.esiChar.id, this.portraitSize/2);
+    return this.imageControl.getAllianceLogo(this.esiChar.id, this.portraitSize / 2);
   }
   constructor(private imageControl: ImageControl,
   private _locationApi: LocationService,
@@ -38,22 +37,32 @@ export class EsiCharacterComponent implements OnInit {
 
   ngOnInit() {
     this.locationObserver = interval(5000).subscribe(() => {
-      console.log(this.esiChar);
       this.reportingLocation = true;
-      const location$ = this._locationApi.getCharactersCharacterIdLocation({characterId: this.esiChar.id, token: this.esiChar.esiToken, datasource: null, IfNoneMatch: null});
-      const ship$ = this._locationApi.getCharactersCharacterIdShip({characterId: this.esiChar.id, token: this.esiChar.esiToken, datasource: null, IfNoneMatch: null});
+      const location$ = this._locationApi.getCharactersCharacterIdLocation({characterId: this.esiChar.id,
+        token: this.esiChar.esiToken, datasource: null, IfNoneMatch: null});
+      const ship$ = this._locationApi.getCharactersCharacterIdShip({characterId: this.esiChar.id,
+        token: this.esiChar.esiToken, datasource: null, IfNoneMatch: null});
       combineLatest(location$, ship$, (location, ship) => ({location, ship}))
       .subscribe( pair => {
         this.esiChar.currentSystemId = pair.location.solar_system_id;
         this.esiChar.currentShipTypeId = pair.ship.ship_type_id;
-        this.esiChar.currentShipName = pair.ship.ship_name;
+        if (pair.ship.ship_name.startsWith('u\'') && pair.ship.ship_name.endsWith('\'')) {
+          const r = /\\u([\d\w]{4})/gi;
+          const uri = pair.ship.ship_name.substring(2, pair.ship.ship_name.lastIndexOf('\'')).replace(r, function (match, grp) {
+              return String.fromCharCode(parseInt(grp, 16)); } );
+          this.esiChar.currentShipName = uri;
+        } else {
+          this.esiChar.currentShipName = pair.ship.ship_name;
+        }
       }, err => {
         console.log(err);
-        this._characterService.postApiCharacterGetEsiCharacter({mainToken:this.authControl.getMainToken(),esiToken: this.esiChar.esiToken}).subscribe(dto=> {
+        this._characterService.postApiCharacterGetEsiCharacter({mainToken: this.authControl.getMainToken(),
+          esiToken: this.esiChar.esiToken}).subscribe(dto => {
           this.esiChar = dto;
         });
       }, () => {
-        this._characterService.postApiCharacterUpdateEsiCharacter({mainToken: this.authControl.getMainToken(), body: this.esiChar}).subscribe(res=> {
+        this._characterService.postApiCharacterUpdateEsiCharacter({mainToken: this.authControl.getMainToken(),
+          body: this.esiChar}).subscribe(res => {
           this.esiChar = res;
         });
         this.reportingLocation = false;

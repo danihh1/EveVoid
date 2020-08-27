@@ -27,10 +27,10 @@ export class CallbackEsiComponent implements OnInit {
             console.log(dto);
             this.ssoService.postApiSSOExchangeCodeForTokenEsi(dto)
               .subscribe(res => {
-                this.router.navigate(['/index']);
+                this.router.navigate(['']);
               }, err => {
                 console.log(err);
-                this.router.navigate(['/index']);
+                this.router.navigate(['']);
               });
           }
       });

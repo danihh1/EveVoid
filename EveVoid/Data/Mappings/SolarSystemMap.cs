@@ -32,6 +32,22 @@ namespace EveVoid.Data.Mappings
                 .HasOne(e => e.Constellaion)
                 .WithMany(e => e.SolarSystems)
                 .HasForeignKey(e => e.ConstellaionId);
+
+            modelBuilder.Entity<SolarSystem>()
+                .HasMany(e => e.Notes)
+                .WithOne(e => e.SolarSystem)
+                .HasForeignKey(e => e.SolarSystemId);
+
+            modelBuilder.Entity<SolarSystemNote>()
+                .HasOne(e => e.Mask)
+                .WithMany()
+                .HasForeignKey(e => e.MaskId);
+
+            modelBuilder.Entity<SolarSystemNote>()
+                .HasOne(e => e.MainCharacter)
+                .WithMany()
+                .HasForeignKey(e => e.MainCharacterId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

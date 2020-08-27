@@ -10,6 +10,7 @@ using EveVoid.Data.Mappings;
 using System.Reflection;
 using EveVoid.Models.Navigation.MapObjects;
 using EveVoid.Models.Shared;
+using EveVoid.Models.Navigation.Masks;
 
 namespace EveVoid.Data
 {
@@ -35,7 +36,7 @@ namespace EveVoid.Data
         public DbSet<StargateJump> StargateJumps { get; set; }
         public DbSet<Region> Regions { get; set; }
         public DbSet<Constellation> Constellaions { get; set; }
-
+        public DbSet<Mask> Masks { get; set; }
 
 
         #endregion
@@ -63,6 +64,11 @@ namespace EveVoid.Data
                 {
                     var track = entity as IHasUpdateTime;
                     track.LastUpdate = DateTime.Now;
+                }
+                if (entity is IHasCreationTime)
+                {
+                    var track = entity as IHasCreationTime;
+                    track.CreationDate = DateTime.Now;
                 }
             }
 

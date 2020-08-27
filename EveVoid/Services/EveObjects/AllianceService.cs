@@ -1,5 +1,6 @@
 ﻿using EveVoid.Data;
 using EveVoid.Models.EveObjects;
+using EveVoid.Models.Navigation.Masks;
 using IO.Swagger.Api;
 using System;
 using System.Collections.Generic;
@@ -25,12 +26,18 @@ namespace EveVoid.Services.EveObjects
             if (alliance == null)
             {
                 var esiResult = _allianceApi.GetAlliancesAllianceId(id, null, null);
+                var newMask = new Mask();
+                _context.Masks.Add(newMask);
+                _context.SaveChanges();
                 alliance = new Alliance
                 {
                     Id = id,
-                    Name = esiResult.Name
+                    Name = esiResult.Name,
+                    MaskId = newMask.Id
                 };
                 _context.Alliances.Add(alliance);
+                _context.SaveChanges();
+                newMask.AllianceId = id;
                 _context.SaveChanges();
             }
             return alliance;

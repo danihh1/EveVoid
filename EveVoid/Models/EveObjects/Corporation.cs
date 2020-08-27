@@ -1,10 +1,10 @@
-﻿using EveVoid.Models.Pilots;
+﻿using EveVoid.Models.Navigation;
+using EveVoid.Models.Pilots;
 using EveVoid.Models.Shared;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+using EveVoid.Models.Navigation.Masks;
 
 namespace EveVoid.Models.EveObjects
 {
@@ -15,9 +15,12 @@ namespace EveVoid.Models.EveObjects
         public string Name { get; set; }
         public int? AllianceId { get; set; }
         public DateTime LastUpdate { get; set; }
+        public int MaskId { get; set; }
+
         public virtual Alliance Alliance { get; set; }
         public virtual List<MainCharacter> Mains { get; set; }
         public virtual List<EsiCharacter> EsiCharacters { get; set; }
+        public virtual Mask Mask { get; set; }
 
         public Corporation()
         {

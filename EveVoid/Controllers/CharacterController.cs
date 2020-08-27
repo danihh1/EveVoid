@@ -3,6 +3,7 @@ using EveVoid.Models.Pilots;
 using EveVoid.Services;
 using EveVoid.Services.Pilots;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace EveVoid.Controllers
     {
         private readonly ICharacterService _characterService;
         private readonly ITokenService _tokenService;
+        private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public CharacterController(ICharacterService characterService, 
             ITokenService tokenService)
@@ -26,19 +28,34 @@ namespace EveVoid.Controllers
         [HttpGet("GetMainCharacter")]
         public ActionResult<MainCharacterDto> GetMainCharacter(string token)
         {
-            return Ok(Map(_characterService.GetMainCharacterByToken(token)));
+            var main = _characterService.GetMainCharacterByToken(token);
+            if (main == null)
+            {
+                return NotFound();
+            }
+            return Ok(Map(main));
         }
 
         [HttpPost("GetEsiCharacter")]
         public ActionResult<EsiCharacterDto> GetEsiCharacter(string mainToken, string esiToken)
         {
-            return Ok(Map(_characterService.GetEsiCharacterWithActiveToken(mainToken, esiToken)));
+            var res = _characterService.GetEsiCharacterWithActiveToken(mainToken, esiToken);
+            if (res == null)
+            {
+                return NotFound(res);
+            }
+            return Ok(Map(res));
         }
 
         [HttpPost("UpdateEsiCharacter")]
         public ActionResult<EsiCharacterDto> UpdateEsiCharacter(string mainToken, EsiCharacterDto dto)
         {
-            return Ok(Map(_characterService.UpdateEsiCharacter(mainToken, dto)));
+            var res = _characterService.UpdateEsiCharacter(mainToken, dto);
+            if (res == null)
+            {
+                return NotFound(res);
+            }
+            return Ok(Map(res));
         }
 
         private MainCharacterDto Map(MainCharacter mainCharacter)
@@ -50,8 +67,9 @@ namespace EveVoid.Controllers
                 CorporationId = mainCharacter.CorporationId,
                 CorporationName = mainCharacter.Corporation.Name,
                 AllianceId = mainCharacter.Corporation.AllianceId,
-                AllianceName = mainCharacter.Corporation.Alliance.Name,
-                EsiCharacterDtos = mainCharacter.EsiCharacters.Select(x => Map(x)).ToList()
+                AllianceName = mainCharacter.Corporation.Alliance?.Name,
+                EsiCharacterDtos = mainCharacter.EsiCharacters.Select(x => Map(x)).ToList(),
+                MaskType = mainCharacter.MaskType
             };
             return dto;
         }

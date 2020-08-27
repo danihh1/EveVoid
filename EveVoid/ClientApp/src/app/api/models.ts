@@ -1,4 +1,17 @@
 export { EsiCharacterDto } from './models/esi-character-dto';
+export { MaskType } from './models/mask-type';
 export { MainCharacterDto } from './models/main-character-dto';
+export { ActivePilotDto } from './models/active-pilot-dto';
+export { MapNodeDto } from './models/map-node-dto';
+export { MapEdgeDto } from './models/map-edge-dto';
+export { MapDto } from './models/map-dto';
+export { Flare } from './models/flare';
+export { SignatureType } from './models/signature-type';
+export { WormholeTypeDto } from './models/wormhole-type-dto';
+export { JumpDto } from './models/jump-dto';
+export { SignatureDto } from './models/signature-dto';
+export { StargateDto } from './models/stargate-dto';
+export { SolarSystemNoteDto } from './models/solar-system-note-dto';
+export { SolarSystemDto } from './models/solar-system-dto';
 export { MainLoginDto } from './models/main-login-dto';
 export { EsiLoginDto } from './models/esi-login-dto';
