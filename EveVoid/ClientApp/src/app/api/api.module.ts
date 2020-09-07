@@ -6,6 +6,7 @@ import { ApiConfiguration, ApiConfigurationInterface } from './api-configuration
 import { AppDataService } from './services/app-data.service';
 import { CharacterService } from './services/character.service';
 import { MapService } from './services/map.service';
+import { SignatureService } from './services/signature.service';
 import { SolarySystemService } from './services/solary-system.service';
 import { SSOService } from './services/sso.service';
 
@@ -25,6 +26,7 @@ import { SSOService } from './services/sso.service';
     AppDataService,
     CharacterService,
     MapService,
+    SignatureService,
     SolarySystemService,
     SSOService
   ],

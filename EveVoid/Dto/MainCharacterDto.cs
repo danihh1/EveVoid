@@ -14,7 +14,15 @@ namespace EveVoid.Dto
         public string CorporationName { get; set; }
         public int? AllianceId { get; set; }
         public string AllianceName { get; set; }
-        public List<EsiCharacterDto> EsiCharacterDtos { get; set; }
         public MaskType MaskType { get; set; }
+
+        public List<EsiCharacterDto> EsiCharacters { get; set; }
+        public List<MapLayoutDto> MapLayouts { get; set; }
+
+        public MainCharacterDto()
+        {
+            EsiCharacters = new List<EsiCharacterDto>();
+            MapLayouts = new List<MapLayoutDto>();
+        }
     }
 }

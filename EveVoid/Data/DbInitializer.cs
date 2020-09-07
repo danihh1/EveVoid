@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using NLog;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using EveVoid.Dto;
+using Microsoft.EntityFrameworkCore;
 
 namespace EveVoid.Data
 {
@@ -21,7 +23,16 @@ namespace EveVoid.Data
         {
             var universeApi = new UniverseApi();
             context.Database.EnsureCreated();
-
+            //_logger.Info(JsonConvert.SerializeObject(context.WormholeTypes.Select(x=> new
+            //{
+            //    id = x.Id,
+            //    duration = x.Duration,
+            //    leadsTo = x.LeadsTo.Name,
+            //    name = x.Name,
+            //    leadsToId = x.LeadsToId,
+            //    maxJump = x.MaxJump,
+            //    maxMass = x.MaxMass
+            //}).ToList()));
             //if (context.SystemTypes.Any())
             //{
             //    return;
@@ -68,6 +79,22 @@ namespace EveVoid.Data
             }
             if (!context.WormholeTypes.Any())
             {
+                context.WormholeTypes.Add(new WormholeType
+                {
+                    Name = "????",
+                    LeadsTo = context.SystemTypes.FirstOrDefault(s => s.Name == "Unknown"),
+                    MaxMass = 2000000000,
+                    MaxJump = 300000000,
+                    Duration = "24 Hours"
+                });
+                context.WormholeTypes.Add(new WormholeType
+                {
+                    Name = "K162",
+                    LeadsTo = context.SystemTypes.FirstOrDefault(s => s.Name == "Unknown"),
+                    MaxMass = 2000000000,
+                    MaxJump = 300000000,
+                    Duration = "24 Hours"
+                });
                 context.WormholeTypes.AddRange(json.wormholes.Select(x => new WormholeType
                 {
                     Name = x.Key,

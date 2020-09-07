@@ -38,6 +38,10 @@ namespace EveVoid
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureServices(services =>
+                {
+                    services.AddHostedService<SignatureCleaner>();
                 });
     }
 }

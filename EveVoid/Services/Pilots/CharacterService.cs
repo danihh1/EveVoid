@@ -89,11 +89,11 @@ namespace EveVoid.Services.Pilots
             {
                 foreach (var esi in main.EsiCharacters)
                 {
-                    if (esi.AccessToken == null || esi.TokenExpiresIn <= DateTime.Now)
+                    if (esi.AccessToken == null || esi.TokenExpiresIn <= DateTime.UtcNow)
                     {
                         var newToken = _tokenService.GetTokenFromRefreshToken(esi.RefreshToken, version: "Location").Result;
                         esi.AccessToken = newToken.access_token;
-                        esi.TokenExpiresIn = DateTime.Now.AddSeconds(newToken.expires_in);
+                        esi.TokenExpiresIn = DateTime.UtcNow.AddSeconds(newToken.expires_in);
                     }
                 }
                 _context.SaveChanges();
@@ -109,7 +109,7 @@ namespace EveVoid.Services.Pilots
                 return null;
             }
             var esiChar = _context.EsiCharacters.FirstOrDefault(x => x.Id == authVerify.CharacterID);
-            if (esiChar == null || esiChar.PassedMoreThan() || esiChar.TokenExpiresIn <= DateTime.Now)
+            if (esiChar == null || esiChar.PassedMoreThan() || esiChar.TokenExpiresIn <= DateTime.UtcNow)
             {
                 var esiResult = _characterApi.GetCharactersCharacterId(authVerify.CharacterID, null, null);
                 if (esiResult.CorporationId.HasValue)
@@ -125,7 +125,7 @@ namespace EveVoid.Services.Pilots
                         AccessToken = authToken.access_token,
                         RefreshToken = authToken.refresh_token,
                         CorporationId = esiResult.CorporationId,
-                        TokenExpiresIn = DateTime.Now.AddSeconds(authToken.expires_in),
+                        TokenExpiresIn = DateTime.UtcNow.AddSeconds(authToken.expires_in),
                     };
                     main.EsiCharacters.Add(esiChar);
                 }
@@ -134,7 +134,7 @@ namespace EveVoid.Services.Pilots
                     esiChar.MainCharacterId = main.Id;
                     esiChar.RefreshToken = authToken.refresh_token;
                     esiChar.CorporationId = esiResult.CorporationId;
-                    esiChar.TokenExpiresIn = DateTime.Now.AddSeconds(authToken.expires_in);
+                    esiChar.TokenExpiresIn = DateTime.UtcNow.AddSeconds(authToken.expires_in);
                     esiChar.CorporationId = esiResult.CorporationId;
                 }
                 _context.SaveChanges();
@@ -142,31 +142,31 @@ namespace EveVoid.Services.Pilots
             return esiChar;
         }
 
-        public EsiCharacter GetEsiCharacterWithActiveToken(string mainToken, string esiToken)
+        public EsiCharacter GetEsiCharacterWithActiveToken(string mainToken, int esiCharId)
         {
-            var esi = _context.EsiCharacters.FirstOrDefault(x=> x.AccessToken == esiToken && x.MainCharacter.AccessToken == mainToken);
+            var esi = _context.EsiCharacters.FirstOrDefault(x=> x.Id == esiCharId && x.MainCharacter.AccessToken == mainToken);
             if (esi == null)
             {
                 return null;
             }
-            if (esi.AccessToken == null || esi.TokenExpiresIn <= DateTime.Now)
+            if (esi.AccessToken == null || esi.TokenExpiresIn <= DateTime.UtcNow)
             {
                 var newToken = _tokenService.GetTokenFromRefreshToken(esi.RefreshToken, version: "Location").Result;
                 esi.AccessToken = newToken.access_token;
-                esi.TokenExpiresIn = DateTime.Now.AddSeconds(newToken.expires_in);
+                esi.TokenExpiresIn = DateTime.UtcNow.AddSeconds(newToken.expires_in);
             }
             _context.SaveChanges();
             return esi;
         }
 
-        public EsiCharacter UpdateEsiCharacter(string mainToken, EsiCharacterDto dto)
+        public EsiCharacter UpdateEsiCharacter(string mainToken, EsiCharacterDto dto, int sigId)
         {
-            var esi = _context.EsiCharacters.FirstOrDefault(x => x.AccessToken == dto.EsiToken && x.MainCharacter.AccessToken == mainToken);
+            var esi = _context.EsiCharacters.FirstOrDefault(x => x.Id == dto.Id && x.MainCharacter.AccessToken == mainToken);
             if (esi == null)
             {
                 return null;
             }
-            if (esi.CurrentSystemId != null && esi.PassedLessThan(seconds: 11))
+            if (esi.CurrentSystemId != null && esi.PassedLessThan(seconds: 11) && sigId >= 0) // sigId = -1 means angular client didn't notice a change in location
             {
                 if (esi.CurrentSystemId != dto.CurrentSystemId)
                 {
@@ -175,20 +175,56 @@ namespace EveVoid.Services.Pilots
                     var connection = _stargateService.GetStargateByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault());
                     if (connection == null)
                     {
-                        var wormhole = _signatureService.GetOrAddWormholeByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault(), maskId);
+                        var wormhole = _signatureService.GetBySignatureId(sigId);
+                        if (wormhole == null) // sigId = 0 means it's an unmarked wormhole
+                        {
+                            wormhole = new Signature
+                            {
+                                SystemId = esi.CurrentSystemId.Value,
+                                SignatureId = "???",
+                                ExpiryDate = DateTime.UtcNow.AddDays(1),
+                                Name = "",
+                                SignatureType = SignatureType.Wormhole,
+                                MaskId = maskId,
+                                WormholeTypeId = _signatureService.GetByTypeName("????").Id
+                            };
+                            _signatureService.Insert(wormhole, commit: true);
+                        }
                         wormhole.Jumps.Add(new Jump
                         {
                             EsiCharacterId = esi.Id,
-                            CreationDate = DateTime.Now,
-                            ShipId = dto.CurrentShipTypeId.GetValueOrDefault(),
+                            ShipId = dto.CurrentShipTypeId.GetValueOrDefault()
                         });
+                        var destoWormhole = wormhole.Destination;
+                        if (destoWormhole == null)
+                        {
+                            destoWormhole = new Signature
+                            {
+                                SystemId = dto.CurrentSystemId.Value,
+                                SignatureId = "???",
+                                ExpiryDate = wormhole.ExpiryDate,
+                                Name = "",
+                                SignatureType = SignatureType.Wormhole,
+                                MaskId = maskId,
+                                WormholeTypeId = _signatureService.GetByTypeName("K162").Id
+                            };
+                            _signatureService.Insert(destoWormhole, commit: true);
+                            destoWormhole.DestinationId = wormhole.Id;
+                            wormhole.DestinationId = destoWormhole.Id;
+                            _signatureService.Update(wormhole, commit: true);
+                        }
+                        //var wormhole = _signatureService.GetOrAddWormholeByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault(), maskId, sigId);
+                        //wormhole.Wormhole.Jumps.Add(new Jump
+                        //{
+                        //    EsiCharacterId = esi.Id,
+                        //    ShipId = dto.CurrentShipTypeId.GetValueOrDefault()
+                        //});
                     }
                     else
                     {
                         connection.StargateJumps.Add(new StargateJump
                         {
                             EsiCharacterId = esi.Id,
-                            CreationDate = DateTime.Now,
                             ShipId = dto.CurrentShipTypeId.GetValueOrDefault(),
                             StargateId = connection.Id,
                             MaskId = maskId
@@ -207,16 +243,15 @@ namespace EveVoid.Services.Pilots
                 _solarSystemService.GetSystemById(dto.CurrentSystemId.Value);
                 esi.CurrentSystemId = dto.CurrentSystemId;
             }
-            esi.CurrentShipName = /*dto.CurrentShipName.StartsWith("u'") && dto.CurrentShipName.EndsWith("'") ? 
-                Regex.Replace(
-                dto.CurrentShipName.Substring(2, dto.CurrentShipName.Length - 3),
-                @"\\u(?<Value>[a-zA-Z0-9]{4})",
-                m => {
-                    return ((char)int.Parse(m.Groups["Value"].Value, NumberStyles.HexNumber)).ToString();
-                }) : */
-                dto.CurrentShipName;
+            esi.CurrentShipName = dto.CurrentShipName;
             _context.SaveChanges();
             return esi;
+        }
+
+        public void UpdateMainCharacter(MainCharacter main)
+        {
+            _context.Update(main);
+            _context.SaveChanges();
         }
     }
 }

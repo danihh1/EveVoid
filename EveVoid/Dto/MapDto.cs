@@ -32,15 +32,28 @@ namespace EveVoid.Dto
         public string Id { get; set; }
         public string Name { get; set; }
         public string Color { get; set; }
+        public string SystemType { get; set; }
+        public string SystemTypeColor { get; set; }
+        public List<WormholeTypeMapDto> Statics { get; set; }
         public List<ActivePilotDto> Pilots { get; set; }
+
+        public MapNodeDto()
+        {
+            Statics = new List<WormholeTypeMapDto>();
+            Pilots = new List<ActivePilotDto>();
+        }
     }
 
     public class MapEdgeDto
     {
         public string Id { get; set; }
+        public string TargetId { get; set; }
         public string Source { get; set; }
         public string Target { get; set; }
-        public string Name { get; set; }
+        public string SourceName { get; set; }
+        public string TargetName { get; set; }
         public string Color { get; set; }
+        public string LineType { get; set; }
+        public string LineWidth { get; set; }
     }
 }

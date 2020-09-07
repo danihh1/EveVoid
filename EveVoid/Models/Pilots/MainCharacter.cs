@@ -20,12 +20,16 @@ namespace EveVoid.Models.Pilots
         public string RefreshToken { get; set; }
         public DateTime LastUpdate { get; set; }
         public MaskType MaskType { get; set; }
+        public int GateCount { get; set; }
+        public string Orientation { get; set; }
 
         public virtual List<EsiCharacter> EsiCharacters { get; set; }
+        public virtual List<MapLayout> MapLayouts { get; set; }
         public virtual Corporation Corporation { get; set; }
 
         public MainCharacter()
         {
+            Orientation = "Left";
             EsiCharacters = new List<EsiCharacter>();
         }
     }

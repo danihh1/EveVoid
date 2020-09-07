@@ -1,4 +1,4 @@
-<div *ngIf="authConrol.isLoggedIn()" style="height: 100vh;">
+<div *ngIf="authControl.isLoggedIn()" style="height: 100vh;">
   <mat-toolbar fxLayout="row">
     <span>EveVoid</span>
     <button mat-icon-button (click)="sidenav.toggle()">
@@ -14,12 +14,37 @@
     <mat-sidenav mode="over" [(opened)]="opened">
       <perfect-scrollbar style="max-width: 300px;">
         <div fxLayout="column">
-          <div *ngFor="let esiChar of mainDto.esiCharacterDtos" >
+          <div fxLayout="row" fxLayoutAlign="start start" >
+            <mat-form-field appearance="fill" style="width: 80px;">
+              <mat-label>Gate Count</mat-label>
+              <mat-select [(value)]="gateCount">
+                <mat-option value="0">0</mat-option>
+                <mat-option value="1">1</mat-option>
+                <mat-option value="2">2</mat-option>
+                <mat-option value="3">3</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 100px;">
+              <mat-label>Mask Type</mat-label>
+              <mat-select [(ngModel)]="mainDto.maskType" (selectionChange)="updateMask($event.value)">
+                <mat-option [value]="0">Alliance</mat-option>
+                <mat-option [value]="10">Corp</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 80px;">
+              <mat-label>Overlay</mat-label>
+              <mat-select [(value)]="overlay">
+                <mat-option value="left">Left</mat-option>
+                <mat-option value="right">right</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+          <div *ngFor="let esiChar of mainDto.esiCharacters" >
             <app-esi-character [esiChar]="esiChar"></app-esi-character>
             <mat-divider></mat-divider>
           </div>
           <a *ngIf="!fetchingLink" class="nav-item" [routerLinkActive]="['link-active']" [href]="ssoLink" style="margin:auto;" mat-button>
-            Add<mat-icon color="accent">add</mat-icon>
+            Add Characters<mat-icon color="accent">add</mat-icon>
             <!-- <img src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-black-small.png" alt="AddMoreCharacters"> -->
           </a>
         </div>

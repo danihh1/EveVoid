@@ -32,18 +32,18 @@ export class LoginComponent implements OnInit {
     (result) => {
       this.ssoLink = result;
       this.fetchingLink = false;
-    });
-    this.appDataService.getApiAppDataGetMainCorpId().subscribe(res => {
-      this.corpId = res;
-    });
-    this.appDataService.getApiAppDataGetMainAllianceId().subscribe(res => {
-      this.allianceId = res;
-    });
-    this.appDataService.getApiAppDataGetMainCorpName().subscribe(res => {
-      this.corpName = res;
-    });
-    this.appDataService.getApiAppDataGetMainAllianceName().subscribe(res => {
-      this.allianceName = res;
+      this.appDataService.getApiAppDataGetMainCorpId().subscribe(res => {
+        this.corpId = res;
+        this.appDataService.getApiAppDataGetMainCorpName().subscribe(res2 => {
+          this.corpName = res2;
+          this.appDataService.getApiAppDataGetMainAllianceId().subscribe(res3 => {
+            this.allianceId = res3;
+            this.appDataService.getApiAppDataGetMainAllianceName().subscribe(res4 => {
+              this.allianceName = res4;
+            });
+          });
+        });
+      });
     });
   }
 

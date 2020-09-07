@@ -14,8 +14,7 @@ namespace EveVoid.Data.Mappings
             modelBuilder.Entity<Signature>()
                 .HasMany(x => x.Jumps)
                 .WithOne(x => x.Wormhole)
-                .HasForeignKey(x => x.WormholeId)
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(x => x.WormholeId);
             modelBuilder.Entity<Signature>()
                 .HasOne(x => x.WormholeType)
                 .WithMany()
@@ -23,14 +22,16 @@ namespace EveVoid.Data.Mappings
                 .OnDelete(DeleteBehavior.NoAction)
                 .IsRequired(false);
             modelBuilder.Entity<Signature>()
-                .HasOne(x => x.LeadsTo)
+                .HasOne(x => x.Destination)
                 .WithMany()
-                .HasForeignKey(x => x.LeadsToId)
-                .IsRequired(false);
+                .HasForeignKey(x => x.DestinationId)
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Signature>()
                 .HasOne(x => x.Mask)
                 .WithMany()
                 .HasForeignKey(x => x.MaskId);
+            
         }
     }
 }

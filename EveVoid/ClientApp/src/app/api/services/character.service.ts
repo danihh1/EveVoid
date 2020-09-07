@@ -9,6 +9,7 @@ import { map as __map, filter as __filter } from 'rxjs/operators';
 
 import { MainCharacterDto } from '../models/main-character-dto';
 import { EsiCharacterDto } from '../models/esi-character-dto';
+import { MapLayoutDto } from '../models/map-layout-dto';
 @Injectable({
   providedIn: 'root',
 })
@@ -16,6 +17,8 @@ class CharacterService extends __BaseService {
   static readonly getApiCharacterGetMainCharacterPath = '/api/Character/GetMainCharacter';
   static readonly postApiCharacterGetEsiCharacterPath = '/api/Character/GetEsiCharacter';
   static readonly postApiCharacterUpdateEsiCharacterPath = '/api/Character/UpdateEsiCharacter';
+  static readonly postApiCharacterUpdateMaskTypePath = '/api/Character/UpdateMaskType';
+  static readonly postApiCharacterUpdateMapLayoutsPath = '/api/Character/UpdateMapLayouts';
 
   constructor(
     config: __Configuration,
@@ -65,7 +68,7 @@ class CharacterService extends __BaseService {
    *
    * - `mainToken`:
    *
-   * - `esiToken`:
+   * - `esiCharId`:
    *
    * @return Success
    */
@@ -74,7 +77,7 @@ class CharacterService extends __BaseService {
     let __headers = new HttpHeaders();
     let __body: any = null;
     if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
-    if (params.esiToken != null) __params = __params.set('esiToken', params.esiToken.toString());
+    if (params.esiCharId != null) __params = __params.set('esiCharId', params.esiCharId.toString());
     let req = new HttpRequest<any>(
       'POST',
       this.rootUrl + `/api/Character/GetEsiCharacter`,
@@ -97,7 +100,7 @@ class CharacterService extends __BaseService {
    *
    * - `mainToken`:
    *
-   * - `esiToken`:
+   * - `esiCharId`:
    *
    * @return Success
    */
@@ -110,6 +113,8 @@ class CharacterService extends __BaseService {
   /**
    * @param params The `CharacterService.PostApiCharacterUpdateEsiCharacterParams` containing the following parameters:
    *
+   * - `sigId`:
+   *
    * - `mainToken`:
    *
    * - `body`:
@@ -120,6 +125,7 @@ class CharacterService extends __BaseService {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
+    if (params.sigId != null) __params = __params.set('sigId', params.sigId.toString());
     if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
     __body = params.body;
     let req = new HttpRequest<any>(
@@ -142,6 +148,8 @@ class CharacterService extends __BaseService {
   /**
    * @param params The `CharacterService.PostApiCharacterUpdateEsiCharacterParams` containing the following parameters:
    *
+   * - `sigId`:
+   *
    * - `mainToken`:
    *
    * - `body`:
@@ -153,6 +161,92 @@ class CharacterService extends __BaseService {
       __map(_r => _r.body as EsiCharacterDto)
     );
   }
+
+  /**
+   * @param params The `CharacterService.PostApiCharacterUpdateMaskTypeParams` containing the following parameters:
+   *
+   * - `maskType`:
+   *
+   * - `mainToken`:
+   */
+  postApiCharacterUpdateMaskTypeResponse(params: CharacterService.PostApiCharacterUpdateMaskTypeParams): __Observable<__StrictHttpResponse<null>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = null;
+    if (params.maskType != null) __params = __params.set('maskType', params.maskType.toString());
+    if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
+    let req = new HttpRequest<any>(
+      'POST',
+      this.rootUrl + `/api/Character/UpdateMaskType`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<null>;
+      })
+    );
+  }
+  /**
+   * @param params The `CharacterService.PostApiCharacterUpdateMaskTypeParams` containing the following parameters:
+   *
+   * - `maskType`:
+   *
+   * - `mainToken`:
+   */
+  postApiCharacterUpdateMaskType(params: CharacterService.PostApiCharacterUpdateMaskTypeParams): __Observable<null> {
+    return this.postApiCharacterUpdateMaskTypeResponse(params).pipe(
+      __map(_r => _r.body as null)
+    );
+  }
+
+  /**
+   * @param params The `CharacterService.PostApiCharacterUpdateMapLayoutsParams` containing the following parameters:
+   *
+   * - `mainToken`:
+   *
+   * - `body`:
+   */
+  postApiCharacterUpdateMapLayoutsResponse(params: CharacterService.PostApiCharacterUpdateMapLayoutsParams): __Observable<__StrictHttpResponse<null>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = null;
+    if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
+    __body = params.body;
+    let req = new HttpRequest<any>(
+      'POST',
+      this.rootUrl + `/api/Character/UpdateMapLayouts`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<null>;
+      })
+    );
+  }
+  /**
+   * @param params The `CharacterService.PostApiCharacterUpdateMapLayoutsParams` containing the following parameters:
+   *
+   * - `mainToken`:
+   *
+   * - `body`:
+   */
+  postApiCharacterUpdateMapLayouts(params: CharacterService.PostApiCharacterUpdateMapLayoutsParams): __Observable<null> {
+    return this.postApiCharacterUpdateMapLayoutsResponse(params).pipe(
+      __map(_r => _r.body as null)
+    );
+  }
 }
 
 module CharacterService {
@@ -162,15 +256,32 @@ module CharacterService {
    */
   export interface PostApiCharacterGetEsiCharacterParams {
     mainToken?: string;
-    esiToken?: string;
+    esiCharId?: number;
   }
 
   /**
    * Parameters for postApiCharacterUpdateEsiCharacter
    */
   export interface PostApiCharacterUpdateEsiCharacterParams {
+    sigId?: number;
     mainToken?: string;
     body?: EsiCharacterDto;
+  }
+
+  /**
+   * Parameters for postApiCharacterUpdateMaskType
+   */
+  export interface PostApiCharacterUpdateMaskTypeParams {
+    maskType?: any;
+    mainToken?: string;
+  }
+
+  /**
+   * Parameters for postApiCharacterUpdateMapLayouts
+   */
+  export interface PostApiCharacterUpdateMapLayoutsParams {
+    mainToken?: string;
+    body?: Array<MapLayoutDto>;
   }
 }
 

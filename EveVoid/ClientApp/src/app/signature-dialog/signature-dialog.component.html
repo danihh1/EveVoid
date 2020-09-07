@@ -1,0 +1,73 @@
+<mat-dialog-content>
+  <!-- <div style="white-space: pre-line;">
+    {{data | json}}
+    <br>
+    {{signature | json}}
+  </div> -->
+  <div fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="10px">
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
+      <mat-form-field style="width:40px">
+        <mat-label>Sig ID</mat-label>
+        <input alphabetOnly matInput style="text-transform:uppercase; text-align: center;" type="text" maxlength="3" size="2"
+            autocomplete="off" minlength="3" pattern="[A-Za-z]*" [(ngModel)]="this.signature.signatureId">
+      </mat-form-field>
+      <mat-form-field style="width:90px">
+        <!-- <mat-label>Type</mat-label> -->
+        <div fxLayout="row" fxLayoutAlign="space-between center">
+          <mat-select matInput [(ngModel)]="signature.signatureType" (selectionChange)="typeSelected($event.value)" style="width:90px">
+            <mat-option *ngFor="let item of types" [value]="item.id">{{item.name}}</mat-option>
+          </mat-select>
+        </div>
+      </mat-form-field>
+      <mat-form-field *ngIf="signature.signatureType === 1" style="width:40px">
+        <mat-label>Type</mat-label>
+        <div>
+          <input matInput style="text-transform:uppercase; text-align: center;" type="text" maxlength="4" size="3"
+          minlength="4" [formControl]="control" [matAutocomplete]="auto" [(ngModel)]="signature.wormholeType">
+          <mat-autocomplete #auto="matAutocomplete" (optionSelected)="wormholeTypeSelected($event.option.value)">
+            <mat-option *ngFor="let type of filteredWormholeTypes | async" [value]="type.name" style="line-height: auto; height:auto;">
+              {{type.name}}
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </mat-form-field>
+      <mat-form-field *ngIf="signature.signatureType === 1" style="width:140px">
+        <mat-label>Leads To</mat-label>
+        <div>
+          <input style="width:100%;" type="text" matInput
+            [formControl]="leadsToControl" [matAutocomplete]="autoLeadsTo" [(ngModel)]="signature.destinationSystemName" >
+            <mat-autocomplete #autoLeadsTo="matAutocomplete" (optionSelected)="leadsToSelected($event.option.value)">
+              <mat-option *ngFor="let system of filteredSystems | async" [value]="system.name" style="line-height: auto; height:auto;">
+                {{system.name}}
+              </mat-option>
+            </mat-autocomplete>
+        </div>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
+      <mat-form-field style="width:140px">
+        <mat-label>Name</mat-label>
+        <div>
+          <input matInput type="text" [(ngModel)]="signature.name">
+        </div>
+      </mat-form-field>
+      <mat-form-field style="width:100px" *ngIf="signature.signatureType === 1">
+        <mat-label>Life</mat-label>
+        <mat-select [(value)]="signature.timeRemainingIndicator">
+          <mat-option *ngFor="let type of wormholeLifeTypes" [value]="type.id">{{type.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field style="width:100px" *ngIf="signature.signatureType === 1">
+        <mat-label>Mass</mat-label>
+          <mat-select [(value)]="signature.massIndicator">
+            <mat-option *ngFor="let type of massTypes" [value]="type.id">{{type.name}}</mat-option>
+          </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-divider></mat-divider>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-around start">
+  <button class="mat-raised-button mat-primary" (click)="confirm()">Confirm</button>
+  <button class="mat-raised-button" (click)="cancel()">Cancel</button>
+</mat-dialog-actions>

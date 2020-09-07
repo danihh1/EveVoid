@@ -30,6 +30,8 @@ class MapService extends __BaseService {
    *
    * - `mainToken`:
    *
+   * - `customName`:
+   *
    * @return Success
    */
   getApiMapGetMapForRootIdResponse(params: MapService.GetApiMapGetMapForRootIdParams): __Observable<__StrictHttpResponse<MapDto>> {
@@ -39,6 +41,7 @@ class MapService extends __BaseService {
     if (params.systemId != null) __params = __params.set('systemId', params.systemId.toString());
     if (params.maxGateLevel != null) __params = __params.set('maxGateLevel', params.maxGateLevel.toString());
     if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
+    if (params.customName != null) __params = __params.set('customName', params.customName.toString());
     let req = new HttpRequest<any>(
       'GET',
       this.rootUrl + `/api/Map/GetMapForRootId`,
@@ -65,6 +68,8 @@ class MapService extends __BaseService {
    *
    * - `mainToken`:
    *
+   * - `customName`:
+   *
    * @return Success
    */
   getApiMapGetMapForRootId(params: MapService.GetApiMapGetMapForRootIdParams): __Observable<MapDto> {
@@ -83,6 +88,7 @@ module MapService {
     systemId?: number;
     maxGateLevel?: number;
     mainToken?: string;
+    customName?: string;
   }
 }
 

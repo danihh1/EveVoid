@@ -1,10 +1,12 @@
 ﻿using EveVoid.Models.Navigation.MapObjects;
+using System.Collections.Generic;
 
 namespace EveVoid.Services.Navigation.MapObjects
 {
     public interface ISolarSystemService
     {
         SolarSystem GetSystemById(int id);
-        int GetSystemTypeIdBySecStatusAndName(double secStatus, string name);
+        void UpdateSystem(SolarSystem solarSystem);
+        List<SolarSystem> Find(string name, int pageSize);
     }
 }

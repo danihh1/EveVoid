@@ -63,19 +63,5 @@ namespace EveVoid.Controllers
             _characterService.AddOrUpdateEsiCharacterToMainToken(dto.MainCharacterToken, oAuthToken, oAuthVerify);
             return true;
         }
-
-       
-
-        //private MainLoginDto Map(MainCharacter main)
-        //{
-        //    var res = new MainLoginDto
-        //    {
-        //        AccessToken = main.AccessToken,
-        //        CharacterId = main.Id,
-        //        CharacterName = main.Name,
-        //        CharacterInfo = null
-        //    };
-        //    return res;
-        //}
     }
 }

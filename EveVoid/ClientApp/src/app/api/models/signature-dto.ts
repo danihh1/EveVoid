@@ -1,18 +1,25 @@
 /* tslint:disable */
 import { JumpDto } from './jump-dto';
+import { MassIndicator } from './mass-indicator';
 import { SignatureType } from './signature-type';
-import { WormholeTypeDto } from './wormhole-type-dto';
+import { TimeRemainingIndicator } from './time-remaining-indicator';
 export interface SignatureDto {
   creationDate?: string;
+  description?: string;
+  destinationSystemId?: number;
+  destinationSystemName?: string;
+  destinationWormholeType?: string;
   expiryDate?: string;
   id?: number;
   jumps?: Array<JumpDto>;
   lastUpdate?: string;
-  leadsTo?: string;
-  leadsToId?: number;
+  massIndicator?: MassIndicator;
+  name?: string;
   signatureId?: string;
   signatureType?: SignatureType;
+  systemId?: number;
+  timeRemainingIndicator?: TimeRemainingIndicator;
   totalMass?: number;
-  wormholeType?: WormholeTypeDto;
+  wormholeType?: string;
   wormholeTypeId?: number;
 }

@@ -21,6 +21,16 @@ namespace EveVoid.Data.Mappings
                 .WithMany(e => e.Mains)
                 .HasForeignKey(x => x.CorporationId);
 
+            modelBuilder.Entity<MainCharacter>()
+                .HasMany(e => e.MapLayouts)
+                .WithOne(e => e.MainCharacter)
+                .HasForeignKey(x => x.MainCharacterId);
+
+            modelBuilder.Entity<MapLayout>()
+                .HasOne(e => e.SolarSystem)
+                .WithMany()
+                .HasForeignKey(x => x.SolarSystemId);
+
             modelBuilder.Entity<EsiCharacter>()
                 .HasOne(e => e.Corporation)
                 .WithMany(e => e.EsiCharacters)

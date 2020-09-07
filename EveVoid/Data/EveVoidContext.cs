@@ -37,8 +37,8 @@ namespace EveVoid.Data
         public DbSet<Region> Regions { get; set; }
         public DbSet<Constellation> Constellaions { get; set; }
         public DbSet<Mask> Masks { get; set; }
-
-
+        public DbSet<MapLayout> MapLayouts { get; set; }
+        
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -63,12 +63,12 @@ namespace EveVoid.Data
                 if (entity is IHasUpdateTime)
                 {
                     var track = entity as IHasUpdateTime;
-                    track.LastUpdate = DateTime.Now;
+                    track.LastUpdate = DateTime.UtcNow;
                 }
                 if (entity is IHasCreationTime)
                 {
                     var track = entity as IHasCreationTime;
-                    track.CreationDate = DateTime.Now;
+                    track.CreationDate = DateTime.UtcNow;
                 }
             }
 
@@ -82,7 +82,7 @@ namespace EveVoid.Data
                 if (entity is IHasUpdateTime)
                 {
                     var track = entity as IHasUpdateTime;
-                    track.LastUpdate = DateTime.Now;
+                    track.LastUpdate = DateTime.UtcNow;
                 }
             }
             return base.SaveChanges();

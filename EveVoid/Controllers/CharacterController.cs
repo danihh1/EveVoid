@@ -1,4 +1,6 @@
-﻿using EveVoid.Dto;
+﻿using AutoMapper;
+using EveVoid.Dto;
+using EveVoid.Models.Navigation.Masks;
 using EveVoid.Models.Pilots;
 using EveVoid.Services;
 using EveVoid.Services.Pilots;
@@ -15,15 +17,18 @@ namespace EveVoid.Controllers
     [ApiController]
     public class CharacterController : ControllerBase
     {
+        private readonly IMapper _mapper;
         private readonly ICharacterService _characterService;
         private readonly ITokenService _tokenService;
         private static readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
-        public CharacterController(ICharacterService characterService, 
-            ITokenService tokenService)
+        public CharacterController(ICharacterService characterService,
+            ITokenService tokenService, 
+            IMapper mapper)
         {
             _characterService = characterService;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
         [HttpGet("GetMainCharacter")]
         public ActionResult<MainCharacterDto> GetMainCharacter(string token)
@@ -33,65 +38,75 @@ namespace EveVoid.Controllers
             {
                 return NotFound();
             }
-            return Ok(Map(main));
+            var res = _mapper.Map<MainCharacterDto>(main);
+            return Ok(res);
         }
 
         [HttpPost("GetEsiCharacter")]
-        public ActionResult<EsiCharacterDto> GetEsiCharacter(string mainToken, string esiToken)
+        public ActionResult<EsiCharacterDto> GetEsiCharacter(string mainToken, int esiCharId)
         {
-            var res = _characterService.GetEsiCharacterWithActiveToken(mainToken, esiToken);
+            var res = _characterService.GetEsiCharacterWithActiveToken(mainToken, esiCharId);
             if (res == null)
             {
                 return NotFound(res);
             }
-            return Ok(Map(res));
+            return Ok(_mapper.Map<EsiCharacterDto>(res));
         }
 
         [HttpPost("UpdateEsiCharacter")]
-        public ActionResult<EsiCharacterDto> UpdateEsiCharacter(string mainToken, EsiCharacterDto dto)
+        public ActionResult<EsiCharacterDto> UpdateEsiCharacter(string mainToken, EsiCharacterDto dto, int sigId)
         {
-            var res = _characterService.UpdateEsiCharacter(mainToken, dto);
+            var res = _characterService.UpdateEsiCharacter(mainToken, dto, sigId);
             if (res == null)
             {
                 return NotFound(res);
             }
-            return Ok(Map(res));
+            return Ok(_mapper.Map<EsiCharacterDto>(res));
         }
 
-        private MainCharacterDto Map(MainCharacter mainCharacter)
+        [HttpPost("UpdateMaskType")]
+        public ActionResult UpdateMaskType(string mainToken, MaskType maskType)
         {
-            var dto = new MainCharacterDto
+            var main = _characterService.GetMainCharacterByToken(mainToken);
+            if (main == null)
             {
-                Id = mainCharacter.Id,
-                Name = mainCharacter.Name,
-                CorporationId = mainCharacter.CorporationId,
-                CorporationName = mainCharacter.Corporation.Name,
-                AllianceId = mainCharacter.Corporation.AllianceId,
-                AllianceName = mainCharacter.Corporation.Alliance?.Name,
-                EsiCharacterDtos = mainCharacter.EsiCharacters.Select(x => Map(x)).ToList(),
-                MaskType = mainCharacter.MaskType
-            };
-            return dto;
+                return NotFound();
+            }
+            main.MaskType = maskType;
+            _characterService.UpdateMainCharacter(main);
+            return Ok();
         }
 
-        private EsiCharacterDto Map(EsiCharacter esiCharacter)
+        [HttpPost("UpdateMapLayouts")]
+        public ActionResult UpdateMapLayouts(string mainToken, List<MapLayoutDto> dtos)
         {
-            var dto = new EsiCharacterDto
+            var main = _characterService.GetMainCharacterByToken(mainToken);
+            if (main == null)
             {
-                Id = esiCharacter.Id,
-                Name = esiCharacter.Name,
-                CorporationId = esiCharacter.CorporationId,
-                CorporationName = esiCharacter.Corporation.Name,
-                AllianceId = esiCharacter.Corporation.AllianceId,
-                AllianceName = esiCharacter.Corporation.Alliance?.Name,
-                CurrentSystemId = esiCharacter.CurrentSystemId,
-                CurrentSystemName = esiCharacter.CurrentSystem?.Name,
-                CurrentShipTypeId = esiCharacter.CurrentShipTypeId,
-                CurrentShipTypeName = esiCharacter.CurrentShip?.Name,
-                CurrentShipName = esiCharacter.CurrentShipName,
-                EsiToken = esiCharacter.AccessToken
-            };
-            return dto;
+                return NotFound();
+            }
+            var dtoIdHash = dtos.Select(x => x.Id).ToHashSet();
+            main.MapLayouts.RemoveAll(x => !dtoIdHash.Contains(x.Id));
+            foreach (var mapDto in dtos)
+            {
+                var map = main.MapLayouts.FirstOrDefault(x => x.Id == mapDto.Id);
+                if (map == null)
+                {
+                    map = new MapLayout
+                    {
+                        Name = mapDto.Name,
+                        SolarSystemId = mapDto.SolarSystemId
+                    };
+                    main.MapLayouts.Add(map);
+                }
+                else
+                {
+                    map.Name = mapDto.Name;
+                    map.SolarSystemId = mapDto.SolarSystemId;
+                }
+            }
+            _characterService.UpdateMainCharacter(main);
+            return Ok();
         }
     }
 }

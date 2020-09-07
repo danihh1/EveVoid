@@ -1,0 +1,28 @@
+<h1 matDialogTitle>Select jump signature</h1>
+
+<mat-dialog-content>
+  <mat-radio-group
+    aria-labelledby="example-radio-group-label"
+    [(ngModel)]="selectedSigId">
+    <table>
+      <tr *ngFor="let sig of data.data">
+        <td>
+          <mat-radio-button [value]="sig.id">
+            {{sig.signatureId}}
+          </mat-radio-button>
+        </td>
+        <td>
+          {{sig.name}}
+        </td>
+        <td style.color="{{getDateColorFromFormat(sig.expiryDate)}}">
+          {{sig.expiryDate | durationLeft}}
+        </td>
+      </tr>
+    </table>
+  </mat-radio-group>
+</mat-dialog-content>
+
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-around start">
+  <button class="mat-raised-button mat-primary" (click)="confirm()">Confirm</button>
+  <button class="mat-raised-button" (click)="cancel()">Cancel</button>
+</mat-dialog-actions>

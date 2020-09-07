@@ -1,0 +1,20 @@
+<mat-chip-list
+  class="example-chip"
+  cdkDropList
+  cdkDropListOrientation="horizontal"
+  (cdkDropListDropped)="drop($event)">
+  <mat-chip
+    class="example-box"
+    cdkDrag
+    *ngFor="let tab of tabs"
+    [selected]="getCurrentSystem() && getCurrentSystem().solarSystemId === tab.solarSystemId"
+    (click)="changeMapSystem(tab)"
+    (dblclick)="tabDialog(tab.id)">
+    {{tab.name}}
+  </mat-chip>
+  <mat-chip
+    class="example-box"
+    (click)="tabDialog(-1)">
+    New Tab
+  </mat-chip>
+</mat-chip-list>

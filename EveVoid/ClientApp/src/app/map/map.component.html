@@ -1,59 +1,80 @@
-<div fxLayout="row" fxLayoutAlign="start start">
-
-  <mat-card style="width: 400px;">
-    <div fxLayout="row" fxLayoutAlign="start start">
-      <div fxLayout="column" fxLayoutAlign="start start">
+<div fxLayout="row" fxLayoutAlign="start start" (paste)="onPaste($event)">
+  <mat-card style="width: 400px; position: fixed; background-color: rgb(66, 66, 66, 0.6);"
+    [style.right]="preferencesControl.getOverlayPosition() == 'right' ? 0 : ''">
+    <div fxLayout="column" fxLayoutAlign="start start">
+      <div fxLayout="row" fxLayoutAlign="start start">
         <mat-card-header>
           <mat-card-title>{{solarSystem.name}}</mat-card-title>
           <mat-card-subtitle>{{solarSystem.constellaionName}}</mat-card-subtitle>
           <mat-card-subtitle>{{solarSystem.regionName}}</mat-card-subtitle>
         </mat-card-header>
-        <mat-card-content>
-          <table *ngIf="solarSystem.gates !== null && solarSystem.gates.length > 0">
-            <tr>
-              <th>
-                Gates
-              </th>
-            </tr>
-            <tr *ngFor="let gate of solarSystem.gates">
-              <td>
-                <a (click)="goToSystem(gate.leadsToId)"
-                  [style.color]="gate.leadsToSystemType === 'High-Sec' ? 'lawngreen' : gate.leadsToSystemType === 'Low-Sec' ? 'yellow' : 'red'">
-                  <mat-icon>subdirectory_arrow_right</mat-icon>{{gate.leadsTo}}
-                </a>
-              </td>
-            </tr>
-          </table>
+        <mat-card-content *ngIf="solarSystem.gates.length > 0" >
+          <mat-card-title>Gates</mat-card-title>
+          <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="5px">
+            <div *ngFor="let gate of solarSystem.gates" style="white-space: nowrap;">
+              <a (click)="goToSystem(gate.leadsToId)"
+                [style.color]="gate.leadsToSystemType === 'High-Sec' ? 'lawngreen' : gate.leadsToSystemType === 'Low-Sec' ? 'yellow' : 'red'">
+                <!-- <mat-icon>subdirectory_arrow_right</mat-icon> -->
+                {{gate.leadsTo}}
+              </a>
+            </div>
+          </div>
         </mat-card-content>
       </div>
-      <div fxLayout="column" fxLayoutAlign="start start" fxFlex style="width:100%;">
-        <table *ngIf="solarSystem.signatures !== null">
-          <tr>
-            <th>
-              Signatures
-            </th>
-          </tr>
-          <tr *ngFor="let sig of solarSystem.signatures">
-            <td>
-              {{sig.signatureId}}
-            </td>
-            <td>
-              {{sig.signatureType}}
-            </td>
-            <td>
-              {{sig.leadsTo}}
-            </td>
-            <td>
-              {{sig.totalMass}}
-            </td>
-            <td>
-              {{sig.totalMass}}
-            </td>
-          </tr>
-        </table>
+      <div fxLayout="row" fxLayoutAlign="space-around start" style="width:100%;">
+        <mat-card-title>Signatures</mat-card-title>
+        <button mat-button (click)="openSigDialog(0)">Add Sig</button>
       </div>
+      <table mat-table [dataSource]="dataSource" style="width:100%; white-space: nowrap;" matSort>
+        <ng-container matColumnDef="signatureId">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>SigID</th>
+          <td mat-cell *matCellDef="let element" style="text-transform:uppercase; text-align: center;">
+            {{element.signatureId}} </td>
+        </ng-container>
+        <ng-container matColumnDef="signatureType">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+          <td mat-cell *matCellDef="let element" matTooltipPosition="above"
+          [matTooltip]="getTooltipForWormhole(element)" matTooltipClass="material-tooltip">
+            {{element.signatureType === 1 && element.wormholeType && element.wormholeType != '????' ? element.wormholeType : sigTypes[element.signatureType].name}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="leadsTo">
+          <th mat-header-cell *matHeaderCellDef>Leads To</th>
+          <td mat-cell *matCellDef="let element">
+            <a (click)="goToSystem(element.destinationSystemId)">
+              {{element.signatureType === 1 && element.destinationSystemName ? element.destinationSystemName : element.name}}
+            </a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="expiryDate">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Time Left</th>
+          <td mat-cell *matCellDef="let element" style.color="{{getDateColorFromFormat(element.expiryDate)}}">
+            {{element.expiryDate | durationLeft}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="mass">
+          <th mat-header-cell *matHeaderCellDef>Mass</th>
+          <td mat-cell *matCellDef="let element" style.color="{{getMassColor(element.totalMass)}}">
+            {{element.signatureType === 1 ? getMassText(element.totalMass) : ''}}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <a (click)="deleteSig(element.id)" style="cursor: pointer;">
+              <mat-icon style="font-size: 20px;">delete</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" (dblclick)="openSigDialog(row.id)"></tr>
+      </table>
     </div>
   </mat-card>
+  <div style="position: absolute; max-width: 20vw; left: 410px; right: 410px;">
+    <app-map-tab-layout></app-map-tab-layout>
+  </div>
   <div>
     <app-map-graph></app-map-graph>
   </div>

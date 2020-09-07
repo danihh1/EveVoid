@@ -1,8 +1,9 @@
+import { AlphabetDirective } from './directives/alphabet-only.directive';
 import { environment } from './../environments/environment';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { NgModule, LOCALE_ID } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from './app.component';
@@ -30,6 +31,25 @@ import { MatTooltipModule} from '@angular/material/tooltip';
 import { MatBadgeModule } from '@angular/material/badge';
 import { NgxGraphModule} from '@swimlane/ngx-graph';
 import { MapGraphComponent } from './map-graph/map-graph.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { SignatureDialogComponent } from './signature-dialog/signature-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MomentModule } from 'ngx-moment';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatTableModule } from '@angular/material/table';
+import { DeleteSigsSnackComponent } from './delete-sigs-snack/delete-sigs-snack.component';
+import { MapTabLayoutComponent } from './map-tab-layout/map-tab-layout.component';
+import { TabDialogComponent } from './tab-dialog/tab-dialog.component';
+import { MatSortModule } from '@angular/material/sort';
+import { NumberAbbreviatePipe } from './pipes/number-abbreviate.pipe';
+import { MatInputModule } from '@angular/material/input';
+import { MatRadioModule } from '@angular/material/radio';
+import { AutoJumpDialogComponent } from './auto-jump-dialog/auto-jump-dialog.component';
+import { DurationLeftPipe } from './pipes/duration-left.pipe';
+import { MatPaginatorModule } from '@angular/material/paginator';
+
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -64,7 +84,15 @@ const routes: Routes = [
     MapComponent,
     MapHomeComponent,
     SolarSystemComponent,
-    MapGraphComponent
+    MapGraphComponent,
+    SignatureDialogComponent,
+    DeleteSigsSnackComponent,
+    MapTabLayoutComponent,
+    TabDialogComponent,
+    NumberAbbreviatePipe,
+    AlphabetDirective,
+    AutoJumpDialogComponent,
+    DurationLeftPipe,
   ],
   imports: [
     MatBadgeModule,
@@ -82,13 +110,26 @@ const routes: Routes = [
     MatSidenavModule,
     MatSnackBarModule,
     MatButtonToggleModule,
+    MatSelectModule,
     MatTooltipModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
     PerfectScrollbarModule,
     NgxGraphModule,
+    MatTableModule,
+    MatSortModule,
+    MomentModule,
+    MatChipsModule,
+    MatInputModule,
+    MatRadioModule,
     RouterModule.forRoot(routes),
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatPaginatorModule
   ],
-  providers: [],
+  providers: [NumberAbbreviatePipe, AlphabetDirective, DurationLeftPipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

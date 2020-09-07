@@ -14,6 +14,10 @@ using EveVoid.Services.EveObjects;
 using EveVoid.Services.Pilots;
 using EveVoid.Services.Navigation.MapObjects;
 using EveVoid.Services.Navigation;
+using AutoMapper;
+using System.Reflection;
+using System.Linq;
+using System;
 
 namespace EveVoid
 {
@@ -30,8 +34,16 @@ namespace EveVoid
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddDbContext<EveVoidContext>(options =>
-                options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            if (Configuration.GetValue<string>("SqlProvider") == "SqlServer")
+            {
+                services.AddDbContext<EveVoidContext>(options =>
+                    options.UseLazyLoadingProxies().UseSqlServer(Configuration.GetConnectionString("SqlServerConnectionString")));
+            }
+            if (Configuration.GetValue<string>("SqlProvider") == "MySql")
+            {
+                services.AddDbContext<EveVoidContext>(options =>
+                    options.UseLazyLoadingProxies().UseMySQL(Configuration.GetConnectionString("MySqlConnectionString")));
+            }
             services.AddScoped<ICharacterApi, CharacterApi>();
             services.AddScoped<ICharacterService, CharacterService>();
             services.AddScoped<IAllianceApi, AllianceApi>();
@@ -47,6 +59,17 @@ namespace EveVoid
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ILocationApi, LocationApi>();
             services.AddScoped<ISignatureService, SignatureService>();
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                var profiles = Assembly.GetExecutingAssembly().GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x));
+                foreach (var profile in profiles)
+                {
+                    mc.AddProfile(Activator.CreateInstance(profile) as Profile);
+                }
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

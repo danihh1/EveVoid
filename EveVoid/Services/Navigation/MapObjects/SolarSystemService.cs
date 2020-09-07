@@ -101,7 +101,7 @@ namespace EveVoid.Services.Navigation.MapObjects
             return system;
         }
 
-        public int GetSystemTypeIdBySecStatusAndName(double secStatus, string name)
+        private int GetSystemTypeIdBySecStatusAndName(double secStatus, string name)
         {
             if (secStatus >= 0.5)
             {
@@ -123,10 +123,21 @@ namespace EveVoid.Services.Navigation.MapObjects
             return _context.SystemTypes.FirstOrDefault(x => x.Name == "Null-Sec").Id;
         }
 
-        public IEnumerable<SolarSystem> GetConnectedSystems(int id)
+        //public IEnumerable<SolarSystem> GetConnectedSystems(int id)
+        //{
+        //    var system = GetSystemById(id);
+        //    return system.Gates.Select(x => x.Destination.SolarSystem).Union(system.Signatures.Where(x => x.LeadsToId != null).Select(x => x.LeadsTo.System));
+        //}
+
+        public void UpdateSystem(SolarSystem solarSystem)
         {
-            var system = GetSystemById(id);
-            return system.Gates.Select(x => x.Destination.SolarSystem).Union(system.Signatures.Where(x => x.LeadsToId != null).Select(x => x.LeadsTo.System));
+            _context.Update(solarSystem);
+            _context.SaveChanges();
+        }
+
+        public List<SolarSystem> Find(string name, int pageSize)
+        {
+            return _context.SolarSystems.Where(x => x.Name.Contains(name)).Take(pageSize).ToList();
         }
     }
 }

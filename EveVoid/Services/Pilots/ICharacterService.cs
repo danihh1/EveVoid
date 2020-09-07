@@ -9,7 +9,8 @@ namespace EveVoid.Services.Pilots
         MainCharacter CreateOrUpdateMain(MainLoginDto dto);
         MainCharacter GetMainCharacterByToken(string token);
         EsiCharacter AddOrUpdateEsiCharacterToMainToken(string token, OAuthToken authToken, OAuthVerify authVerify);
-        EsiCharacter GetEsiCharacterWithActiveToken(string mainToken, string esiToken);
-        EsiCharacter UpdateEsiCharacter(string mainToken, EsiCharacterDto dto);
+        EsiCharacter GetEsiCharacterWithActiveToken(string mainToken, int esiCharId);
+        EsiCharacter UpdateEsiCharacter(string mainToken, EsiCharacterDto dto, int sigId);
+        void UpdateMainCharacter(MainCharacter main);
     }
 }
