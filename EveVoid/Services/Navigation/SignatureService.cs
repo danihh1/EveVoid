@@ -1,9 +1,11 @@
 ﻿using EveVoid.Data;
+using EveVoid.Dto;
 using EveVoid.Models.Navigation;
 using EveVoid.Services.Navigation.MapObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace EveVoid.Services.Navigation
@@ -78,44 +80,93 @@ namespace EveVoid.Services.Navigation
             return _context.WormholeTypes.FirstOrDefault(x => x.Name == name);
         }
 
-        //public Wormhole GetOrAddWormhole(int originId, int destoId, int maskId, int jumpedSigId)
-        //{
-        //    var sig = _context.Signatures.FirstOrDefault(x => x.SystemId == originId && x.Id == jumpedSigId);
-        //    if (jumpedSigId == 0)
-        //    {
-        //        sig = _context.Signatures.FirstOrDefault(x => x.SystemId == originId && x.LeadsToId != null && x.LeadsTo.SystemId == destoId);
-        //    }
-        //    if (sig == null)
-        //    {
-        //        var origin = _solarSystemService.GetSystemById(originId);
-        //        origin.Signatures.Add(sig = new Signature
-        //        {
-        //            Name = "Name",
-        //            ExpiryDate = DateTime.UtcNow.AddDays(1),
-        //            SignatureId = "???",
-        //            SignatureType = SignatureType.Wormhole,
-        //            MaskId = maskId
-        //        });
-        //        _context.SaveChanges();
-        //        if (destoId > 0)
-        //        {
-        //            var desto = _solarSystemService.GetSystemById(destoId);
-        //            var destoSig = new Signature
-        //            {
-        //                Name = "Name",
-        //                ExpiryDate = DateTime.UtcNow.AddDays(1),
-        //                SignatureId = "???",
-        //                SignatureType = SignatureType.Wormhole,
-        //                MaskId = maskId
-        //            };
-        //            desto.Signatures.Add(destoSig);
-        //            _context.SaveChanges();
-        //            destoSig.LeadsToId = sig.Id;
-        //            sig.LeadsToId = destoSig.Id;
-        //            _context.SaveChanges();
-        //        }
-        //    }
-        //    return sig;
-        //}
+        public void WormholeSigUpdate(SignatureDto dto, Signature sig, int maskId)
+        {
+            if (dto.SignatureType == SignatureType.Wormhole)
+            {
+                sig.MassIndicator = dto.MassIndicator;
+                if (sig.TimeRemainingIndicator != dto.TimeRemainingIndicator)
+                {
+                    switch (dto.TimeRemainingIndicator)
+                    {
+                        case TimeRemainingIndicator.EoL:
+                            {
+                                if (sig.ExpiryDate > DateTime.UtcNow.AddHours(4))
+                                {
+                                    sig.ExpiryDate = DateTime.UtcNow.AddHours(4);
+                                }
+                                break;
+                            }
+                        case TimeRemainingIndicator.Unset:
+                            {
+                                var baseHours = 24;
+                                if (sig.WormholeType != null)
+                                {
+                                    baseHours = int.Parse(Regex.Replace(sig.WormholeType.Duration, "[^0-9]+", string.Empty));
+                                    sig.ExpiryDate = sig.CreationDate.AddHours(baseHours);
+                                }
+                                break;
+                            }
+                    }
+                }
+                sig.TimeRemainingIndicator = dto.TimeRemainingIndicator;
+                sig.WormholeTypeId = dto.WormholeTypeId;
+                Update(sig);
+                if (dto.DestinationSystemId.HasValue)
+                {
+                    if (sig.DestinationId.HasValue && sig.Destination.SystemId != dto.DestinationSystemId)
+                    {
+                        Delete(sig.DestinationId.Value);
+                        sig.DestinationId = null;
+                        Update(sig, commit: true);
+                    }
+                    var desto = _solarSystemService.GetSystemById(dto.DestinationSystemId.Value);
+                    //sig.Name = desto.Name;
+                    var destoSig = desto.Signatures.FirstOrDefault(x => x.Id == sig.DestinationId); // desto.Signatures.FirstOrDefault(x => x.MaskId == maskId && x.Destination?.SystemId == dto.SystemId);
+                    if (destoSig == null)
+                    {
+                        destoSig = new Signature
+                        {
+                            SignatureId = "???",
+                            ExpiryDate = sig.ExpiryDate,
+                            Name = "",
+                            SignatureType = SignatureType.Wormhole,
+                            MaskId = maskId,
+                            WormholeTypeId = GetByTypeName("????").Id
+                        };
+                        desto.Signatures.Add(destoSig);
+                        _solarSystemService.UpdateSystem(desto);
+                    }
+                    if (dto.WormholeType != "K162" && dto.WormholeType != "????")
+                    {
+                        destoSig.WormholeTypeId = GetByTypeName("K162").Id;
+                    }
+                    sig.DestinationId = destoSig.Id;
+                    destoSig.DestinationId = sig.Id;
+                    destoSig.MassIndicator = sig.MassIndicator;
+                    destoSig.TimeRemainingIndicator = sig.TimeRemainingIndicator;
+                    destoSig.ExpiryDate = sig.ExpiryDate;
+                    _solarSystemService.UpdateSystem(desto);
+                }
+                else
+                {
+                    if (sig.DestinationId.HasValue)
+                    {
+                        Delete(sig.DestinationId.Value);
+                        sig.DestinationId = null;
+                    }
+                }
+            }
+            else
+            {
+                if (sig.DestinationId.HasValue)
+                {
+                    Delete(sig.DestinationId.Value);
+                    sig.DestinationId = null;
+                }
+                sig.WormholeTypeId = null;
+            }
+            Update(sig, commit: true);
+        }
     }
 }

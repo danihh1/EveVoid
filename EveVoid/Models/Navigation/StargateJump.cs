@@ -18,7 +18,7 @@ namespace EveVoid.Models.Navigation
 
         public virtual Stargate Stargate { get; set; }
         public virtual EsiCharacter EsiCharacter { get; set; }
-        public virtual Ship Ship { get; set; }
+        public virtual ItemType Ship { get; set; }
         public virtual Mask Mask { get; set; }
     }
 }

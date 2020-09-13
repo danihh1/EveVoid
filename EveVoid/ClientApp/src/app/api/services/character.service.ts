@@ -18,6 +18,7 @@ class CharacterService extends __BaseService {
   static readonly postApiCharacterGetEsiCharacterPath = '/api/Character/GetEsiCharacter';
   static readonly postApiCharacterUpdateEsiCharacterPath = '/api/Character/UpdateEsiCharacter';
   static readonly postApiCharacterUpdateMaskTypePath = '/api/Character/UpdateMaskType';
+  static readonly postApiCharacterUpdateFavoriteSystemPath = '/api/Character/UpdateFavoriteSystem';
   static readonly postApiCharacterUpdateMapLayoutsPath = '/api/Character/UpdateMapLayouts';
 
   constructor(
@@ -206,13 +207,63 @@ class CharacterService extends __BaseService {
   }
 
   /**
+   * @param params The `CharacterService.PostApiCharacterUpdateFavoriteSystemParams` containing the following parameters:
+   *
+   * - `systemId`:
+   *
+   * - `mainToken`:
+   *
+   * - `favorite`:
+   */
+  postApiCharacterUpdateFavoriteSystemResponse(params: CharacterService.PostApiCharacterUpdateFavoriteSystemParams): __Observable<__StrictHttpResponse<null>> {
+    let __params = this.newParams();
+    let __headers = new HttpHeaders();
+    let __body: any = null;
+    if (params.systemId != null) __params = __params.set('systemId', params.systemId.toString());
+    if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
+    if (params.favorite != null) __params = __params.set('favorite', params.favorite.toString());
+    let req = new HttpRequest<any>(
+      'POST',
+      this.rootUrl + `/api/Character/UpdateFavoriteSystem`,
+      __body,
+      {
+        headers: __headers,
+        params: __params,
+        responseType: 'json'
+      });
+
+    return this.http.request<any>(req).pipe(
+      __filter(_r => _r instanceof HttpResponse),
+      __map((_r) => {
+        return _r as __StrictHttpResponse<null>;
+      })
+    );
+  }
+  /**
+   * @param params The `CharacterService.PostApiCharacterUpdateFavoriteSystemParams` containing the following parameters:
+   *
+   * - `systemId`:
+   *
+   * - `mainToken`:
+   *
+   * - `favorite`:
+   */
+  postApiCharacterUpdateFavoriteSystem(params: CharacterService.PostApiCharacterUpdateFavoriteSystemParams): __Observable<null> {
+    return this.postApiCharacterUpdateFavoriteSystemResponse(params).pipe(
+      __map(_r => _r.body as null)
+    );
+  }
+
+  /**
    * @param params The `CharacterService.PostApiCharacterUpdateMapLayoutsParams` containing the following parameters:
    *
    * - `mainToken`:
    *
    * - `body`:
+   *
+   * @return Success
    */
-  postApiCharacterUpdateMapLayoutsResponse(params: CharacterService.PostApiCharacterUpdateMapLayoutsParams): __Observable<__StrictHttpResponse<null>> {
+  postApiCharacterUpdateMapLayoutsResponse(params: CharacterService.PostApiCharacterUpdateMapLayoutsParams): __Observable<__StrictHttpResponse<Array<MapLayoutDto>>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -231,7 +282,7 @@ class CharacterService extends __BaseService {
     return this.http.request<any>(req).pipe(
       __filter(_r => _r instanceof HttpResponse),
       __map((_r) => {
-        return _r as __StrictHttpResponse<null>;
+        return _r as __StrictHttpResponse<Array<MapLayoutDto>>;
       })
     );
   }
@@ -241,10 +292,12 @@ class CharacterService extends __BaseService {
    * - `mainToken`:
    *
    * - `body`:
+   *
+   * @return Success
    */
-  postApiCharacterUpdateMapLayouts(params: CharacterService.PostApiCharacterUpdateMapLayoutsParams): __Observable<null> {
+  postApiCharacterUpdateMapLayouts(params: CharacterService.PostApiCharacterUpdateMapLayoutsParams): __Observable<Array<MapLayoutDto>> {
     return this.postApiCharacterUpdateMapLayoutsResponse(params).pipe(
-      __map(_r => _r.body as null)
+      __map(_r => _r.body as Array<MapLayoutDto>)
     );
   }
 }
@@ -274,6 +327,15 @@ module CharacterService {
   export interface PostApiCharacterUpdateMaskTypeParams {
     maskType?: any;
     mainToken?: string;
+  }
+
+  /**
+   * Parameters for postApiCharacterUpdateFavoriteSystem
+   */
+  export interface PostApiCharacterUpdateFavoriteSystemParams {
+    systemId?: number;
+    mainToken?: string;
+    favorite?: boolean;
   }
 
   /**

@@ -5,28 +5,43 @@
     layout="dagre">
     <ng-template #nodeTemplate let-node>
       <svg:g class="node">
-        <svg:foreignObject [style.width]="node.label.length > 5 ? (node.label.length * 11) + 16 : 80"
-          [style.height]="node.data.statics.length > 0 ? 66 : 44">
+        <svg:foreignObject [style.width]="getNodeWith(node)"
+          [style.height]="44 + (node.data.statics.length > 0 ? 22 : 0) + (node.data.tags.length > 0 ? 22 : 0)">
           <xhtml:div style="height:100%">
             <mat-card [style.background]="node.data.customColor" fxFlex fxLayout="column" fxLayoutAlign="space-around start"
-              style="padding:5px; border: 0.5px solid black!important">
+              style="padding:3px;" [contextMenu]="systemMenu" [contextMenuSubject]="node.id"
+              [style.border]="getBorder(node.id)">
                 <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%;">
                   <label style="margin: 0; font-size: smaller; white-space: nowrap;" [style.color]="node.data.systemTypeColor">
+                    <mat-icon *ngIf="node.data.effect" style="font-size: 14px; width: inherit;height: inherit; vertical-align: sub;" matTooltipPosition="left"
+                    [matTooltip]="node.data.effect" [style.color]="getEffectColor(node.data.effect)">
+                      {{getEffectIcon(node.data.effect)}}
+                    </mat-icon>
                     {{node.data.systemType}}
                   </label>
                   <span class="mat-badge-content mat-badge-active" style="position: inherit; width: 16px; height: 16px; line-height: 16px; pointer-events: all;"
-                  *ngIf="node.data.pilotCount > 0" matTooltipPosition="after"
+                  *ngIf="node.data.pilotCount > 0" matTooltipPosition="after" [style.background]="isCharHere(node.id) ? 'cyan' : ''"
                   [matTooltip]="node.data.pilots">
                     {{node.data.pilotCount}}
                   </span>
                 </div>
-                <a style="color:white; font-size: large;" (click)="goToSystem(node.id)"
-                  matTooltipClass="material-tooltip">
-                  {{node.label}}
-                </a>
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%;">
+                  <a style="color:white; font-size: large;" (click)="goToSystem(node.id)"
+                    matTooltipClass="material-tooltip">
+                    {{node.label}}
+                  </a>
+                  <span>
+                    <mat-icon *ngIf="node.data.hasStructureData" style="font-size: 14px; width: inherit; height: inherit; vertical-align: middle; margin-left: 4px;">home_work</mat-icon>
+                  </span>
+                </div>
                 <div fxFlex fxLayout="row" fxLayoutAlign="start start" style="width: 100%;">
                   <span *ngFor="let static of node.data.statics" [style.color]="static.color" style="margin-right: 3px;"
                   matTooltipPosition="above" [matTooltip]="getTooltipForStatic(static)" matTooltipClass="material-tooltip">{{static.name}}</span>
+                </div>
+                <div fxFlex fxLayout="row" fxLayoutAlign="start start" style="width: 100%;">
+                  <span *ngFor="let tag of node.data.tags" [style.color]="tag.color" style="margin-right: 1px;">
+                    <mat-icon style="font-size: 20px; width: inherit;" matTooltipPosition="below" [matTooltip]="tag.name">{{tag.icon}}</mat-icon>
+                  </span>
                 </div>
             </mat-card>
           </xhtml:div>
@@ -57,3 +72,29 @@
     </ng-template>
   </ngx-graph>
 </div>
+<context-menu style="color:black;" #systemMenu>
+  <ng-template contextMenuItem [subMenu]="tagSubMenu">
+    <div style="width: 100%">Tag</div>
+  </ng-template>
+  <context-menu #tagSubMenu>
+    <ng-template contextMenuItem (execute)="addTag($event.item, tag)" *ngFor="let tag of tags">
+      <div [style.color]="tag.color">
+        <mat-icon style="font-size: 20px; vertical-align: middle;">{{tag.icon}}</mat-icon>{{tag.name}}
+      </div>
+    </ng-template>
+    <ng-template contextMenuItem (execute)="newTagDialog($event.item)">
+      <div [style.color]="'white'">
+        <mat-icon style="font-size: 20px; vertical-align: middle;">add</mat-icon>Custom Tag
+      </div>
+    </ng-template>
+  </context-menu>
+  <ng-template contextMenuItem divider="true"></ng-template>
+  <ng-template contextMenuItem [subMenu]="tagSubMenu2">
+    <div>Nagivation</div>
+  </ng-template>
+  <context-menu #tagSubMenu2>
+    <ng-template contextMenuItem (execute)="addTag($event.item, tag)" *ngFor="let tag of tags" >
+      {{tag.name}}
+    </ng-template>
+  </context-menu>
+</context-menu>

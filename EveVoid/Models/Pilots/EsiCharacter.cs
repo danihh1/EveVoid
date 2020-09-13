@@ -28,7 +28,7 @@ namespace EveVoid.Models.Pilots
         public virtual MainCharacter MainCharacter { get; set; }
         public virtual Corporation Corporation { get; set; }
         public virtual SolarSystem CurrentSystem { get; set; }
-        public virtual Ship CurrentShip { get; set; }
+        public virtual ItemType CurrentShip { get; set; }
 
         public EsiCharacter()
         {

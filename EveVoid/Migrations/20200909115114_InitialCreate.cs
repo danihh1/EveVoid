@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
-using MySql.Data.EntityFrameworkCore.Metadata;
 
 namespace EveVoid.Migrations
 {
@@ -40,7 +39,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
@@ -73,7 +72,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     MaxMass = table.Column<double>(nullable: false),
@@ -100,7 +99,6 @@ namespace EveVoid.Migrations
                     Name = table.Column<string>(nullable: true),
                     Class = table.Column<int>(nullable: false),
                     Security = table.Column<double>(nullable: false),
-                    Flare = table.Column<int>(nullable: false),
                     SystemTypeId = table.Column<int>(nullable: false),
                     ConstellaionId = table.Column<int>(nullable: false),
                     LastUpdate = table.Column<DateTime>(nullable: false)
@@ -153,7 +151,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     SystemId = table.Column<int>(nullable: false),
                     WormholeTypeId = table.Column<int>(nullable: false)
                 },
@@ -263,7 +261,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
                     Order = table.Column<int>(nullable: false),
                     MainCharacterId = table.Column<int>(nullable: false),
@@ -291,7 +289,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     CorporationId = table.Column<int>(nullable: true),
                     AllianceId = table.Column<int>(nullable: true)
                 },
@@ -330,7 +328,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     SignatureId = table.Column<string>(nullable: true),
@@ -373,11 +371,38 @@ namespace EveVoid.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SolarSystemFlares",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Color = table.Column<string>(nullable: true),
+                    MaskId = table.Column<int>(nullable: false),
+                    SolarSystemId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SolarSystemFlares", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SolarSystemFlares_Masks_MaskId",
+                        column: x => x.MaskId,
+                        principalTable: "Masks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SolarSystemFlares_SolarSystems_SolarSystemId",
+                        column: x => x.SolarSystemId,
+                        principalTable: "SolarSystems",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SolarSystemNote",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     MainCharacterId = table.Column<int>(nullable: false),
                     SolarSystemId = table.Column<int>(nullable: false),
                     MaskId = table.Column<int>(nullable: false),
@@ -413,7 +438,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ShipId = table.Column<int>(nullable: false),
                     StargateId = table.Column<int>(nullable: false),
                     EsiCharacterId = table.Column<int>(nullable: false),
@@ -452,7 +477,7 @@ namespace EveVoid.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ShipId = table.Column<int>(nullable: false),
                     WormholeId = table.Column<int>(nullable: false),
                     EsiCharacterId = table.Column<int>(nullable: false),
@@ -581,6 +606,16 @@ namespace EveVoid.Migrations
                 column: "WormholeTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemFlares_MaskId",
+                table: "SolarSystemFlares",
+                column: "MaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemFlares_SolarSystemId",
+                table: "SolarSystemFlares",
+                column: "SolarSystemId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SolarSystemNote_MainCharacterId",
                 table: "SolarSystemNote",
                 column: "MainCharacterId");
@@ -689,6 +724,9 @@ namespace EveVoid.Migrations
 
             migrationBuilder.DropTable(
                 name: "MapLayouts");
+
+            migrationBuilder.DropTable(
+                name: "SolarSystemFlares");
 
             migrationBuilder.DropTable(
                 name: "SolarSystemNote");

@@ -5,16 +5,17 @@
     {{signature | json}}
   </div> -->
   <div fxLayout="column" fxLayoutAlign="start start" fxLayoutGap="10px">
-    <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="10px">
       <mat-form-field style="width:40px">
         <mat-label>Sig ID</mat-label>
-        <input alphabetOnly matInput style="text-transform:uppercase; text-align: center;" type="text" maxlength="3" size="2"
-            autocomplete="off" minlength="3" pattern="[A-Za-z]*" [(ngModel)]="this.signature.signatureId">
+        <input alphabetOnly matInput style="text-transform:uppercase; text-align: center;" type="text" maxlength="3"
+          size="2" autocomplete="off" minlength="3" pattern="[A-Za-z]*" [(ngModel)]="this.signature.signatureId">
       </mat-form-field>
       <mat-form-field style="width:90px">
         <!-- <mat-label>Type</mat-label> -->
         <div fxLayout="row" fxLayoutAlign="space-between center">
-          <mat-select matInput [(ngModel)]="signature.signatureType" (selectionChange)="typeSelected($event.value)" style="width:90px">
+          <mat-select matInput [(ngModel)]="signature.signatureType" (selectionChange)="typeSelected($event.value)"
+            style="width:90px">
             <mat-option *ngFor="let item of types" [value]="item.id">{{item.name}}</mat-option>
           </mat-select>
         </div>
@@ -23,34 +24,32 @@
         <mat-label>Type</mat-label>
         <div>
           <input matInput style="text-transform:uppercase; text-align: center;" type="text" maxlength="4" size="3"
-          minlength="4" [formControl]="control" [matAutocomplete]="auto" [(ngModel)]="signature.wormholeType">
+            minlength="4" [formControl]="control" [matAutocomplete]="auto" [(ngModel)]="signature.wormholeType">
           <mat-autocomplete #auto="matAutocomplete" (optionSelected)="wormholeTypeSelected($event.option.value)">
-            <mat-option *ngFor="let type of filteredWormholeTypes | async" [value]="type.name" style="line-height: auto; height:auto;">
+            <mat-option *ngFor="let type of filteredWormholeTypes | async" [value]="type.name"
+              style="line-height: auto; height:auto;">
               {{type.name}}
             </mat-option>
           </mat-autocomplete>
         </div>
       </mat-form-field>
-      <mat-form-field *ngIf="signature.signatureType === 1" style="width:140px">
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="10px">
+      <mat-form-field *ngIf="signature.signatureType === 1" style="width:200px">
         <mat-label>Leads To</mat-label>
         <div>
-          <input style="width:100%;" type="text" matInput
-            [formControl]="leadsToControl" [matAutocomplete]="autoLeadsTo" [(ngModel)]="signature.destinationSystemName" >
-            <mat-autocomplete #autoLeadsTo="matAutocomplete" (optionSelected)="leadsToSelected($event.option.value)">
-              <mat-option *ngFor="let system of filteredSystems | async" [value]="system.name" style="line-height: auto; height:auto;">
-                {{system.name}}
-              </mat-option>
-            </mat-autocomplete>
+          <input style="width:100%;" type="text" matInput [formControl]="leadsToControl" [matAutocomplete]="autoLeadsTo"
+            [(ngModel)]="signature.destinationSystemName">
+          <mat-autocomplete #autoLeadsTo="matAutocomplete" (optionSelected)="leadsToSelected($event.option.value)">
+            <mat-option *ngFor="let system of filteredSystems | async" [value]="system.name"
+              style="line-height: auto; height:auto;">
+              {{system.name}}
+            </mat-option>
+          </mat-autocomplete>
         </div>
       </mat-form-field>
     </div>
-    <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
-      <mat-form-field style="width:140px">
-        <mat-label>Name</mat-label>
-        <div>
-          <input matInput type="text" [(ngModel)]="signature.name">
-        </div>
-      </mat-form-field>
+    <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="10px">
       <mat-form-field style="width:100px" *ngIf="signature.signatureType === 1">
         <mat-label>Life</mat-label>
         <mat-select [(value)]="signature.timeRemainingIndicator">
@@ -59,9 +58,17 @@
       </mat-form-field>
       <mat-form-field style="width:100px" *ngIf="signature.signatureType === 1">
         <mat-label>Mass</mat-label>
-          <mat-select [(value)]="signature.massIndicator">
-            <mat-option *ngFor="let type of massTypes" [value]="type.id">{{type.name}}</mat-option>
-          </mat-select>
+        <mat-select [(value)]="signature.massIndicator">
+          <mat-option *ngFor="let type of massTypes" [value]="type.id">{{type.name}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
+      <mat-form-field style="width:200px">
+        <mat-label>Name</mat-label>
+        <div>
+          <input matInput type="text" [(ngModel)]="signature.name">
+        </div>
       </mat-form-field>
     </div>
   </div>

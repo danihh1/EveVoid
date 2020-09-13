@@ -1,15 +1,24 @@
-<mat-dialog-content fxLayout="column" fxLayoutAlign="start start">
-  <mat-label>Tab Name</mat-label>
-  <input style="text-align: center;" type="text" matInput [(ngModel)]="data.data.name">
-  <mat-label>System</mat-label>
-  <input style="text-align: center;" type="text" [formControl]="tabSystemControl" [matAutocomplete]="autoLeadsTo"
-    [(ngModel)]="data.data.solarSystemName">
-  <mat-autocomplete #autoLeadsTo="matAutocomplete" (optionSelected)="tabSystemSelected($event.option.value)">
-    <mat-option *ngFor="let system of filteredSystems | async" [value]="system.name"
-      style="line-height: auto; height:auto;">
-      {{system.name}}
-    </mat-option>
-  </mat-autocomplete>
+<mat-dialog-content>
+  <div fxLayout="column" fxLayoutAlign="start start">
+    <mat-form-field>
+      <mat-label>Tab Name</mat-label>
+      <input matInput style="text-align: center;" type="text" [(ngModel)]="data.data.name">
+    </mat-form-field>
+    <mat-form-field>
+    <mat-label>System</mat-label>
+      <input matInput style="text-align: center;" type="text" [formControl]="tabSystemControl" [matAutocomplete]="autoLeadsTo"
+        [(ngModel)]="data.data.solarSystemName">
+      <mat-autocomplete #autoLeadsTo="matAutocomplete" (optionSelected)="tabSystemSelected($event.option.value)">
+        <mat-option *ngFor="let system of filteredSystems | async" [value]="system.name"
+          style="line-height: auto; height:auto;">
+          {{system.name}}
+        </mat-option>
+      </mat-autocomplete>
+    </mat-form-field>
+  </div>
 </mat-dialog-content>
 <mat-divider></mat-divider>
-<button mat-button (click)="confirm()" style="width:100%;">Add</button>
+<mat-dialog-actions fxLayout="row" fxLayoutAlign="space-around start">
+  <button (click)="confirm()" class="mat-raised-button mat-primary">{{data.data.id > 0 ? 'Update' : 'Add'}}</button>
+  <button *ngIf="data.data.id > 0" (click)="cancel()" class="mat-raised-button">Delete</button>
+</mat-dialog-actions>

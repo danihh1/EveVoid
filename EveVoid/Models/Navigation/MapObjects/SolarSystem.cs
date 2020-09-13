@@ -15,10 +15,10 @@ namespace EveVoid.Models.Navigation.MapObjects
         public string Name { get; set; }
         public int Class { get; set; }
         public double Security { get; set; }
-        public Flare Flare { get; set; }
         public int SystemTypeId { get; set; }
         public int ConstellaionId { get; set; }
         public DateTime LastUpdate { get; set; }
+        public string SystemEffect { get; set; }
         public virtual SystemType SystemType { get; set; }
         public virtual List<WormholeStatic> Statics { get; set; }
         public virtual List<Signature> Signatures { get; set; }
@@ -26,6 +26,8 @@ namespace EveVoid.Models.Navigation.MapObjects
         public virtual List<Stargate> Gates { get; set; }
         public virtual Constellation Constellaion { get; set; }
         public virtual List<SolarSystemNote> Notes { get; set; }
+        public virtual List<SolarSystemTag> Tags { get; set; }
+        public virtual List<SolarSystemStructure> Structures { get; set; }
 
         public SolarSystem()
         {
@@ -34,6 +36,8 @@ namespace EveVoid.Models.Navigation.MapObjects
             Pilots = new List<EsiCharacter>();
             Gates = new List<Stargate>();
             Notes = new List<SolarSystemNote>();
+            Tags = new List<SolarSystemTag>();
+            Structures = new List<SolarSystemStructure>();
         }
     }
 }

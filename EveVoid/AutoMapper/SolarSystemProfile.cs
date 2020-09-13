@@ -20,7 +20,9 @@ namespace EveVoid.AutoMapper
                 .ForMember(src => src.Statics, dst => dst.MapFrom(x => x.Statics.Select(x => x.WormholeType.LeadsTo.Name).ToList()))
                 .ForMember(src => src.Signatures, dst => dst.Ignore())
                 .ForMember(src => src.Pilots, dst => dst.Ignore())
-                .ForMember(src => src.Notes, dst => dst.Ignore());
+                .ForMember(src => src.Notes, dst => dst.Ignore())
+                .ForMember(src => src.Tags, dst => dst.Ignore())
+                .ForMember(src => src.Structures, dst => dst.Ignore());
 
             CreateMap<Signature, SignatureDto>()
                 .ForMember(src => src.DestinationSystemId, dst => dst.MapFrom(x => x.Destination.SystemId))
@@ -46,6 +48,10 @@ namespace EveVoid.AutoMapper
                 .ForMember(src => src.LeadsToSystemType, dst => dst.MapFrom(x => x.Destination.SolarSystem.SystemType.Name));
 
             CreateMap<SolarSystemNote, SolarSystemNoteDto>();
+
+            CreateMap<SolarSystemTag, SolarSystemTagDto>();
+
+            CreateMap<SolarSystemStructure, SolarSystemStructureDto>();
 
             CreateMap<WormholeType, WormholeTypeDto>()
                 .ForMember(src => src.LeadsTo, dst => dst.MapFrom(x => x.LeadsTo.Name));

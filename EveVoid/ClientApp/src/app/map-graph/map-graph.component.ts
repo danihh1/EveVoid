@@ -1,18 +1,22 @@
+import { CustomTagDialogComponent } from './../custom-tag-dialog/custom-tag-dialog.component';
+import { SolarSystemTagDto } from './../api/models/solar-system-tag-dto';
 import { MapLayoutDto } from './../api/models/map-layout-dto';
 import { NumberAbbreviatePipe } from './../pipes/number-abbreviate.pipe';
 import { PreferencesControl } from './../control/preferences-control';
 import { WormholeTypeMapDto } from './../api/models/wormhole-type-map-dto';
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthControl } from '../control/auth-control';
 import { MapDto, SignatureDto } from '../api/models';
-import { MapService } from '../api/services';
+import { MapService, TagService } from '../api/services';
 import { Subject, interval, Subscription, combineLatest } from 'rxjs';
 import { Node, Edge, ClusterNode } from '@swimlane/ngx-graph';
 import { DataControl } from '../control/data-control';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { SignatureDialogComponent } from '../signature-dialog/signature-dialog.component';
+import { TagTypes, TagType, EffectIcons } from '../control/constants/tag-types';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-map-graph',
@@ -23,6 +27,8 @@ export class MapGraphComponent implements OnInit, OnDestroy {
   maps: MapDto[];
   systemObserver: Subscription;
   unsubscribe$: Subject<boolean> = new Subject();
+  tags = TagTypes;
+  effectIcons = EffectIcons;
   layoutSettings = {
     orientation: 'TB',
     edgePadding: 30,
@@ -31,14 +37,6 @@ export class MapGraphComponent implements OnInit, OnDestroy {
   };
   nodes: Node[];
   links: Edge[];
-  // clusters: ClusterNode[] = [
-  //   {
-  //     id: 'c1',
-  //     label: this.preferencesControl.getMapSystem()?.name,
-  //     childNodeIds: [this.preferencesControl.getMapSystem().solarSystemId ?
-  //       this.preferencesControl.getMapSystem().solarSystemId.toString() : '']
-  //   }
-  // ];
 
   get miniMapPosition(): string {
     return this.preferencesControl.getOverlayPosition() === 'left' ? 'UpperRight' : 'UpperLeft';
@@ -55,6 +53,7 @@ export class MapGraphComponent implements OnInit, OnDestroy {
     private mapService: MapService,
     private authControl: AuthControl,
     private dataControl: DataControl,
+    private tagService: TagService,
     private router: Router,
     private abbreviate: NumberAbbreviatePipe) {
       this.links = [];
@@ -121,6 +120,9 @@ export class MapGraphComponent implements OnInit, OnDestroy {
             systemType: x.systemType,
             systemTypeColor: x.systemTypeColor,
             statics: x.statics,
+            tags: x.tags,
+            effect: x.wormholeEffect,
+            hasStructureData: x.hasStructureData
           }
         });
       });
@@ -164,5 +166,56 @@ export class MapGraphComponent implements OnInit, OnDestroy {
         },
       },
     });
+  }
+
+  getBorder(id: string): string {
+    let res = '0.5px solid black';
+    if (this.preferencesControl.getSelectedSystem().solarSystemId.toString() === id) {
+      res = '0.5px solid cyan';
+    }
+    return res;
+  }
+
+  isCharHere(id: string): boolean {
+    const charLocations = this.dataControl.getCharLocations();
+    return charLocations.some(x => x === id);
+  }
+
+  addTag(systemId: string, tag: TagType) {
+    const newTag = {
+      color: tag.color,
+      name: tag.name,
+      solarSystemId: parseInt(systemId, 10),
+      icon: tag.icon,
+      expiryDate: moment.utc(new Date(Date.now() + 4 * 60 * 60 * 1000).toJSON()).toISOString()
+    } as SolarSystemTagDto;
+    this.tagService.postApiTagInsert({mainToken: this.authControl.getMainToken(), body: newTag}).subscribe(x => {
+      this.dataControl.forceMapUpdate();
+    }, err => {
+      console.error(err);
+    });
+  }
+
+  newTagDialog(systemId: string) {
+    this.dialog.open(CustomTagDialogComponent, {
+      data: {
+        title: '',
+        body: '',
+        data: {
+          solarSystemId: parseInt(systemId, 10)
+        }
+      },
+    });
+  }
+
+  getNodeWith(node: any): number {
+    return Math.max(node.label.length > 5 ? (node.label.length * 11) + 24 : 0, 90, node.data.tags.length * 23);
+  }
+
+  getEffectIcon(effect: any): string {
+    return this.effectIcons.find(x => x.name === effect).icon;
+  }
+  getEffectColor(effect: any): string {
+    return this.effectIcons.find(x => x.name === effect).color;
   }
 }

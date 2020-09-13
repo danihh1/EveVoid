@@ -1,4 +1,5 @@
-﻿using EveVoid.Models.Navigation;
+﻿using EveVoid.Dto;
+using EveVoid.Models.Navigation;
 using System.Collections.Generic;
 
 namespace EveVoid.Services.Navigation
@@ -12,5 +13,6 @@ namespace EveVoid.Services.Navigation
         void Delete(int id, bool commit = false);
         List<WormholeType> GetWormholeTypes();
         WormholeType GetByTypeName(string name);
+        void WormholeSigUpdate(SignatureDto dto, Signature sig, int maskId);
     }
 }

@@ -1,8 +1,8 @@
-<div fxLayout="row" fxLayoutAlign="start start">
+<div fxLayout="row" fxLayoutAlign="start center">
   <img [src]="portrait" alt="mainChar.name" style="width:60px; height:60px; border-radius: 5px; margin:2px;">
   <table style="height: 64px; font-size: 14px; line-height: initial;">
     <tr style="height:50%;">
-      <th>{{mainChar.name}}</th>
+      <th style="text-align: start;">{{mainChar.name}}</th>
     </tr>
     <tr>
       <td>
@@ -15,4 +15,14 @@
       </td>
     </tr>
   </table>
+  <div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="5px">
+    <mat-icon>search</mat-icon>
+    <input style="width:100%;" type="text" matInput [formControl]="control" [matAutocomplete]="auto" placeholder="Search">
+    <mat-autocomplete #auto="matAutocomplete" (optionSelected)="systemSelected($event.option.value)">
+      <mat-option *ngFor="let system of filteredSystems | async" [value]="system.name"
+        style="line-height: auto; height:auto;">
+        {{system.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </div>
 </div>

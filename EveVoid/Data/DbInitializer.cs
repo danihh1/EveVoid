@@ -22,21 +22,8 @@ namespace EveVoid.Data
         public static void Initialize(EveVoidContext context)
         {
             var universeApi = new UniverseApi();
-            context.Database.EnsureCreated();
-            //_logger.Info(JsonConvert.SerializeObject(context.WormholeTypes.Select(x=> new
-            //{
-            //    id = x.Id,
-            //    duration = x.Duration,
-            //    leadsTo = x.LeadsTo.Name,
-            //    name = x.Name,
-            //    leadsToId = x.LeadsToId,
-            //    maxJump = x.MaxJump,
-            //    maxMass = x.MaxMass
-            //}).ToList()));
-            //if (context.SystemTypes.Any())
-            //{
-            //    return;
-            //}
+            context.Database.Migrate();
+            //context.Database.EnsureCreated();
 
             var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\combine.json");
             var jsonText = File.ReadAllText(path);
@@ -134,6 +121,7 @@ namespace EveVoid.Data
                     Name = x.Value.name,
                     Security = x.Value.security == null ? 0 : double.Parse(x.Value.security),
                     Class = x.Value.wClass == null ? 0 : int.Parse(x.Value.wClass),
+                    SystemEffect = x.Value.effect,
                     Statics = x.Value.statics?.Select(s => new WormholeStatic
                     {
                         SystemId = int.Parse(x.Key),

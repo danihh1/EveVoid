@@ -1,0 +1,30 @@
+<h1 mat-dialog-title>{{solarSystemStructureDto.name}}</h1>
+<div mat-dialog-content fxLayout="column" fxLayoutAlign="start start">
+  <table>
+    <tr>
+      <th style="text-align: start;">Type</th>
+      <td>{{solarSystemStructureDto.itemTypeName}}</td>
+    </tr>
+    <tr>
+      <th style="text-align: start;">First Detected</th>
+      <td>{{solarSystemStructureDto.creationDate | date: 'HH:mm dd/MM/yyyy'}}</td>
+    </tr>
+    <tr>
+      <th style="text-align: start;">Last Update</th>
+      <td>{{solarSystemStructureDto.lastUpdate | date: 'HH:mm dd/MM/yyyy'}}</td>
+    </tr>
+  </table>
+  <!-- <mat-label>Type: {{solarSystemStructureDto.itemTypeName}}</mat-label>
+  <mat-label>First Detected: {{solarSystemStructureDto.creationDate | date: 'HH:mm dd/MM/yyyy'}}</mat-label>
+  <mat-label>Last Update: {{solarSystemStructureDto.lastUpdate | date: 'HH:mm dd/MM/yyyy'}}</mat-label> -->
+  <mat-form-field>
+    <mat-label>Description</mat-label>
+    <textarea matInput [(ngModel)]="solarSystemStructureDto.description">
+
+    </textarea>
+  </mat-form-field>
+</div>
+<div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-around start">
+  <button class="mat-raised-button mat-primary" (click)="confirm()">Confirm</button>
+  <button class="mat-raised-button" (click)="cancel()">Cancel</button>
+</div>

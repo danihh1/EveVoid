@@ -10,6 +10,8 @@ import { CharacterService, SolarySystemService, SignatureService } from '../api/
 import { LocationService } from '../eve-esi-api/services';
 import { MatDialog } from '@angular/material/dialog';
 import { AutoJumpDailogResponseData, DialogResult } from '../signature-dialog/confim-dialog.model';
+import { PreferencesControl } from '../control/preferences-control';
+import { DataControl } from '../control/data-control';
 
 
 @Component({
@@ -34,11 +36,13 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
     return this.imageControl.getAllianceLogo(this.esiChar.id, this.portraitSize / 2);
   }
   constructor(private imageControl: ImageControl,
-  private _locationApi: LocationService,
-  private _characterService: CharacterService,
-  private signatureService: SignatureService,
-  private dialog: MatDialog,
-  private authControl: AuthControl) {
+    public preferencesControl: PreferencesControl,
+    private _locationApi: LocationService,
+    private _characterService: CharacterService,
+    private signatureService: SignatureService,
+    private dataControl: DataControl,
+    private dialog: MatDialog,
+    private authControl: AuthControl) {
 
    }
 
@@ -120,5 +124,14 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
       this.esiChar = res;
       this.reportingLocation = false;
     });
+  }
+
+  goToSystem(systemId: number) {
+    if (systemId > 10000000) {
+      this.preferencesControl.setSelectedSystem({solarSystemId: systemId});
+      this.dataControl.forceMapUpdate();
+      this.dataControl.setCharLocation({ id: this.esiChar.id, locationId: systemId.toString()});
+      //this.router.navigate(['./map/' + systemId]);
+    }
   }
 }

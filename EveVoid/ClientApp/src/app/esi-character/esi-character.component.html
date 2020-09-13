@@ -4,7 +4,7 @@
     <div style="width:10px;"></div>
     <table style="height: 64px; font-size: 14px; line-height: initial;">
       <tr style="height:50%;">
-        <th>{{esiChar.name}}</th>
+        <th style="text-align: start;">{{esiChar.name}}</th>
       </tr>
       <tr>
         <td>
@@ -23,7 +23,7 @@
       </tr>
       <tr *ngIf="esiChar.currentSystemName != null">
         <td>
-          <a routerLink="{{esiChar.currentSystemId}}">{{esiChar.currentSystemName}}</a>
+          <a (click)="goToSystem(esiChar.currentSystemId)">{{esiChar.currentSystemName}}</a>
         </td>
       </tr>
     </table>

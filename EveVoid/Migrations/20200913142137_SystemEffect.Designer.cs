@@ -3,21 +3,23 @@ using System;
 using EveVoid.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EveVoid.Migrations
 {
     [DbContext(typeof(EveVoidContext))]
-    [Migration("20200907150901_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200913142137_SystemEffect")]
+    partial class SystemEffect
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "3.1.7")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("EveVoid.Models.EveObjects.Alliance", b =>
                 {
@@ -25,13 +27,13 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MaskId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -49,13 +51,13 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MaskId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -66,33 +68,79 @@ namespace EveVoid.Migrations
                     b.ToTable("Corporations");
                 });
 
-            modelBuilder.Entity("EveVoid.Models.EveObjects.Ship", b =>
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemCategory", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
-
-                    b.Property<double>("Mass")
-                        .HasColumnType("double");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ships");
+                    b.ToTable("ItemCategories");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemCategoryId");
+
+                    b.ToTable("ItemGroups");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ItemGroupId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("Mass")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemGroupId");
+
+                    b.ToTable("ItemTypes");
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.Jump", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("EsiCharacterId")
                         .HasColumnType("int");
@@ -120,10 +168,10 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RegionId")
                         .HasColumnType("int");
@@ -141,10 +189,10 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -162,17 +210,17 @@ namespace EveVoid.Migrations
                     b.Property<int>("ConstellaionId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Flare")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("Security")
-                        .HasColumnType("double");
+                        .HasColumnType("float");
+
+                    b.Property<string>("SystemEffect")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SystemTypeId")
                         .HasColumnType("int");
@@ -190,16 +238,17 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Content")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MainCharacterId")
                         .HasColumnType("int");
@@ -211,7 +260,7 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -224,6 +273,85 @@ namespace EveVoid.Migrations
                     b.ToTable("SolarSystemNote");
                 });
 
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemStructure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ItemTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SolarSystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemTypeId");
+
+                    b.HasIndex("MaskId");
+
+                    b.HasIndex("SolarSystemId");
+
+                    b.ToTable("SolarSystemStructures");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SolarSystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaskId");
+
+                    b.HasIndex("SolarSystemId");
+
+                    b.ToTable("SolarSystemTags");
+                });
+
             modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.Stargate", b =>
                 {
                     b.Property<int>("Id")
@@ -233,7 +361,7 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("SystemId")
                         .HasColumnType("int");
@@ -251,10 +379,11 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -265,7 +394,8 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int?>("AllianceId")
                         .HasColumnType("int");
@@ -286,22 +416,23 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("DestinationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ExpiryDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MaskId")
                         .HasColumnType("int");
@@ -310,10 +441,10 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SignatureId")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("SignatureType")
                         .HasColumnType("int");
@@ -344,10 +475,11 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("EsiCharacterId")
                         .HasColumnType("int");
@@ -378,7 +510,8 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("SystemId")
                         .HasColumnType("int");
@@ -399,25 +532,26 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Description")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Duration")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("LeadsToId")
                         .HasColumnType("int");
 
                     b.Property<double>("MaxJump")
-                        .HasColumnType("double");
+                        .HasColumnType("float");
 
                     b.Property<double>("MaxMass")
-                        .HasColumnType("double");
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -432,13 +566,13 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("AccessToken")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CorporationId")
                         .HasColumnType("int");
 
                     b.Property<string>("CurrentShipName")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CurrentShipTypeId")
                         .HasColumnType("int");
@@ -447,19 +581,19 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MainCharacterId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("TokenExpiresIn")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -474,13 +608,35 @@ namespace EveVoid.Migrations
                     b.ToTable("EsiCharacters");
                 });
 
+            modelBuilder.Entity("EveVoid.Models.Pilots.FavoriteSystem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("MainCharacterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SolarSystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MainCharacterId");
+
+                    b.HasIndex("SolarSystemId");
+
+                    b.ToTable("FavoriteSystem");
+                });
+
             modelBuilder.Entity("EveVoid.Models.Pilots.MainCharacter", b =>
                 {
                     b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<string>("AccessToken")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("CorporationId")
                         .HasColumnType("int");
@@ -489,19 +645,19 @@ namespace EveVoid.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("MaskType")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Orientation")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RefreshToken")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -514,13 +670,14 @@ namespace EveVoid.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<int>("MainCharacterId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .HasColumnType("text");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Order")
                         .HasColumnType("int");
@@ -559,6 +716,24 @@ namespace EveVoid.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemGroup", b =>
+                {
+                    b.HasOne("EveVoid.Models.EveObjects.ItemCategory", "ItemCategory")
+                        .WithMany("ItemGroups")
+                        .HasForeignKey("ItemCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemType", b =>
+                {
+                    b.HasOne("EveVoid.Models.EveObjects.ItemGroup", "ItemGroup")
+                        .WithMany("ItemTypes")
+                        .HasForeignKey("ItemGroupId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EveVoid.Models.Navigation.Jump", b =>
                 {
                     b.HasOne("EveVoid.Models.Pilots.EsiCharacter", "EsiCharacter")
@@ -567,7 +742,7 @@ namespace EveVoid.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EveVoid.Models.EveObjects.Ship", "Ship")
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "Ship")
                         .WithMany()
                         .HasForeignKey("ShipId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -622,6 +797,42 @@ namespace EveVoid.Migrations
                         .WithMany("Notes")
                         .HasForeignKey("SolarSystemId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemStructure", b =>
+                {
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "ItemType")
+                        .WithMany()
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.Masks.Mask", "Mask")
+                        .WithMany()
+                        .HasForeignKey("MaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
+                        .WithMany("Structures")
+                        .HasForeignKey("SolarSystemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemTag", b =>
+                {
+                    b.HasOne("EveVoid.Models.Navigation.Masks.Mask", "Mask")
+                        .WithMany()
+                        .HasForeignKey("MaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
+                        .WithMany("Tags")
+                        .HasForeignKey("SolarSystemId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -688,7 +899,7 @@ namespace EveVoid.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("EveVoid.Models.EveObjects.Ship", "Ship")
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "Ship")
                         .WithMany()
                         .HasForeignKey("ShipId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -731,7 +942,7 @@ namespace EveVoid.Migrations
                         .WithMany("EsiCharacters")
                         .HasForeignKey("CorporationId");
 
-                    b.HasOne("EveVoid.Models.EveObjects.Ship", "CurrentShip")
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "CurrentShip")
                         .WithMany()
                         .HasForeignKey("CurrentShipTypeId");
 
@@ -742,6 +953,21 @@ namespace EveVoid.Migrations
                     b.HasOne("EveVoid.Models.Pilots.MainCharacter", "MainCharacter")
                         .WithMany("EsiCharacters")
                         .HasForeignKey("MainCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Pilots.FavoriteSystem", b =>
+                {
+                    b.HasOne("EveVoid.Models.Pilots.MainCharacter", "MainCharacter")
+                        .WithMany("FavoriteSystems")
+                        .HasForeignKey("MainCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
+                        .WithMany()
+                        .HasForeignKey("SolarSystemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

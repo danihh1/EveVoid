@@ -57,7 +57,9 @@ export class MapTabLayoutComponent implements OnInit, OnDestroy {
         title: '',
         body: '',
         data: {
-          name: '',
+          name: tab.name,
+          solarSystemName: tab.solarSystemName,
+          solarSystemId: tab.solarSystemId,
           id,
           order: this.tabs.length
         } as MapLayoutDto,
@@ -65,19 +67,30 @@ export class MapTabLayoutComponent implements OnInit, OnDestroy {
     });
     dialogRef.afterClosed()
       .subscribe((response: TabDailogResponseData) => {
-        if (response.result === DialogResult.confirmed) {
-          if (id === -1) {
-            this.tabs.push(response.data);
+        if (response) {
+          if (response.result === DialogResult.confirmed) {
+            if (id === -1) {
+              this.tabs.push(response.data);
+            } else {
+              const updateTab = this.tabs.find(x => x.id === id);
+              updateTab.name = response.data.name;
+              updateTab.order = response.data.order;
+              updateTab.solarSystemId = response.data.solarSystemId;
+              updateTab.solarSystemName = response.data.solarSystemName;
+            }
+            this.characterService.postApiCharacterUpdateMapLayouts({mainToken: this.authControl.getMainToken(), body: this.tabs })
+              .subscribe(x => {
+                this.tabs = x;
+            });
           } else {
-            const updateTab = this.tabs.find(x => x.id === id);
-            updateTab.name = response.data.name;
-            updateTab.order = response.data.order;
-            updateTab.solarSystemId = response.data.solarSystemId;
-            updateTab.solarSystemName = response.data.solarSystemName;
+            if (response.result === DialogResult.canceld && id !== -1) {
+              this.tabs.splice(this.tabs.findIndex(x => x.id === id), 1);
+              this.characterService.postApiCharacterUpdateMapLayouts({mainToken: this.authControl.getMainToken(), body: this.tabs })
+              .subscribe(x => {
+                this.tabs = x;
+            });
+            }
           }
-          this.characterService.postApiCharacterUpdateMapLayouts({mainToken: this.authControl.getMainToken(), body: this.tabs })
-            .subscribe(x => {
-          });
         }
       });
   }

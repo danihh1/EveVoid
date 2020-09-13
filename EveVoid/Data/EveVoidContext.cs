@@ -26,7 +26,6 @@ namespace EveVoid.Data
         public DbSet<SolarSystem> SolarSystems { get; set; }
         public DbSet<Jump> Jumps { get; set; }
         public DbSet<Signature> Signatures { get; set; }
-        public DbSet<Ship> Ships { get; set; }
         public DbSet<Alliance> Alliances { get; set; }
         public DbSet<Corporation> Corporations { get; set; }
         public DbSet<WormholeType> WormholeTypes { get; set; }
@@ -38,7 +37,12 @@ namespace EveVoid.Data
         public DbSet<Constellation> Constellaions { get; set; }
         public DbSet<Mask> Masks { get; set; }
         public DbSet<MapLayout> MapLayouts { get; set; }
-        
+        public DbSet<SolarSystemTag> SolarSystemTags { get; set; }
+        public DbSet<SolarSystemStructure> SolarSystemStructures { get; set; }
+        public DbSet<ItemType> ItemTypes { get; set; }
+        public DbSet<ItemGroup> ItemGroups { get; set; }
+        public DbSet<ItemCategory> ItemCategories { get; set; }
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

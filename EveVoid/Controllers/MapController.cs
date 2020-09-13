@@ -52,6 +52,9 @@ namespace EveVoid.Controllers
                 Color = "#121212",
                 Name = customName.IsNullOrEmpty() ? system.Name : customName,
                 SystemType = system.SystemType?.Name,
+                HasStructureData = system.Structures.Any(x => x.MaskId == maskId),
+                WormholeEffect = system.SystemEffect,
+                Tags = system.Tags.Where(x => x.MaskId == maskId).Select(x => _mapper.Map<SolarSystemTagDto>(x)).ToList(),
                 Statics = system.Statics.Select(x => new WormholeTypeMapDto {
                     Name = x.WormholeType.Name,
                     Duration = x.WormholeType.Duration,

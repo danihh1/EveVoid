@@ -47,6 +47,9 @@ namespace EveVoid.Controllers
             res.Pilots = _mapper.Map<List<ActivePilotDto>>(system.Pilots.Where(x => main.MaskType == MaskType.Corp ? (x.MainCharacter.Corporation.MaskId == maskId) :
                 x.MainCharacter.Corporation.AllianceId != null && x.MainCharacter.Corporation.Alliance.MaskId == maskId));
             res.Notes = _mapper.Map<List<SolarSystemNoteDto>>(system.Notes.Where(x => x.MaskId == maskId));
+            res.Tags = _mapper.Map<List<SolarSystemTagDto>>(system.Tags.Where(x => x.MaskId == maskId));
+            res.Structures = _mapper.Map<List<SolarSystemStructureDto>>(system.Structures.Where(x => x.MaskId == maskId));
+            res.IsFavorite = main.FavoriteSystems.Any(x => x.SolarSystemId == systemId);
             return res;
         }
 
@@ -99,51 +102,7 @@ namespace EveVoid.Controllers
                     systemSig.Name = updateSig.Name;
                     systemSig.SignatureType = updateSig.SignatureType;
                 }
-                if (updateSig.SignatureType == SignatureType.Wormhole)
-                {
-                    systemSig.MassIndicator = updateSig.MassIndicator;
-                    systemSig.TimeRemainingIndicator = updateSig.TimeRemainingIndicator;
-                    systemSig.WormholeTypeId = updateSig.WormholeTypeId;
-                    _signatureService.Update(systemSig);
-                    if (updateSig.DestinationSystemId.HasValue)
-                    {
-                        var desto = _solarSystemService.GetSystemById(updateSig.DestinationSystemId.Value);
-                        systemSig.Name = desto.Name;
-                        var destoSig = desto.Signatures.FirstOrDefault(x => x.MaskId == maskId && x.Destination?.SystemId == system.Id);
-                        if (destoSig == null)
-                        {
-                            destoSig = new Signature
-                            {
-                                SignatureId = "???",
-                                ExpiryDate = systemSig.ExpiryDate,
-                                Name = system.Name,
-                                SignatureType = SignatureType.Wormhole,
-                                MaskId = maskId,
-                                WormholeTypeId = _signatureService.GetByTypeName("????").Id
-                            };
-                            desto.Signatures.Add(destoSig);
-                            _solarSystemService.UpdateSystem(desto);
-                        }
-                        if (updateSig.WormholeType != "K162" && updateSig.WormholeType != "????")
-                        {
-                            destoSig.WormholeTypeId = _signatureService.GetByTypeName("K162").Id;
-                        }
-                        systemSig.DestinationId = destoSig.Id;
-                        destoSig.DestinationId = systemSig.Id;
-                        destoSig.MassIndicator = systemSig.MassIndicator;
-                        destoSig.TimeRemainingIndicator = systemSig.TimeRemainingIndicator;
-                        _solarSystemService.UpdateSystem(desto);
-                    }
-                }
-                else
-                {
-                    if (systemSig.DestinationId.HasValue)
-                    {
-                        _signatureService.Delete(systemSig.DestinationId.Value);
-                    }
-                    systemSig.WormholeTypeId = null;
-                    systemSig.DestinationId = null;
-                }
+                _signatureService.WormholeSigUpdate(updateSig, systemSig, maskId);
             }
 
             _solarSystemService.UpdateSystem(system);

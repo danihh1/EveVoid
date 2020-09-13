@@ -51,7 +51,9 @@ namespace EveVoid
             services.AddScoped<ICorporationApi, CorporationApi>();
             services.AddScoped<ICorporationService, CorporationService>();
             services.AddScoped<IUniverseApi, UniverseApi>();
-            services.AddScoped<IShipService, ShipService>();
+            services.AddScoped<IItemTypeService, ItemTypeService>();
+            services.AddScoped<IItemGroupService, ItemGroupService>();
+            services.AddScoped<IItemCategoryService, ItemCategoryService>();
             services.AddScoped<IConstellationService, ConstellationService>();
             services.AddScoped<IRegionService, RegionService>();
             services.AddScoped<IStargateService, StargateService>();
@@ -59,6 +61,9 @@ namespace EveVoid
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<ILocationApi, LocationApi>();
             services.AddScoped<ISignatureService, SignatureService>();
+            services.AddScoped<ITagService, TagService>();
+            services.AddScoped<ISolarSystemStructureService, SolarSystemStructureService>();
+
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 var profiles = Assembly.GetExecutingAssembly().GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x));

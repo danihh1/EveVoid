@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace EveVoid.Models.Navigation
 {
-    public class Signature: IMasked, IHasUpdateTime, IHasCreationTime
+    public class Signature: IMasked, IHasUpdateTime, IHasCreationTime, IHasExpiry
     {
         public int Id { get; set; }
         public string Name { get; set; }

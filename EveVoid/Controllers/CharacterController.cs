@@ -77,8 +77,28 @@ namespace EveVoid.Controllers
             return Ok();
         }
 
+        [HttpPost("UpdateFavoriteSystem")]
+        public ActionResult UpdateFavoriteSystem(string mainToken, int systemId, bool favorite)
+        {
+            var main = _characterService.GetMainCharacterByToken(mainToken);
+            if (main == null)
+            {
+                return NotFound();
+            }
+            main.FavoriteSystems.RemoveAll(x => x.SolarSystemId == systemId);
+            if (favorite)
+            {
+                main.FavoriteSystems.Add(new FavoriteSystem
+                {
+                    SolarSystemId = systemId
+                });
+            }
+            _characterService.UpdateMainCharacter(main);
+            return Ok();
+        }
+
         [HttpPost("UpdateMapLayouts")]
-        public ActionResult UpdateMapLayouts(string mainToken, List<MapLayoutDto> dtos)
+        public ActionResult<List<MapLayoutDto>> UpdateMapLayouts(string mainToken, List<MapLayoutDto> dtos)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
             if (main == null)
@@ -106,7 +126,7 @@ namespace EveVoid.Controllers
                 }
             }
             _characterService.UpdateMainCharacter(main);
-            return Ok();
+            return Ok(_mapper.Map<List<MapLayoutDto>>(main.MapLayouts));
         }
     }
 }

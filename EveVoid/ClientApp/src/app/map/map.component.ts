@@ -1,3 +1,4 @@
+import { SolarSystemStructureDto } from './../api/models/solar-system-structure-dto';
 import { MapLayoutDto } from './../api/models/map-layout-dto';
 import { DeleteSigsSnackComponent } from './../delete-sigs-snack/delete-sigs-snack.component';
 import { WormholeTypeDto } from './../api/models/wormhole-type-dto';
@@ -5,11 +6,11 @@ import { PreferencesControl } from './../control/preferences-control';
 import { SigTypes } from './../control/constants/signature-types';
 import { SignatureDto } from './../api/models/signature-dto';
 import { SolarSystemDto } from './../api/models/solar-system-dto';
-import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, map, takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SolarySystemService, SignatureService } from '../api/services';
+import { SolarySystemService, SignatureService, TagService, CharacterService, SolarSystemStructureService } from '../api/services';
 import { AuthControl } from '../control/auth-control';
 import { Subscription, interval, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -47,15 +48,20 @@ export class MapComponent implements OnInit, OnDestroy {
     private authControl: AuthControl,
     private abbreviate: NumberAbbreviatePipe,
     public preferencesControl: PreferencesControl,
-    private dataControl: DataControl
+    private dataControl: DataControl,
+    private tagService: TagService,
+    private characterService: CharacterService,
+    private structureService: SolarSystemStructureService
   ) {
     this.signatureService.getApiSignatureGetWormholeTypes().subscribe(x => {
       this.wormholeTypes = x;
     });
     this.solarSystem = {} as SolarSystemDto;
     this.solarSystem.gates = [];
+    this.solarSystem.tags = [];
     this.solarSystem.signatures = [];
     this.solarSystem.pilots = [];
+    this.solarSystem.structures = [];
   }
 
   ngOnInit(): void {
@@ -66,37 +72,17 @@ export class MapComponent implements OnInit, OnDestroy {
         if (this.systemObserver) {
           this.systemObserver.unsubscribe();
         }
-        // this.systemObserver = interval(10000).subscribe(() => {
-        //   this.fetch();
-        // });
+        this.systemObserver = interval(10000).subscribe(() => {
+          this.fetch();
+        });
       }
     });
   }
 fetch() {
   this.fetchingData = true;
-  // this.route.paramMap
-  //   .pipe(
-  //     switchMap((val) => {
-  //       if (val.has('id')) {
-  //         return this.solarySystemService
-  //           .getApiSolarySystemGetSolarSystemById({
-  //             mainToken: this.authControl.getMainToken(),
-  //             systemId: parseInt(val.get('id')),
-  //           })
-  //           .pipe(
-  //             map((res) => {
-  //               return res;
-  //             })
-  //           );
-  //       } else {
-  //         this.goToSystem(this.preferencesControl.getMapSystem() && this.preferencesControl.getMapSystem().solarSystemId ?
-  //         this.preferencesControl.getMapSystem().solarSystemId : 30000142);
-  //       }
-  //     })
-  //   )
   this.solarySystemService.getApiSolarySystemGetSolarSystemById({
     mainToken: this.authControl.getMainToken(),
-    systemId: this.preferencesControl.getMapSystem().solarSystemId}).subscribe((data) => {
+    systemId: this.preferencesControl.getSelectedSystem().solarSystemId}).subscribe((data) => {
       this.fetchingData = false;
       if (data === null) {
         this.router.navigate(['./map']);
@@ -189,69 +175,93 @@ openSigDialog(id: number) {
     }
   }
   onPaste(event: ClipboardEvent) {
-    const pastedSigs: SignatureDto[] = [];
     const pasteText = event.clipboardData.getData('text');
     const pasteLines = pasteText.split('\n');
-    pasteLines.forEach(x => {
-      const pasteSig = x.split('\t');
-      if (pasteSig.length < 2) {
-        return;
-      }
-      const sigId = pasteSig[0];
-      const sigType = pasteSig[2];
-      const sigName = pasteSig[3];
-      const regex = /[A-Z]{3}-[0-9]{3}/g;
-      const sig = sigId.match(regex);
-      if (sig.length === 0) {
-        return;
-      }
-      const sigTypeMatch =  this.sigTypes.find(s => sigType.indexOf(s.name) > -1);
-      pastedSigs.push({
-        name: sigTypeMatch && sigTypeMatch.id === 1 ? '' : sigName,
-        signatureId: sig[0].split('-')[0],
-        signatureType: sigTypeMatch ? sigTypeMatch.id : 0,
-        expiryDate: new Date(Date.now() + (24 * 60 * 60 * 1000)).toJSON(),
-        wormholeType: '????',
-        // wormholeTypeId: this.wormholeTypes.find(w => w.name === '????').id,
-        creationDate: new Date().toJSON(),
-        jumps: []
-      } as SignatureDto);
-      // console.log(sig[0].split('-')[0]);
-    });
-    pastedSigs.forEach(x => {
-      const existIndex = this.solarSystem.signatures.findIndex(s => s.signatureId === x.signatureId);
-      if (existIndex > -1) {
-        const existSig = this.solarSystem.signatures[existIndex];
-        existSig.signatureType = x.signatureType;
-        if (x.signatureType !== 1) {
-          existSig.name = x.name;
-        }
-      } else {
-        this.solarSystem.signatures.push(x);
-      }
-    });
-    if (this.solarSystem.signatures.some(x =>
-      pastedSigs.findIndex(p => p.signatureId === x.signatureId) === -1 && x.signatureId !== '???')) {
-        const deleteSnack =  this.snackBar.openFromComponent(DeleteSigsSnackComponent, {
-          data: {signatures: this.solarSystem.signatures,
-            pastedData: pastedSigs
-          },
-          duration: 3000
+    const structureReg = /^(\d+)\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)/gm;
+    const matchStruct = pasteText.match(structureReg);
+    if (matchStruct) {
+      // Structure Paste
+      const pastedStructures: SolarSystemStructureDto[] = [];
+      matchStruct.forEach(match => {
+        const line = match.split('\t');
+        pastedStructures.push({
+          itemTypeId: parseInt(line[0], 10),
+          name: line[1],
+          solarSystemId: this.solarSystem.id
+        } as SolarSystemStructureDto);
+      });
+      this.structureService.postApiSolarSystemStructureInsertBulk({mainToken: this.authControl.getMainToken(), body: pastedStructures})
+        .subscribe(x => {
+          this.dataControl.forceMapUpdate();
         });
-        deleteSnack.onAction().subscribe(() => {
-          this.solarSystem.signatures = this.solarSystem.signatures.filter(x =>
-            pastedSigs.findIndex(p => p.signatureId === x.signatureId) > -1 || x.signatureId === '???');
-            this.solarySystemService.putApiSolarySystemUpdateSolarSystemSignatures({
-              mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
-                this.solarSystem = x;
-              });
+      return;
+    }
+    const sigReg = /^(\w{3})-(\d{3})\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)/gm;
+    const pastedSigReg = pasteText.match(sigReg);
+    if (pastedSigReg) {
+      // Signature Paste
+      const pastedSigs: SignatureDto[] = [];
+      pasteLines.forEach(x => {
+        const pasteSig = x.split('\t');
+        if (pasteSig.length < 2) {
+          return;
+        }
+        const sigId = pasteSig[0];
+        const sigType = pasteSig[2];
+        const sigName = pasteSig[3];
+        const regex = /[A-Z]{3}-[0-9]{3}/g;
+        const sig = sigId.match(regex);
+        if (!sig) {
+          return;
+        }
+        const sigTypeMatch =  this.sigTypes.find(s => sigType.indexOf(s.name) > -1);
+        pastedSigs.push({
+          name: sigTypeMatch && sigTypeMatch.id === 1 ? '' : sigName,
+          signatureId: sig[0].split('-')[0],
+          signatureType: sigTypeMatch ? sigTypeMatch.id : 0,
+          expiryDate: new Date(Date.now() + (24 * 60 * 60 * 1000)).toJSON(),
+          wormholeType: '????',
+          // wormholeTypeId: this.wormholeTypes.find(w => w.name === '????').id,
+          creationDate: new Date().toJSON(),
+          jumps: []
+        } as SignatureDto);
+        // console.log(sig[0].split('-')[0]);
+      });
+      pastedSigs.forEach(x => {
+        const existIndex = this.solarSystem.signatures.findIndex(s => s.signatureId === x.signatureId);
+        if (existIndex > -1) {
+          const existSig = this.solarSystem.signatures[existIndex];
+          existSig.signatureType = x.signatureType;
+          if (x.signatureType !== 1) {
+            existSig.name = x.name;
+          }
+        } else {
+          this.solarSystem.signatures.push(x);
+        }
+      });
+      if (this.solarSystem.signatures.some(x =>
+        pastedSigs.findIndex(p => p.signatureId === x.signatureId) === -1 && x.signatureId !== '???')) {
+          const deleteSnack =  this.snackBar.openFromComponent(DeleteSigsSnackComponent, {
+            data: {signatures: this.solarSystem.signatures,
+              pastedData: pastedSigs
+            },
+            duration: 3000
+          });
+          deleteSnack.onAction().subscribe(() => {
+            this.solarSystem.signatures = this.solarSystem.signatures.filter(x =>
+              pastedSigs.findIndex(p => p.signatureId === x.signatureId) > -1 || x.signatureId === '???');
+              this.solarySystemService.putApiSolarySystemUpdateSolarSystemSignatures({
+                mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
+                  this.solarSystem = x;
+                });
+          });
+      }
+      this.solarySystemService.putApiSolarySystemUpdateSolarSystemSignatures({
+        mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
+          this.solarSystem = x;
+          this.dataControl.forceMapUpdate();
         });
     }
-    this.solarySystemService.putApiSolarySystemUpdateSolarSystemSignatures({
-      mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
-        this.solarSystem = x;
-        this.dataControl.forceMapUpdate();
-      });
   }
   getTooltipForWormhole(type: SignatureDto): string {
     if (!type.wormholeType) {
@@ -266,5 +276,18 @@ openSigDialog(id: number) {
       }
     }
     return `Type: ${p.name}\n Duration: ${p.duration}\n Max Jump: ${this.abbreviate.transform(p.maxJump, 2)}\n Max Mass: ${this.abbreviate.transform(p.maxMass, 2)}\n LeadsTo: ${p.leadsTo}\n`;
+  }
+
+  deleteTag(tagId: number) {
+    this.tagService.deleteApiTag(tagId).subscribe(x => {
+      this.dataControl.forceMapUpdate();
+    });
+  }
+
+  updateFavorite(flag: boolean) {
+    this.characterService.postApiCharacterUpdateFavoriteSystem(
+      {systemId: this.solarSystem.id, mainToken: this.authControl.getMainToken(), favorite: flag}).subscribe(x => {
+        this.solarSystem.isFavorite = flag;
+      });
   }
 }

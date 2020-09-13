@@ -37,12 +37,11 @@ export class TabDialogComponent implements OnInit {
         return result;
       }));
   }
-  tabSystemSelected(name: string){
+  tabSystemSelected(name: string) {
     const selected = this.fetchedSystems.find(x => x.name === name);
     this.data.data.solarSystemId = selected.id;
     this.data.data.solarSystemName = selected.name;
   }
-
 
   onNoClick(): void {
     this.cancel();

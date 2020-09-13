@@ -49,7 +49,11 @@ import { MatRadioModule } from '@angular/material/radio';
 import { AutoJumpDialogComponent } from './auto-jump-dialog/auto-jump-dialog.component';
 import { DurationLeftPipe } from './pipes/duration-left.pipe';
 import { MatPaginatorModule } from '@angular/material/paginator';
-
+import { MatTabsModule } from '@angular/material/tabs';
+import { ContextMenuModule } from 'ngx-contextmenu';
+import { CustomTagDialogComponent } from './custom-tag-dialog/custom-tag-dialog.component';
+import { SystemStructureListComponent } from './system-structure-list/system-structure-list.component';
+import { SystemStructureDialogComponent } from './system-structure-dialog/system-structure-dialog.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -93,6 +97,9 @@ const routes: Routes = [
     AlphabetDirective,
     AutoJumpDialogComponent,
     DurationLeftPipe,
+    CustomTagDialogComponent,
+    SystemStructureListComponent,
+    SystemStructureDialogComponent,
   ],
   imports: [
     MatBadgeModule,
@@ -127,7 +134,9 @@ const routes: Routes = [
     MatRadioModule,
     RouterModule.forRoot(routes),
     BrowserAnimationsModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    ContextMenuModule.forRoot(),
+    MatTabsModule,
   ],
   providers: [NumberAbbreviatePipe, AlphabetDirective, DurationLeftPipe],
   bootstrap: [AppComponent]

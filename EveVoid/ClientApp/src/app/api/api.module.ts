@@ -7,8 +7,10 @@ import { AppDataService } from './services/app-data.service';
 import { CharacterService } from './services/character.service';
 import { MapService } from './services/map.service';
 import { SignatureService } from './services/signature.service';
+import { SolarSystemStructureService } from './services/solar-system-structure.service';
 import { SolarySystemService } from './services/solary-system.service';
 import { SSOService } from './services/sso.service';
+import { TagService } from './services/tag.service';
 
 /**
  * Provider for all Api services, plus ApiConfiguration
@@ -27,8 +29,10 @@ import { SSOService } from './services/sso.service';
     CharacterService,
     MapService,
     SignatureService,
+    SolarSystemStructureService,
     SolarySystemService,
-    SSOService
+    SSOService,
+    TagService
   ],
 })
 export class ApiModule {

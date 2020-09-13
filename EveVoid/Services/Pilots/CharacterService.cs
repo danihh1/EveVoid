@@ -26,7 +26,7 @@ namespace EveVoid.Services.Pilots
         public ILocationApi _locationApi { get; set; }
         public ICharacterApi _characterApi { get; set; }
         public ITokenService _tokenService { get; set; }
-        public IShipService _shipService { get; set; }
+        public IItemTypeService _itemTypeService { get; set; }
         public ISolarSystemService _solarSystemService { get; set; }
         public ISignatureService _signatureService { get; set; }
         public IStargateService _stargateService { get; set; }
@@ -37,7 +37,7 @@ namespace EveVoid.Services.Pilots
             ICharacterApi characterApi,
             ITokenService tokenService,
             ISolarSystemService solarSystemService,
-            IShipService shipService,
+            IItemTypeService itemTypeService,
             ISignatureService signatureService, 
             IStargateService stargateService)
         {
@@ -47,7 +47,7 @@ namespace EveVoid.Services.Pilots
             _characterApi = characterApi;
             _tokenService = tokenService;
             _solarSystemService = solarSystemService;
-            _shipService = shipService;
+            _itemTypeService = itemTypeService;
             _signatureService = signatureService;
             _stargateService = stargateService;
         }
@@ -234,14 +234,14 @@ namespace EveVoid.Services.Pilots
             }
             if (dto.CurrentShipTypeId.HasValue) 
             {
-                _shipService.GetShipById(dto.CurrentShipTypeId.Value);
+                _itemTypeService.GetItemTypeById(dto.CurrentShipTypeId.Value);
                 esi.CurrentShipTypeId = dto.CurrentShipTypeId;
             }
             if (dto.CurrentSystemId.HasValue)
             {
-                _context.Update(esi);
                 _solarSystemService.GetSystemById(dto.CurrentSystemId.Value);
                 esi.CurrentSystemId = dto.CurrentSystemId;
+                _context.Update(esi);
             }
             esi.CurrentShipName = dto.CurrentShipName;
             _context.SaveChanges();

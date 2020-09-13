@@ -53,7 +53,11 @@ export class PreferencesControl {
     }
   }
   public getSelectedSystem(): MapLayoutDto {
-    const res = JSON.parse(localStorage.getItem(SELECTED_SYSTEM));
+    let res = JSON.parse(localStorage.getItem(SELECTED_SYSTEM));
+    if (res) {
+      return res;
+    }
+    res = JSON.parse(localStorage.getItem(MAP_SYSTEM));
     if (res) {
       return res;
     }

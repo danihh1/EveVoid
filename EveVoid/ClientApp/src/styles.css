@@ -37,12 +37,54 @@ a:hover {
   color: white;
   font-weight: bold;
   background-color: transparent;
-  text-decoration: underline;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 a:active {
   color: white;
   font-weight: bold;
   background-color: transparent;
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.ngx-contextmenu .dropdown-menu {
+  border: solid 0.3px black;
+  background-color: #424242;
+  padding: 2px;
+  min-width: auto;
+}
+.ngx-contextmenu ul {
+  margin-left: 3px;
+}
+.ngx-contextmenu li {
+  display: block;
+  border-top: solid 0.3px black;
+  text-align: start;
+  min-width: auto;
+}
+.ngx-contextmenu li:first-child {
+  border-top:none;
+}
+.ngx-contextmenu a {
+  color: white;
+  font-weight: inherit;
+  background-color: transparent;
+  text-decoration: none;
+}
+.ngx-contextmenu a:hover {
+  color: white;
+  font-weight: bold;
+  background-color: transparent;
+}
+.hasSubMenu::before {
+  content:none !important;
+  font-size: 10px;
+  margin-left: 10px;
+}
+
+.mat-tab-label{
+  height: auto !important;
+  min-width: 0px !important;
+  padding: 0px 12px !important;
 }

@@ -36,7 +36,7 @@ namespace EveVoid.Controllers
         }
 
         [HttpPost("InsertSignature")]
-        public void InsertSignature(string mainToken, SignatureDto dto)
+        public ActionResult InsertSignature(string mainToken, SignatureDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
             var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
@@ -50,11 +50,12 @@ namespace EveVoid.Controllers
                 SystemId = dto.SystemId
             };
             _signatureService.Insert(newSig, commit: true);
-            WormholeSigUpdate(dto, newSig, maskId);
+            _signatureService.WormholeSigUpdate(dto, newSig, maskId);
+            return Ok();
         }
 
         [HttpPut("UpdateSignature")]
-        public void UpdateSignature(string mainToken, SignatureDto dto)
+        public ActionResult UpdateSignature(string mainToken, SignatureDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
             var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
@@ -63,13 +64,15 @@ namespace EveVoid.Controllers
             sig.ExpiryDate = dto.ExpiryDate;
             sig.Name = dto.Name;
             sig.SignatureType = dto.SignatureType;
-            WormholeSigUpdate(dto, sig, maskId);
+            _signatureService.WormholeSigUpdate(dto, sig, maskId);
+            return Ok();
         }
 
         [HttpDelete("")]
-        public void DeleteSignature(int sigId)
+        public ActionResult DeleteSignature(int sigId)
         {
             _signatureService.Delete(sigId, commit: true);
+            return Ok();
         }
 
         [HttpGet("GetSignatureById")]
@@ -112,95 +115,6 @@ namespace EveVoid.Controllers
         public List<WormholeTypeDto> GetWormholeTypes()
         {
             return _mapper.Map<List<WormholeTypeDto>>(_signatureService.GetWormholeTypes());
-        }
-
-        private void WormholeSigUpdate(SignatureDto dto, Signature sig, int maskId)
-        {
-            if (dto.SignatureType == SignatureType.Wormhole)
-            {
-                sig.MassIndicator = dto.MassIndicator;
-                if (sig.TimeRemainingIndicator != dto.TimeRemainingIndicator)
-                {
-                    switch (dto.TimeRemainingIndicator)
-                    {
-                        case TimeRemainingIndicator.EoL:
-                            {
-                                if (sig.ExpiryDate > DateTime.UtcNow.AddHours(4))
-                                {
-                                    sig.ExpiryDate = DateTime.UtcNow.AddHours(4);
-                                }
-                                break;
-                            }
-                        case TimeRemainingIndicator.Unset:
-                            {
-                                var baseHours = 24;
-                                if (sig.WormholeType != null)
-                                {
-                                    baseHours = int.Parse(Regex.Replace(sig.WormholeType.Duration, "[^0-9]+", string.Empty));
-                                    sig.ExpiryDate = sig.CreationDate.AddHours(baseHours);
-                                }
-                                break;
-                            }
-                    }
-                }
-                sig.TimeRemainingIndicator = dto.TimeRemainingIndicator;
-                sig.WormholeTypeId = dto.WormholeTypeId;
-                _signatureService.Update(sig);
-                if (dto.DestinationSystemId.HasValue)
-                {
-                    if (sig.DestinationId.HasValue && sig.Destination.SystemId != dto.DestinationSystemId)
-                    {
-                        _signatureService.Delete(sig.DestinationId.Value);
-                        sig.DestinationId = null;
-                        _signatureService.Update(sig, commit: true);
-                    }
-                    var desto = _solarSystemService.GetSystemById(dto.DestinationSystemId.Value);
-                    //sig.Name = desto.Name;
-                    var destoSig = desto.Signatures.FirstOrDefault(x => x.Id == sig.DestinationId); // desto.Signatures.FirstOrDefault(x => x.MaskId == maskId && x.Destination?.SystemId == dto.SystemId);
-                    if (destoSig == null)
-                    {
-                        destoSig = new Signature
-                        {
-                            SignatureId = "???",
-                            ExpiryDate = sig.ExpiryDate,
-                            Name = "",
-                            SignatureType = SignatureType.Wormhole,
-                            MaskId = maskId,
-                            WormholeTypeId = _signatureService.GetByTypeName("????").Id
-                        };
-                        desto.Signatures.Add(destoSig);
-                        _solarSystemService.UpdateSystem(desto);
-                    }
-                    if (dto.WormholeType != "K162" && dto.WormholeType != "????")
-                    {
-                        destoSig.WormholeTypeId = _signatureService.GetByTypeName("K162").Id;
-                    }
-                    sig.DestinationId = destoSig.Id;
-                    destoSig.DestinationId = sig.Id;
-                    destoSig.MassIndicator = sig.MassIndicator;
-                    destoSig.TimeRemainingIndicator = sig.TimeRemainingIndicator;
-                    destoSig.ExpiryDate = sig.ExpiryDate;
-                    _solarSystemService.UpdateSystem(desto);
-                }
-                else
-                {
-                    if (sig.DestinationId.HasValue)
-                    {
-                        _signatureService.Delete(sig.DestinationId.Value);
-                        sig.DestinationId = null;
-                    }
-                }
-            }
-            else
-            {
-                if (sig.DestinationId.HasValue)
-                {
-                    _signatureService.Delete(sig.DestinationId.Value);
-                    sig.DestinationId = null;
-                }
-                sig.WormholeTypeId = null;
-            }
-            _signatureService.Update(sig, commit: true);
         }
     }
 }

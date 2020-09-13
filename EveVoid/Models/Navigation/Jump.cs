@@ -19,6 +19,6 @@ namespace EveVoid.Models.Navigation
 
         public virtual Signature Wormhole { get; set; }
         public virtual EsiCharacter EsiCharacter { get; set; }
-        public virtual Ship Ship { get; set; }
+        public virtual ItemType Ship { get; set; }
     }
 }
