@@ -54,6 +54,10 @@ import { ContextMenuModule } from 'ngx-contextmenu';
 import { CustomTagDialogComponent } from './custom-tag-dialog/custom-tag-dialog.component';
 import { SystemStructureListComponent } from './system-structure-list/system-structure-list.component';
 import { SystemStructureDialogComponent } from './system-structure-dialog/system-structure-dialog.component';
+import { SystemNoteComponent } from './system-note/system-note.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { SystemNoteDialogComponent } from './system-note-dialog/system-note-dialog.component';
+import { NoSanitizePipe } from './pipes/no-sanitize';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -100,6 +104,9 @@ const routes: Routes = [
     CustomTagDialogComponent,
     SystemStructureListComponent,
     SystemStructureDialogComponent,
+    SystemNoteComponent,
+    SystemNoteDialogComponent,
+    NoSanitizePipe
   ],
   imports: [
     MatBadgeModule,
@@ -137,8 +144,9 @@ const routes: Routes = [
     MatPaginatorModule,
     ContextMenuModule.forRoot(),
     MatTabsModule,
+    CKEditorModule
   ],
-  providers: [NumberAbbreviatePipe, AlphabetDirective, DurationLeftPipe],
+  providers: [NumberAbbreviatePipe, AlphabetDirective, DurationLeftPipe, NoSanitizePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -14,7 +14,6 @@ namespace EveVoid.Models.Navigation.MapObjects
         public int MainCharacterId { get; set; }
         public int SolarSystemId { get; set; }
         public int MaskId { get; set; }
-        public string Title { get; set; }
         public string Content { get; set; }
         public DateTime LastUpdate { get; set; }
         public DateTime CreationDate { get; set; }

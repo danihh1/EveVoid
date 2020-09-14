@@ -31,9 +31,10 @@ export class MapTabLayoutComponent implements OnInit, OnDestroy {
       if (mainChar) {
         this.tabs = mainChar.mapLayouts;
       }
-      //this.dataControl.forceMapUpdate();
+      // this.dataControl.forceMapUpdate();
     });
-    // this.characterService.postApiCharacterUpdateMapLayouts({mainToken: this.authControl.getMainToken(), body: this.tabs }).subscribe(x => {
+    // this.characterService.postApiCharacterUpdateMapLayouts({mainToken: this.authControl.getMainToken(), body: this.tabs })
+    // .subscribe(x => {
     //   console.log('success');
     // });
   }

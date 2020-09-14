@@ -5,5 +5,5 @@ export interface SolarSystemNoteDto {
   id?: number;
   lastUpdate?: string;
   mainCharacterName?: string;
-  title?: string;
+  solarSystemId?: number;
 }

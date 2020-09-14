@@ -21,7 +21,7 @@ namespace EveVoid.Controllers
 
         public SolarSystemStructureController(IMapper mapper,
             ICharacterService characterService,
-            ISolarSystemStructureService solarSystemStructureService, 
+            ISolarSystemStructureService solarSystemStructureService,
             IItemTypeService itemTypeService)
         {
             _mapper = mapper;
@@ -85,7 +85,7 @@ namespace EveVoid.Controllers
             var main = _characterService.GetMainCharacterByToken(mainToken);
             var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
             var addList = new List<SolarSystemStructure>();
-            foreach(var dto in dtos)
+            foreach (var dto in dtos)
             {
                 var itemType = _itemTypeService.GetItemTypeById(dto.ItemTypeId);
                 if (itemType.ItemGroup.ItemCategory.Name == "Structure")

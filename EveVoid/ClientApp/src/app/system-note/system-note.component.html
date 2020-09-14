@@ -1,0 +1,16 @@
+<button mat-button (click)="openNoteDialog()">Add Note</button>
+<perfect-scrollbar style="max-height: calc(100vh - 300px);">
+  <mat-card *ngFor="let note of noteList" style="margin-bottom: 5px;">
+      <mat-card-content>
+        <div [innerHTML]="note.content | noSanitize"></div>
+      </mat-card-content>
+      <mat-card-actions align="start" fxLayout="row" fxLayoutAlign="space-around start">
+        <button mat-button (click)="openNoteDialog(note)">Edit</button>
+        <button mat-button (click)="deleteNote(note.id)">Delete</button>
+      </mat-card-actions>
+      <mat-card-footer>
+          Created by {{note.mainCharacterName}} at {{note.creationDate | date: 'HH:mm dd/MM/yyyy'}}
+      </mat-card-footer>
+  </mat-card>
+</perfect-scrollbar>
+

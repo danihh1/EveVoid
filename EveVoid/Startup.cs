@@ -63,6 +63,8 @@ namespace EveVoid
             services.AddScoped<ISignatureService, SignatureService>();
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<ISolarSystemStructureService, SolarSystemStructureService>();
+            services.AddScoped<ISolarSystemNoteService, SolarSystemNoteService>();
+            
 
             var mapperConfig = new MapperConfiguration(mc =>
             {

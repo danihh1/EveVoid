@@ -29,9 +29,9 @@ export const TagColorOptions: string[] = [
 
 export const EffectIcons: TagType[] = [
   {name: 'Pulsar', icon: 'flare', color: 'deepskyblue'},
-  {name: 'Black Hole', icon: 'lens', color: 'crimson'},
+  {name: 'Black Hole', icon: 'album', color: 'crimson'},
   {name: 'Cataclysmic Variable', icon: 'healing', color: 'mediumseagreen'},
   {name: 'Magnetar', icon: 'filter_tilt_shift', color: 'peru'},
   {name: 'Red Giant', icon: 'motion_photos_on', color: 'red'},
-  {name: 'Wolf-Rayet Star', icon: 'pages', color: 'khaki'}
-]
+  {name: 'Wolf-Rayet Star', icon: 'donut_small', color: 'khaki'}
+];

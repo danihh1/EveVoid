@@ -94,7 +94,7 @@ export class MapGraphComponent implements OnInit, OnDestroy {
     if (systemId > 10000000) {
       this.preferencesControl.setSelectedSystem({solarSystemId: systemId});
       this.dataControl.forceMapUpdate();
-      //this.router.navigate(['./map/' + systemId]);
+      // this.router.navigate(['./map/' + systemId]);
     }
   }
   ngOnDestroy() {

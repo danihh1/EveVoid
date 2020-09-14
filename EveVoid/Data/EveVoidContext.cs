@@ -39,6 +39,7 @@ namespace EveVoid.Data
         public DbSet<MapLayout> MapLayouts { get; set; }
         public DbSet<SolarSystemTag> SolarSystemTags { get; set; }
         public DbSet<SolarSystemStructure> SolarSystemStructures { get; set; }
+        public DbSet<SolarSystemNote> SolarSystemNotes { get; set; }
         public DbSet<ItemType> ItemTypes { get; set; }
         public DbSet<ItemGroup> ItemGroups { get; set; }
         public DbSet<ItemCategory> ItemCategories { get; set; }

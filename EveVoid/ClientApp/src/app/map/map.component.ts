@@ -72,9 +72,9 @@ export class MapComponent implements OnInit, OnDestroy {
         if (this.systemObserver) {
           this.systemObserver.unsubscribe();
         }
-        this.systemObserver = interval(10000).subscribe(() => {
-          this.fetch();
-        });
+        // this.systemObserver = interval(10000).subscribe(() => {
+        //   this.fetch();
+        // });
       }
     });
   }
