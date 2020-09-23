@@ -8,6 +8,19 @@ namespace EveVoid.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "ItemCategories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    LastUpdate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemCategories", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Regions",
                 columns: table => new
                 {
@@ -18,20 +31,6 @@ namespace EveVoid.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Regions", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Ships",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Mass = table.Column<double>(nullable: false),
-                    LastUpdate = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Ships", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,7 +47,26 @@ namespace EveVoid.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Constellaions",
+                name: "ItemGroups",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false),
+                    ItemCategoryId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    LastUpdate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemGroups", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemGroups_ItemCategories_ItemCategoryId",
+                        column: x => x.ItemCategoryId,
+                        principalTable: "ItemCategories",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Constellations",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
@@ -58,9 +76,9 @@ namespace EveVoid.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Constellaions", x => x.Id);
+                    table.PrimaryKey("PK_Constellations", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Constellaions_Regions_RegionId",
+                        name: "FK_Constellations_Regions_RegionId",
                         column: x => x.RegionId,
                         principalTable: "Regions",
                         principalColumn: "Id",
@@ -92,6 +110,27 @@ namespace EveVoid.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ItemTypes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false),
+                    ItemGroupId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    Mass = table.Column<double>(nullable: false),
+                    LastUpdate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemTypes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemTypes_ItemGroups_ItemGroupId",
+                        column: x => x.ItemGroupId,
+                        principalTable: "ItemGroups",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SolarSystems",
                 columns: table => new
                 {
@@ -100,16 +139,17 @@ namespace EveVoid.Migrations
                     Class = table.Column<int>(nullable: false),
                     Security = table.Column<double>(nullable: false),
                     SystemTypeId = table.Column<int>(nullable: false),
-                    ConstellaionId = table.Column<int>(nullable: false),
-                    LastUpdate = table.Column<DateTime>(nullable: false)
+                    ConstellationId = table.Column<int>(nullable: false),
+                    LastUpdate = table.Column<DateTime>(nullable: false),
+                    SystemEffect = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SolarSystems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SolarSystems_Constellaions_ConstellaionId",
-                        column: x => x.ConstellaionId,
-                        principalTable: "Constellaions",
+                        name: "FK_SolarSystems_Constellations_ConstellationId",
+                        column: x => x.ConstellationId,
+                        principalTable: "Constellations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -237,9 +277,9 @@ namespace EveVoid.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_EsiCharacters_Ships_CurrentShipTypeId",
+                        name: "FK_EsiCharacters_ItemTypes_CurrentShipTypeId",
                         column: x => x.CurrentShipTypeId,
-                        principalTable: "Ships",
+                        principalTable: "ItemTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -252,6 +292,32 @@ namespace EveVoid.Migrations
                         name: "FK_EsiCharacters_MainCharacters_MainCharacterId",
                         column: x => x.MainCharacterId,
                         principalTable: "MainCharacters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FavoriteSystem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    MainCharacterId = table.Column<int>(nullable: false),
+                    SolarSystemId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FavoriteSystem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_FavoriteSystem_MainCharacters_MainCharacterId",
+                        column: x => x.MainCharacterId,
+                        principalTable: "MainCharacters",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_FavoriteSystem_SolarSystems_SolarSystemId",
+                        column: x => x.SolarSystemId,
+                        principalTable: "SolarSystems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -302,6 +368,26 @@ namespace EveVoid.Migrations
                         principalTable: "Corporations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AdjacencyMatrix",
+                columns: table => new
+                {
+                    RowNumber = table.Column<int>(nullable: false),
+                    ColumnNumber = table.Column<int>(nullable: false),
+                    MaskId = table.Column<int>(nullable: false),
+                    Distance = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AdjacencyMatrix", x => new { x.RowNumber, x.ColumnNumber, x.MaskId });
+                    table.ForeignKey(
+                        name: "FK_AdjacencyMatrix_Masks_MaskId",
+                        column: x => x.MaskId,
+                        principalTable: "Masks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -371,34 +457,7 @@ namespace EveVoid.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "SolarSystemFlares",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(nullable: true),
-                    Color = table.Column<string>(nullable: true),
-                    MaskId = table.Column<int>(nullable: false),
-                    SolarSystemId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SolarSystemFlares", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SolarSystemFlares_Masks_MaskId",
-                        column: x => x.MaskId,
-                        principalTable: "Masks",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SolarSystemFlares_SolarSystems_SolarSystemId",
-                        column: x => x.SolarSystemId,
-                        principalTable: "SolarSystems",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SolarSystemNote",
+                name: "SolarSystemNotes",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -406,31 +465,96 @@ namespace EveVoid.Migrations
                     MainCharacterId = table.Column<int>(nullable: false),
                     SolarSystemId = table.Column<int>(nullable: false),
                     MaskId = table.Column<int>(nullable: false),
-                    Title = table.Column<string>(nullable: true),
                     Content = table.Column<string>(nullable: true),
                     LastUpdate = table.Column<DateTime>(nullable: false),
                     CreationDate = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SolarSystemNote", x => x.Id);
+                    table.PrimaryKey("PK_SolarSystemNotes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SolarSystemNote_MainCharacters_MainCharacterId",
+                        name: "FK_SolarSystemNotes_MainCharacters_MainCharacterId",
                         column: x => x.MainCharacterId,
                         principalTable: "MainCharacters",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_SolarSystemNote_Masks_MaskId",
+                        name: "FK_SolarSystemNotes_Masks_MaskId",
                         column: x => x.MaskId,
                         principalTable: "Masks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SolarSystemNote_SolarSystems_SolarSystemId",
+                        name: "FK_SolarSystemNotes_SolarSystems_SolarSystemId",
                         column: x => x.SolarSystemId,
                         principalTable: "SolarSystems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SolarSystemStructures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    LastUpdate = table.Column<DateTime>(nullable: false),
+                    ItemTypeId = table.Column<int>(nullable: false),
+                    MaskId = table.Column<int>(nullable: false),
+                    SolarSystemId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SolarSystemStructures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SolarSystemStructures_ItemTypes_ItemTypeId",
+                        column: x => x.ItemTypeId,
+                        principalTable: "ItemTypes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_SolarSystemStructures_Masks_MaskId",
+                        column: x => x.MaskId,
+                        principalTable: "Masks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SolarSystemStructures_SolarSystems_SolarSystemId",
+                        column: x => x.SolarSystemId,
+                        principalTable: "SolarSystems",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SolarSystemTags",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(nullable: true),
+                    Color = table.Column<string>(nullable: true),
+                    Icon = table.Column<string>(nullable: true),
+                    MaskId = table.Column<int>(nullable: false),
+                    SolarSystemId = table.Column<int>(nullable: false),
+                    CreationDate = table.Column<DateTime>(nullable: false),
+                    LastUpdate = table.Column<DateTime>(nullable: false),
+                    ExpiryDate = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SolarSystemTags", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SolarSystemTags_Masks_MaskId",
+                        column: x => x.MaskId,
+                        principalTable: "Masks",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SolarSystemTags_SolarSystems_SolarSystemId",
+                        column: x => x.SolarSystemId,
+                        principalTable: "SolarSystems",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -461,9 +585,9 @@ namespace EveVoid.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_StargateJumps_Ships_ShipId",
+                        name: "FK_StargateJumps_ItemTypes_ShipId",
                         column: x => x.ShipId,
-                        principalTable: "Ships",
+                        principalTable: "ItemTypes",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_StargateJumps_Stargates_StargateId",
@@ -493,9 +617,9 @@ namespace EveVoid.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Jumps_Ships_ShipId",
+                        name: "FK_Jumps_ItemTypes_ShipId",
                         column: x => x.ShipId,
-                        principalTable: "Ships",
+                        principalTable: "ItemTypes",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Jumps_Signatures_WormholeId",
@@ -505,14 +629,24 @@ namespace EveVoid.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Masks",
+                columns: new[] { "Id", "AllianceId", "CorporationId" },
+                values: new object[] { -1, null, null });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AdjacencyMatrix_MaskId",
+                table: "AdjacencyMatrix",
+                column: "MaskId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Alliances_MaskId",
                 table: "Alliances",
                 column: "MaskId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Constellaions_RegionId",
-                table: "Constellaions",
+                name: "IX_Constellations_RegionId",
+                table: "Constellations",
                 column: "RegionId");
 
             migrationBuilder.CreateIndex(
@@ -544,6 +678,26 @@ namespace EveVoid.Migrations
                 name: "IX_EsiCharacters_MainCharacterId",
                 table: "EsiCharacters",
                 column: "MainCharacterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteSystem_MainCharacterId",
+                table: "FavoriteSystem",
+                column: "MainCharacterId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_FavoriteSystem_SolarSystemId",
+                table: "FavoriteSystem",
+                column: "SolarSystemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemGroups_ItemCategoryId",
+                table: "ItemGroups",
+                column: "ItemCategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ItemTypes_ItemGroupId",
+                table: "ItemTypes",
+                column: "ItemGroupId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Jumps_EsiCharacterId",
@@ -606,39 +760,54 @@ namespace EveVoid.Migrations
                 column: "WormholeTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SolarSystemFlares_MaskId",
-                table: "SolarSystemFlares",
-                column: "MaskId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SolarSystemFlares_SolarSystemId",
-                table: "SolarSystemFlares",
-                column: "SolarSystemId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SolarSystemNote_MainCharacterId",
-                table: "SolarSystemNote",
+                name: "IX_SolarSystemNotes_MainCharacterId",
+                table: "SolarSystemNotes",
                 column: "MainCharacterId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SolarSystemNote_MaskId",
-                table: "SolarSystemNote",
+                name: "IX_SolarSystemNotes_MaskId",
+                table: "SolarSystemNotes",
                 column: "MaskId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SolarSystemNote_SolarSystemId",
-                table: "SolarSystemNote",
+                name: "IX_SolarSystemNotes_SolarSystemId",
+                table: "SolarSystemNotes",
                 column: "SolarSystemId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SolarSystems_ConstellaionId",
+                name: "IX_SolarSystems_ConstellationId",
                 table: "SolarSystems",
-                column: "ConstellaionId");
+                column: "ConstellationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SolarSystems_SystemTypeId",
                 table: "SolarSystems",
                 column: "SystemTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemStructures_ItemTypeId",
+                table: "SolarSystemStructures",
+                column: "ItemTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemStructures_MaskId",
+                table: "SolarSystemStructures",
+                column: "MaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemStructures_SolarSystemId",
+                table: "SolarSystemStructures",
+                column: "SolarSystemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemTags_MaskId",
+                table: "SolarSystemTags",
+                column: "MaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SolarSystemTags_SolarSystemId",
+                table: "SolarSystemTags",
+                column: "SolarSystemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StargateJumps_EsiCharacterId",
@@ -720,16 +889,25 @@ namespace EveVoid.Migrations
                 table: "Corporations");
 
             migrationBuilder.DropTable(
+                name: "AdjacencyMatrix");
+
+            migrationBuilder.DropTable(
+                name: "FavoriteSystem");
+
+            migrationBuilder.DropTable(
                 name: "Jumps");
 
             migrationBuilder.DropTable(
                 name: "MapLayouts");
 
             migrationBuilder.DropTable(
-                name: "SolarSystemFlares");
+                name: "SolarSystemNotes");
 
             migrationBuilder.DropTable(
-                name: "SolarSystemNote");
+                name: "SolarSystemStructures");
+
+            migrationBuilder.DropTable(
+                name: "SolarSystemTags");
 
             migrationBuilder.DropTable(
                 name: "StargateJumps");
@@ -750,7 +928,7 @@ namespace EveVoid.Migrations
                 name: "WormholeTypes");
 
             migrationBuilder.DropTable(
-                name: "Ships");
+                name: "ItemTypes");
 
             migrationBuilder.DropTable(
                 name: "MainCharacters");
@@ -759,10 +937,16 @@ namespace EveVoid.Migrations
                 name: "SolarSystems");
 
             migrationBuilder.DropTable(
-                name: "Constellaions");
+                name: "ItemGroups");
+
+            migrationBuilder.DropTable(
+                name: "Constellations");
 
             migrationBuilder.DropTable(
                 name: "SystemTypes");
+
+            migrationBuilder.DropTable(
+                name: "ItemCategories");
 
             migrationBuilder.DropTable(
                 name: "Regions");

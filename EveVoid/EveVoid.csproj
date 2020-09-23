@@ -53,6 +53,26 @@
   <ItemGroup>
     <Compile Remove="Migrations\20200909114040_InitialCreate.cs" />
     <Compile Remove="Migrations\20200909114040_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200909115114_InitialCreate.cs" />
+    <Compile Remove="Migrations\20200909115114_InitialCreate.Designer.cs" />
+    <Compile Remove="Migrations\20200910082530_Tags.cs" />
+    <Compile Remove="Migrations\20200910082530_Tags.Designer.cs" />
+    <Compile Remove="Migrations\20200913075632_SystemStructures.cs" />
+    <Compile Remove="Migrations\20200913075632_SystemStructures.Designer.cs" />
+    <Compile Remove="Migrations\20200913100908_TypeGroupCategoryChange.cs" />
+    <Compile Remove="Migrations\20200913100908_TypeGroupCategoryChange.Designer.cs" />
+    <Compile Remove="Migrations\20200913113725_ItemTypeId_SolarSysStruc.cs" />
+    <Compile Remove="Migrations\20200913113725_ItemTypeId_SolarSysStruc.Designer.cs" />
+    <Compile Remove="Migrations\20200913142137_SystemEffect.cs" />
+    <Compile Remove="Migrations\20200913142137_SystemEffect.Designer.cs" />
+    <Compile Remove="Migrations\20200914094824_SystemNotes.cs" />
+    <Compile Remove="Migrations\20200914094824_SystemNotes.Designer.cs" />
+    <Compile Remove="Migrations\20200917130238_Matrix.cs" />
+    <Compile Remove="Migrations\20200917130238_Matrix.Designer.cs" />
+    <Compile Remove="Migrations\20200917130525_Matrix.cs" />
+    <Compile Remove="Migrations\20200917130525_Matrix.Designer.cs" />
+    <Compile Remove="Migrations\20200917132107_MatrixIdRemove.cs" />
+    <Compile Remove="Migrations\20200917132107_MatrixIdRemove.Designer.cs" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EveVoid.Migrations
 {
     [DbContext(typeof(EveVoidContext))]
-    [Migration("20200909115114_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20200920121959_SystemTypeColor")]
+    partial class SystemTypeColor
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -68,9 +68,52 @@ namespace EveVoid.Migrations
                     b.ToTable("Corporations");
                 });
 
-            modelBuilder.Entity("EveVoid.Models.EveObjects.Ship", b =>
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemCategory", b =>
                 {
                     b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemCategories");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemGroup", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ItemCategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemCategoryId");
+
+                    b.ToTable("ItemGroups");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemType", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ItemGroupId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
@@ -84,7 +127,9 @@ namespace EveVoid.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Ships");
+                    b.HasIndex("ItemGroupId");
+
+                    b.ToTable("ItemTypes");
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.Jump", b =>
@@ -135,7 +180,7 @@ namespace EveVoid.Migrations
 
                     b.HasIndex("RegionId");
 
-                    b.ToTable("Constellaions");
+                    b.ToTable("Constellations");
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.Region", b =>
@@ -162,7 +207,7 @@ namespace EveVoid.Migrations
                     b.Property<int>("Class")
                         .HasColumnType("int");
 
-                    b.Property<int>("ConstellaionId")
+                    b.Property<int>("ConstellationId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdate")
@@ -174,44 +219,19 @@ namespace EveVoid.Migrations
                     b.Property<double>("Security")
                         .HasColumnType("float");
 
+                    b.Property<string>("SystemEffect")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("SystemTypeId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ConstellaionId");
+                    b.HasIndex("ConstellationId");
 
                     b.HasIndex("SystemTypeId");
 
                     b.ToTable("SolarSystems");
-                });
-
-            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemFlare", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Color")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("MaskId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("SolarSystemId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MaskId");
-
-                    b.HasIndex("SolarSystemId");
-
-                    b.ToTable("SolarSystemFlares");
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemNote", b =>
@@ -239,9 +259,6 @@ namespace EveVoid.Migrations
                     b.Property<int>("SolarSystemId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MainCharacterId");
@@ -250,7 +267,86 @@ namespace EveVoid.Migrations
 
                     b.HasIndex("SolarSystemId");
 
-                    b.ToTable("SolarSystemNote");
+                    b.ToTable("SolarSystemNotes");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemStructure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ItemTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SolarSystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemTypeId");
+
+                    b.HasIndex("MaskId");
+
+                    b.HasIndex("SolarSystemId");
+
+                    b.ToTable("SolarSystemStructures");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemTag", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("MaskId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SolarSystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MaskId");
+
+                    b.HasIndex("SolarSystemId");
+
+                    b.ToTable("SolarSystemTags");
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.Stargate", b =>
@@ -283,6 +379,9 @@ namespace EveVoid.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Color")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -311,6 +410,33 @@ namespace EveVoid.Migrations
                     b.HasIndex("CorporationId");
 
                     b.ToTable("Masks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1
+                        });
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.Matrix.AdjacencyMatrix", b =>
+                {
+                    b.Property<int>("RowNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColumnNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MaskId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Distance")
+                        .HasColumnType("int");
+
+                    b.HasKey("RowNumber", "ColumnNumber", "MaskId");
+
+                    b.HasIndex("MaskId");
+
+                    b.ToTable("AdjacencyMatrix");
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.Signature", b =>
@@ -509,6 +635,28 @@ namespace EveVoid.Migrations
                     b.ToTable("EsiCharacters");
                 });
 
+            modelBuilder.Entity("EveVoid.Models.Pilots.FavoriteSystem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("MainCharacterId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SolarSystemId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MainCharacterId");
+
+                    b.HasIndex("SolarSystemId");
+
+                    b.ToTable("FavoriteSystem");
+                });
+
             modelBuilder.Entity("EveVoid.Models.Pilots.MainCharacter", b =>
                 {
                     b.Property<int>("Id")
@@ -595,6 +743,24 @@ namespace EveVoid.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemGroup", b =>
+                {
+                    b.HasOne("EveVoid.Models.EveObjects.ItemCategory", "ItemCategory")
+                        .WithMany("ItemGroups")
+                        .HasForeignKey("ItemCategoryId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.EveObjects.ItemType", b =>
+                {
+                    b.HasOne("EveVoid.Models.EveObjects.ItemGroup", "ItemGroup")
+                        .WithMany("ItemTypes")
+                        .HasForeignKey("ItemGroupId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("EveVoid.Models.Navigation.Jump", b =>
                 {
                     b.HasOne("EveVoid.Models.Pilots.EsiCharacter", "EsiCharacter")
@@ -603,7 +769,7 @@ namespace EveVoid.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("EveVoid.Models.EveObjects.Ship", "Ship")
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "Ship")
                         .WithMany()
                         .HasForeignKey("ShipId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -619,7 +785,7 @@ namespace EveVoid.Migrations
             modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.Constellation", b =>
                 {
                     b.HasOne("EveVoid.Models.Navigation.MapObjects.Region", "Region")
-                        .WithMany("Constellaions")
+                        .WithMany("Constellations")
                         .HasForeignKey("RegionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -627,9 +793,9 @@ namespace EveVoid.Migrations
 
             modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystem", b =>
                 {
-                    b.HasOne("EveVoid.Models.Navigation.MapObjects.Constellation", "Constellaion")
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.Constellation", "Constellation")
                         .WithMany("SolarSystems")
-                        .HasForeignKey("ConstellaionId")
+                        .HasForeignKey("ConstellationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -637,21 +803,6 @@ namespace EveVoid.Migrations
                         .WithMany()
                         .HasForeignKey("SystemTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemFlare", b =>
-                {
-                    b.HasOne("EveVoid.Models.Navigation.Masks.Mask", "Mask")
-                        .WithMany()
-                        .HasForeignKey("MaskId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
-                        .WithMany("Flares")
-                        .HasForeignKey("SolarSystemId")
-                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -673,6 +824,42 @@ namespace EveVoid.Migrations
                         .WithMany("Notes")
                         .HasForeignKey("SolarSystemId")
                         .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemStructure", b =>
+                {
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "ItemType")
+                        .WithMany()
+                        .HasForeignKey("ItemTypeId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.Masks.Mask", "Mask")
+                        .WithMany()
+                        .HasForeignKey("MaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
+                        .WithMany("Structures")
+                        .HasForeignKey("SolarSystemId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.MapObjects.SolarSystemTag", b =>
+                {
+                    b.HasOne("EveVoid.Models.Navigation.Masks.Mask", "Mask")
+                        .WithMany()
+                        .HasForeignKey("MaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
+                        .WithMany("Tags")
+                        .HasForeignKey("SolarSystemId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
                 });
 
@@ -698,6 +885,15 @@ namespace EveVoid.Migrations
                     b.HasOne("EveVoid.Models.EveObjects.Corporation", "Corporation")
                         .WithMany()
                         .HasForeignKey("CorporationId");
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Navigation.Matrix.AdjacencyMatrix", b =>
+                {
+                    b.HasOne("EveVoid.Models.Navigation.Masks.Mask", "Mask")
+                        .WithMany()
+                        .HasForeignKey("MaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("EveVoid.Models.Navigation.Signature", b =>
@@ -739,7 +935,7 @@ namespace EveVoid.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("EveVoid.Models.EveObjects.Ship", "Ship")
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "Ship")
                         .WithMany()
                         .HasForeignKey("ShipId")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -782,7 +978,7 @@ namespace EveVoid.Migrations
                         .WithMany("EsiCharacters")
                         .HasForeignKey("CorporationId");
 
-                    b.HasOne("EveVoid.Models.EveObjects.Ship", "CurrentShip")
+                    b.HasOne("EveVoid.Models.EveObjects.ItemType", "CurrentShip")
                         .WithMany()
                         .HasForeignKey("CurrentShipTypeId");
 
@@ -793,6 +989,21 @@ namespace EveVoid.Migrations
                     b.HasOne("EveVoid.Models.Pilots.MainCharacter", "MainCharacter")
                         .WithMany("EsiCharacters")
                         .HasForeignKey("MainCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("EveVoid.Models.Pilots.FavoriteSystem", b =>
+                {
+                    b.HasOne("EveVoid.Models.Pilots.MainCharacter", "MainCharacter")
+                        .WithMany("FavoriteSystems")
+                        .HasForeignKey("MainCharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("EveVoid.Models.Navigation.MapObjects.SolarSystem", "SolarSystem")
+                        .WithMany()
+                        .HasForeignKey("SolarSystemId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -61,9 +61,9 @@ namespace EveVoid.Controllers
                     MaxJump = x.WormholeType.MaxJump,
                     MaxMass = x.WormholeType.MaxMass,
                     LeadsTo = x.WormholeType.LeadsTo.Name,
-                    Color = SystemTypeColor(x.WormholeType.LeadsTo.Name)
+                    Color = x.WormholeType.LeadsTo.Color
                 }).ToList(),
-                SystemTypeColor = SystemTypeColor(system.SystemType?.Name),
+                SystemTypeColor = system.SystemType?.Color,
                 Pilots = system.Pilots.Select(x => new ActivePilotDto
                 {
                     Name = x.Name,
@@ -131,65 +131,7 @@ namespace EveVoid.Controllers
             return res;
         }
 
-        private string SystemTypeColor(string systemType)
-        {
-            var res = "";
-            switch (systemType)
-            {
-
-                case "Class 3":
-                case "Unknown":
-                case "Class 1":
-                case "Class 2":
-                case "Class 15":
-                case "Class 17":
-                case "Class 18":
-                case "Class 14":
-                case "Class 16":
-                case "Class 13":
-                default:
-                    {
-                        res = "#1f88ff";
-                        break;
-                    }
-                case "High-Sec":
-                    {
-                        res = "#1fff1f";
-                        break;
-                    }
-                case "Low-Sec":
-                    {
-                        res = "#ffc71f";
-                        break;
-                    }
-                case "Thera":
-                    {
-                        res = "#fffb1f";
-                        break;
-                    }
-                case "Class 5":
-                    {
-                        res = "#ff7d1f";
-                        break;
-                    }
-                case "Class 6":
-                    {
-                        res = "#ff1f4c";
-                        break;
-                    }
-                case "Class 4":
-                    {
-                        res = "#b81fff";
-                        break;
-                    }
-                case "Null-Sec":
-                    {
-                        res = "#ff1f1f";
-                        break;
-                    }
-            };
-            return res;
-        }
+        
         private string WormholeColorBasedOnRemainingMass(Signature signature)
         {
             var dto = _mapper.Map<SignatureDto>(signature);

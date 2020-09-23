@@ -1,6 +1,7 @@
 ﻿using EveVoid.Data;
 using EveVoid.Dto;
 using EveVoid.Models.Navigation;
+using EveVoid.Models.Navigation.Matrix;
 using EveVoid.Services.Navigation.MapObjects;
 using System;
 using System.Collections.Generic;
@@ -14,12 +15,16 @@ namespace EveVoid.Services.Navigation
     {
         public EveVoidContext _context { get; set; }
         public ISolarSystemService _solarSystemService { get; set; }
+        public IRouteService _routeService { get; set; }
 
-        public SignatureService(EveVoidContext context, 
-            ISolarSystemService solarSystemService)
+
+        public SignatureService(EveVoidContext context,
+            ISolarSystemService solarSystemService, 
+            IRouteService routeService)
         {
             _context = context;
             _solarSystemService = solarSystemService;
+            _routeService = routeService;
         }
 
         public Signature GetBySignatureId(int id)
@@ -51,6 +56,7 @@ namespace EveVoid.Services.Navigation
             if (sig.DestinationId != null)
             {
                 var dest = sig.Destination;
+                _routeService.RemoveAdjacency(sig.SystemId, dest.SystemId, sig.MaskId);
                 dest.DestinationId = null;
                 sig.DestinationId = null;
                 Update(dest);
@@ -111,7 +117,7 @@ namespace EveVoid.Services.Navigation
                 }
                 sig.TimeRemainingIndicator = dto.TimeRemainingIndicator;
                 sig.WormholeTypeId = dto.WormholeTypeId;
-                Update(sig);
+                Update(sig, commit: true);
                 if (dto.DestinationSystemId.HasValue)
                 {
                     if (sig.DestinationId.HasValue && sig.Destination.SystemId != dto.DestinationSystemId)
@@ -121,8 +127,8 @@ namespace EveVoid.Services.Navigation
                         Update(sig, commit: true);
                     }
                     var desto = _solarSystemService.GetSystemById(dto.DestinationSystemId.Value);
-                    //sig.Name = desto.Name;
-                    var destoSig = desto.Signatures.FirstOrDefault(x => x.Id == sig.DestinationId); // desto.Signatures.FirstOrDefault(x => x.MaskId == maskId && x.Destination?.SystemId == dto.SystemId);
+                    var origin = _solarSystemService.GetSystemById(dto.SystemId);
+                    var destoSig = desto.Signatures.FirstOrDefault(x => x.Id == sig.DestinationId);
                     if (destoSig == null)
                     {
                         destoSig = new Signature
@@ -135,6 +141,10 @@ namespace EveVoid.Services.Navigation
                             WormholeTypeId = GetByTypeName("????").Id
                         };
                         desto.Signatures.Add(destoSig);
+                        _routeService.AddAdjacency(sig.SystemId, desto.Id, sig.MaskId, 
+                            desto.Class > 0 || origin.Class > 0 ? 10 : // J Space Connection = 10
+                            desto.Security < 0.5 || origin.Security < 0.5 ? 100 : // Null/Low sec connection = 100
+                            1); // Hisec to Hisec = 1
                         _solarSystemService.UpdateSystem(desto);
                     }
                     if (dto.WormholeType != "K162" && dto.WormholeType != "????")

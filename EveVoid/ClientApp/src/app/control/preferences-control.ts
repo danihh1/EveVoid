@@ -5,6 +5,7 @@ const GATE_COUNT = 'gate_count';
 const OVERLAY_POSITION = 'overlay_position';
 const MAP_SYSTEM = 'map_system';
 const SELECTED_SYSTEM = 'selected_system';
+const ROUTE_TYPE = 'route_type';
 
 @Injectable({
   // we declare that this service should be created
@@ -62,5 +63,15 @@ export class PreferencesControl {
       return res;
     }
     return { solarSystemId: 30000142 } as MapLayoutDto;
+  }
+
+  public setRouteType(count: string) {
+    localStorage.setItem(ROUTE_TYPE, count);
+  }
+  public getRouteType(): string {
+    if (localStorage.getItem(ROUTE_TYPE) == null) {
+      this.setGateCount('0');
+    }
+    return localStorage.getItem(ROUTE_TYPE);
   }
 }

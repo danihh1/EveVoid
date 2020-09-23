@@ -2,21 +2,21 @@
 
 namespace EveVoid.Migrations
 {
-    public partial class SystemEffect : Migration
+    public partial class SystemTypeColor : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "SystemEffect",
-                table: "SolarSystems",
+                name: "Color",
+                table: "SystemTypes",
                 nullable: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "SystemEffect",
-                table: "SolarSystems");
+                name: "Color",
+                table: "SystemTypes");
         }
     }
 }

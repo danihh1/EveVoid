@@ -1,6 +1,8 @@
 <div *ngIf="authControl.isLoggedIn()" style="height: 100vh;">
   <mat-toolbar fxLayout="row">
-    <span>EveVoid</span>
+    <a [href]="baseUrl">
+      <img style="max-width: 140px; vertical-align: middle;" src="assets\VoidWordLogo.png" alt="Void Logo" >
+    </a>
     <button mat-icon-button (click)="sidenav.toggle()">
       <mat-icon>menu</mat-icon>
     </button>
@@ -12,7 +14,7 @@
 
   <mat-sidenav-container hasBackdrop="false">
     <mat-sidenav mode="over" [(opened)]="opened">
-      <perfect-scrollbar style="max-width: 300px;">
+      <perfect-scrollbar style="max-width: 360px;">
         <div fxLayout="column">
           <div fxLayout="row" fxLayoutAlign="start start" >
             <mat-form-field appearance="fill" style="width: 80px;">
@@ -29,6 +31,12 @@
               <mat-select [(ngModel)]="mainDto.maskType" (selectionChange)="updateMask($event.value)">
                 <mat-option [value]="0">Alliance</mat-option>
                 <mat-option [value]="10">Corp</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="fill" style="width: 100px;">
+              <mat-label>Route Type</mat-label>
+              <mat-select [(ngModel)]="routeType">
+                <mat-option *ngFor="let type of routeTypes" [value]="type.id">{{type.name}}</mat-option>
               </mat-select>
             </mat-form-field>
             <mat-form-field appearance="fill" style="width: 80px;">

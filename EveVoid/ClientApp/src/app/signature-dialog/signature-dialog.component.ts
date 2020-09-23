@@ -21,7 +21,7 @@ import {
   distinctUntilChanged,
   switchMap,
 } from 'rxjs/operators';
-import { SignatureService, SolarySystemService } from '../api/services';
+import { SignatureService, SolarSystemService } from '../api/services';
 import { DataControl } from '../control/data-control';
 
 @Component({
@@ -56,7 +56,7 @@ export class SignatureDialogComponent implements OnInit {
   } as SignatureDto;
 
   constructor(
-    private solarSystemService: SolarySystemService,
+    private solarSystemService: SolarSystemService,
     private signatureService: SignatureService,
     public dialogRef: MatDialogRef<SignatureDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: SignatureDailogRequestData,
@@ -80,7 +80,7 @@ export class SignatureDialogComponent implements OnInit {
         distinctUntilChanged(),
         startWith(''),
         switchMap((value) => {
-          return this.solarSystemService.getApiSolarySystemFind(value);
+          return this.solarSystemService.getApiSolarSystemFind(value);
         })
       )
       .pipe(
@@ -143,7 +143,6 @@ export class SignatureDialogComponent implements OnInit {
         })
         .subscribe(
           (x) => {
-            console.log('updated!', x);
             this.dataControl.forceMapUpdate();
           },
           (err) => {
@@ -158,7 +157,6 @@ export class SignatureDialogComponent implements OnInit {
         })
         .subscribe(
           (x) => {
-            console.log('inserted!', x);
             this.dataControl.forceMapUpdate();
           },
           (err) => {

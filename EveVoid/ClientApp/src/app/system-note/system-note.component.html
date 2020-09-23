@@ -1,4 +1,4 @@
-<button mat-button (click)="openNoteDialog()">Add Note</button>
+<button mat-button (click)="openNoteDialog(null)" color="accent">Add Note</button>
 <perfect-scrollbar style="max-height: calc(100vh - 300px);">
   <mat-card *ngFor="let note of noteList" style="margin-bottom: 5px;">
       <mat-card-content>

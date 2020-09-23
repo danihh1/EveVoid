@@ -13,10 +13,10 @@ namespace EveVoid.Models.Navigation.MapObjects
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime LastUpdate { get; set; }
-        public virtual List<Constellation> Constellaions { get; set; }
+        public virtual List<Constellation> Constellations { get; set; }
         public Region()
         {
-            Constellaions = new List<Constellation>();
+            Constellations = new List<Constellation>();
         }
     }
 }

@@ -1,7 +1,9 @@
-<div mat-dialog-content fxLayout="column" fxLayoutAlign="start start" style="overflow: hidden;">
-  <ckeditor [editor]="Editor" style="width: 500px; min-height: 250px;"
-(ready)="onReady($event)"
-[(ngModel)]="note.content"></ckeditor>
+<div mat-dialog-content fxLayout="column" fxLayoutAlign="start start" style="overflow-x: hidden;">
+  <!-- <perfect-scrollbar style="overflow-x: hidden;"> -->
+  <ckeditor [editor]="Editor" style="width: 500px;"
+    (ready)="onReady($event)"
+    [(ngModel)]="note.content"></ckeditor>
+  <!-- </perfect-scrollbar> -->
 </div>
 <div mat-dialog-actions fxLayout="row" fxLayoutAlign="space-around start">
   <button class="mat-raised-button mat-primary" (click)="confirm()">Confirm</button>

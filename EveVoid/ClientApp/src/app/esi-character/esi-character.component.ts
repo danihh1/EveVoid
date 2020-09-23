@@ -6,7 +6,7 @@ import { ImageControl } from '../control/image-control';
 import { Observable, interval, Subscription, combineLatest } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EsiCharacterDto } from '../api/models';
-import { CharacterService, SolarySystemService, SignatureService } from '../api/services';
+import { CharacterService, SolarSystemService, SignatureService } from '../api/services';
 import { LocationService } from '../eve-esi-api/services';
 import { MatDialog } from '@angular/material/dialog';
 import { AutoJumpDailogResponseData, DialogResult } from '../signature-dialog/confim-dialog.model';

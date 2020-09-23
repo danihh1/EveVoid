@@ -116,7 +116,8 @@ export class MapGraphComponent implements OnInit, OnDestroy {
           data: {
             customColor: x.color,
             pilotCount: x.pilots.length, // x.pilots.length,
-            pilots: x.pilots.map(p => `${p.name} ${p.shipTypeName} - ${p.shipName}`).join('\n'),
+            // pilots: x.pilots.map(p => `${p.name} ${p.shipTypeName} - ${p.shipName}`).join('\n'),
+            pilots: x.pilots.map(p => `${p.name} - ${p.shipTypeName}`).join('\n'),
             systemType: x.systemType,
             systemTypeColor: x.systemTypeColor,
             statics: x.statics,

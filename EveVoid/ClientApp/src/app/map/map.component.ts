@@ -10,7 +10,7 @@ import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit, ViewEncapsulati
 import { ActivatedRoute, Router } from '@angular/router';
 import { switchMap, map, takeUntil } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SolarySystemService, SignatureService, TagService, CharacterService, SolarSystemStructureService } from '../api/services';
+import { SolarSystemService, SignatureService, TagService, CharacterService, SolarSystemStructureService } from '../api/services';
 import { AuthControl } from '../control/auth-control';
 import { Subscription, interval, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,7 +44,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private readonly snackBar: MatSnackBar,
-    private solarySystemService: SolarySystemService,
+    private solarSystemService: SolarSystemService,
     private authControl: AuthControl,
     private abbreviate: NumberAbbreviatePipe,
     public preferencesControl: PreferencesControl,
@@ -80,7 +80,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 fetch() {
   this.fetchingData = true;
-  this.solarySystemService.getApiSolarySystemGetSolarSystemById({
+  this.solarSystemService.getApiSolarSystemGetSolarSystemById({
     mainToken: this.authControl.getMainToken(),
     systemId: this.preferencesControl.getSelectedSystem().solarSystemId}).subscribe((data) => {
       this.fetchingData = false;
@@ -250,13 +250,13 @@ openSigDialog(id: number) {
           deleteSnack.onAction().subscribe(() => {
             this.solarSystem.signatures = this.solarSystem.signatures.filter(x =>
               pastedSigs.findIndex(p => p.signatureId === x.signatureId) > -1 || x.signatureId === '???');
-              this.solarySystemService.putApiSolarySystemUpdateSolarSystemSignatures({
+              this.solarSystemService.putApiSolarSystemUpdateSolarSystemSignatures({
                 mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
                   this.solarSystem = x;
                 });
           });
       }
-      this.solarySystemService.putApiSolarySystemUpdateSolarSystemSignatures({
+      this.solarSystemService.putApiSolarSystemUpdateSolarSystemSignatures({
         mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
           this.solarSystem = x;
           this.dataControl.forceMapUpdate();

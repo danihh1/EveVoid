@@ -76,15 +76,17 @@ namespace EveVoid.Services.Navigation.MapObjects
                         Id = id,
                         Name = esiResult.Name,
                         Class = wClass,
-                        ConstellaionId = esiResult.ConstellationId.Value,
-                        SystemTypeId = GetSystemTypeIdBySecStatusAndName(esiResult.SecurityStatus.Value, esiResult.Name)
+                        ConstellationId = esiResult.ConstellationId.Value,
+                        SystemTypeId = GetSystemTypeIdBySecStatusAndName(esiResult.SecurityStatus.Value, esiResult.Name),
+                        Security = esiResult.SecurityStatus.GetValueOrDefault()
                     };
                     _context.SolarSystems.Add(system);
                     _context.SaveChanges();
                 }
                 else
                 {
-                    system.ConstellaionId = esiResult.ConstellationId.Value;
+                    system.ConstellationId = esiResult.ConstellationId.Value;
+                    system.Security = esiResult.SecurityStatus.GetValueOrDefault();
                 }
                 if (esiResult.Stargates != null)
                 {
@@ -138,6 +140,11 @@ namespace EveVoid.Services.Navigation.MapObjects
         public List<SolarSystem> Find(string name, int pageSize)
         {
             return _context.SolarSystems.Where(x => x.Name.Contains(name)).Take(pageSize).ToList();
+        }
+
+        public List<SolarSystem> GetAll()
+        {
+            return _context.SolarSystems.ToList();
         }
     }
 }

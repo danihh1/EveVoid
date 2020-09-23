@@ -24,7 +24,7 @@ namespace EveVoid.Services.Navigation.MapObjects
 
         public Constellation GetConstellationById(int id)
         {
-            var constellation = _context.Constellaions.FirstOrDefault(x => x.Id == id);
+            var constellation = _context.Constellations.FirstOrDefault(x => x.Id == id);
             if (constellation == null || constellation.PassedMoreThan() || constellation.Name == "Temp")
             {
                 var esiResult = _universeApi.GetUniverseConstellationsConstellationId(id, "en-us", null, null, "en-us");
@@ -40,7 +40,7 @@ namespace EveVoid.Services.Navigation.MapObjects
                         Name = esiResult.Name,
                         RegionId = esiResult.RegionId.Value
                     };
-                    _context.Constellaions.Add(constellation);
+                    _context.Constellations.Add(constellation);
                 }
                 else
                 {

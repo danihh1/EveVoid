@@ -1,4 +1,5 @@
 /* tslint:disable */
+import { DscanDto } from './dscan-dto';
 import { StargateDto } from './stargate-dto';
 import { SolarSystemNoteDto } from './solar-system-note-dto';
 import { ActivePilotDto } from './active-pilot-dto';
@@ -7,8 +8,9 @@ import { SolarSystemStructureDto } from './solar-system-structure-dto';
 import { SolarSystemTagDto } from './solar-system-tag-dto';
 export interface SolarSystemDto {
   class?: number;
-  constellaionId?: number;
-  constellaionName?: string;
+  constellationId?: number;
+  constellationName?: string;
+  dscans?: Array<DscanDto>;
   gates?: Array<StargateDto>;
   id?: number;
   isFavorite?: boolean;

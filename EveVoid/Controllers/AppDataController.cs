@@ -35,6 +35,11 @@ namespace EveVoid.Controllers
             return BASE_AUTH_URL + _configuration.GetValue<string>("BaseUrl") + "/callback-esi&client_id=" + _configuration.GetValue<string>("ClientIdLocation")
                 + "&scope=esi-location.read_location.v1 esi-location.read_ship_type.v1";
         }
+        [HttpGet("GetBaseUrl")]
+        public string GetBaseUrl()
+        {
+            return _configuration.GetValue<string>("BaseUrl");
+        }
         [HttpGet("GetMainCorpId")]
         public int GetMainCorpId()
         {

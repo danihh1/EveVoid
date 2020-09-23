@@ -5,7 +5,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { MainCharacterDto, SolarSystemDto } from '../api/models';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { SolarySystemService } from '../api/services';
+import { SolarSystemService } from '../api/services';
 import { debounceTime, distinctUntilChanged, startWith, switchMap, map } from 'rxjs/operators';
 
 @Component({
@@ -34,7 +34,7 @@ export class MainCharacterComponent implements OnInit {
   constructor(private imageControl: ImageControl,
     private dataControl: DataControl,
     private preferencesControl: PreferencesControl,
-    private solarSystemService: SolarySystemService) { }
+    private solarSystemService: SolarSystemService) { }
 
   ngOnInit() {
     this.filteredSystems = this.control.valueChanges
@@ -43,7 +43,7 @@ export class MainCharacterComponent implements OnInit {
         distinctUntilChanged(),
         startWith(''),
         switchMap((value) => {
-          return this.solarSystemService.getApiSolarySystemFind(value);
+          return this.solarSystemService.getApiSolarSystemFind(value);
         })
       )
       .pipe(

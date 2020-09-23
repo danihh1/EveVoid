@@ -11,6 +11,7 @@ using System.Reflection;
 using EveVoid.Models.Navigation.MapObjects;
 using EveVoid.Models.Shared;
 using EveVoid.Models.Navigation.Masks;
+using EveVoid.Models.Navigation.Matrix;
 
 namespace EveVoid.Data
 {
@@ -34,7 +35,7 @@ namespace EveVoid.Data
         public DbSet<Stargate> Stargates { get; set; }
         public DbSet<StargateJump> StargateJumps { get; set; }
         public DbSet<Region> Regions { get; set; }
-        public DbSet<Constellation> Constellaions { get; set; }
+        public DbSet<Constellation> Constellations { get; set; }
         public DbSet<Mask> Masks { get; set; }
         public DbSet<MapLayout> MapLayouts { get; set; }
         public DbSet<SolarSystemTag> SolarSystemTags { get; set; }
@@ -43,7 +44,10 @@ namespace EveVoid.Data
         public DbSet<ItemType> ItemTypes { get; set; }
         public DbSet<ItemGroup> ItemGroups { get; set; }
         public DbSet<ItemCategory> ItemCategories { get; set; }
-
+        public DbSet<AdjacencyMatrix> AdjacencyMatrix { get; set; }
+        public DbSet<Dscan> Dscans { get; set; }
+        public DbSet<DscanShip> DscanShips { get; set; }
+        
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

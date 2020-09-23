@@ -58,6 +58,8 @@ import { SystemNoteComponent } from './system-note/system-note.component';
 import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 import { SystemNoteDialogComponent } from './system-note-dialog/system-note-dialog.component';
 import { NoSanitizePipe } from './pipes/no-sanitize';
+import { FavoriteSystemRoutesComponent } from './favorite-system-routes/favorite-system-routes.component';
+import { SystemDScanComponent } from './system-d-scan/system-d-scan.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -106,7 +108,9 @@ const routes: Routes = [
     SystemStructureDialogComponent,
     SystemNoteComponent,
     SystemNoteDialogComponent,
-    NoSanitizePipe
+    NoSanitizePipe,
+    FavoriteSystemRoutesComponent,
+    SystemDScanComponent
   ],
   imports: [
     MatBadgeModule,

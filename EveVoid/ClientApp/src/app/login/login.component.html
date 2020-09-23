@@ -1,85 +1,21 @@
-<mat-card>
-  <mat-card-title>
-    <div fxLayout="column" fxLayoutAlign="center center" fxFlex>
-      <img [src]="allianceId > 0 ? allianceLogo : corpLogo" alt="Group Logo">
-      <h2>
-        <a href="https://eve.renezis.eu/" class="holesale">
-          {{groupName}}
+<div style="text-align: center; background-color: #303030; color: white;" fxLayout="column" fxFlexFill fxLayoutGap="25px" fxLayoutAlign="start center">
+  <img style="max-width: 400px;" src="assets\VoidWordLogo.png" alt="Void Logo">
+  <mat-card>
+    <mat-card-title>
+
+    </mat-card-title>
+    <mat-card-content>
+      <div fxLayout="column" fxLayoutAlign="center center" fxFlex>
+        <img [src]="allianceId > 0 ? allianceLogo : corpLogo" alt="Group Logo">
+        <h2>
+          Hosted by
+            <a>{{groupName}}</a>
+        </h2>
+        <a *ngIf="!fetchingLink" [routerLinkActive]="['link-active']" [href]="ssoLink"><img
+          src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-black-large.png" alt="Holesale">
         </a>
-      </h2>
-    </div>
-  </mat-card-title>
-  <mat-card-content>
-    <div fxLayout="column" fxLayoutAlign="center center" fxFlex>
-      <div class="col-md-12 p-2 row-eq-height text-center">
-        <div class="col-md-12 p-4 bg-standard">
-          Holesale is a wormhole PvP corp living in a C4 with C3/C5 statics.<br>
-          We focus on small gang to larger scale wormhole PvP and evictions.<br>
-          We are currently recruiting new members, no wormhole experience required.<br>
-          <br>
-          <a href="https://zkillboard.com/alliance/99005731/"
-            target="_blank">https://zkillboard.com/alliance/99005731/</a><br>
-        </div>
       </div>
-      <div class="col-md-12 p-2 row-eq-height text-center">
-        <div class="col-md-12 p-4 bg-standard">
-          Devoted Bob believers - Purging heretics from the holy domain of Bob.<br>
-          <br>
-          Join us and experience the full might of the lobster - Tired of known-space?<br>
-          Try the soothing sound of no local and the thrill of stalking the crap out of people.<br>
-          Need guidance? Enjoy the spiritual uplift of bob’s holy land, with a group of devoted believers in thy lord of
-          J-space.<br>
-        </div>
-      </div>
-      <div class="col-md-12 p-2 row-eq-height text-center">
-        <div class="col-md-12 p-4 bg-standard">
-          <p>
-            Do you want to apply?<br>
-            Log in with your eve account and you will be redirected to application form.
-          </p>
-          <a *ngIf="!fetchingLink" [routerLinkActive]="['link-active']" [href]="ssoLink"><img
-              src="https://web.ccpgamescdn.com/eveonlineassets/developers/eve-sso-login-black-large.png" alt="Holesale">
-          </a>
-          <!-- <a href="https://login.eveonline.com/oauth/authorize?response_type=code&redirect_uri=https%3A%2F%2Feve.renezis.eu%2Findex.php%3Fmode%3Dsso&client_id=06ba778f1e3447e1bcac748b768e115b&state=evessologin&scope=publicData%20esi-skills.read_skills.v1%20esi-characterstats.read.v1">
-                        <img src="https://eve.renezis.eu/images/eve_sso.png" alt="Holesale Operations"><br>
-                    </a> -->
-        </div>
-      </div>
-      <div fxLayout="row" fxLayoutAlign="space-between start" fxFlex>
-        <div class="col-md-6 p-2 row-eq-height">
-          <div class="col-md-12 p-3 bg-standard">
-            <h2>What we can offer you.</h2>
-            <ul class="list-group">
-              <li class="list-group-item bg-transparent border-top rounded-0">Large WH PvP OPs</li>
-              <li class="list-group-item bg-transparent border-top">Evictions with share payouts based on participation
-              </li>
-              <li class="list-group-item bg-transparent border-top">Multiple isk printing opportunities in home + Corp
-                buyback</li>
-              <li class="list-group-item bg-transparent border-top">Manufacturing and industry support</li>
-              <li class="list-group-item bg-transparent border-top">Amazing planetary interaction</li>
-              <li class="list-group-item bg-transparent border-top">Assistance with logistics, free of charge</li>
-              <li class="list-group-item bg-transparent border-top">“Asset Safety” offered via safelog freighters</li>
-              <li class="list-group-item bg-transparent border-top">Experienced leadership run by WH Veterans</li>
-              <li class="list-group-item bg-transparent border-top border-bottom rounded-0">Bunch of amazing lobsters to
-                play with</li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6 p-2 row-eq-height">
-          <div class="col-md-12 p-3 bg-standard">
-            <h2>What we require.</h2>
-            <ul class="list-group">
-              <li class="list-group-item bg-transparent border-top rounded-0">English speaking</li>
-              <li class="list-group-item bg-transparent border-top">On TS3 when online</li>
-              <li class="list-group-item bg-transparent border-top">Discord for pings</li>
-              <li class="list-group-item bg-transparent border-top">Full ESI for ALL characters</li>
-              <li class="list-group-item bg-transparent border-top">15 Mil Skill Points</li>
-              <li class="list-group-item bg-transparent border-top">Willingness to scan OR learn how to scan</li>
-              <li class="list-group-item bg-transparent border-top border-bottom rounded-0">Teamplay and activity</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  </mat-card-content>
-</mat-card>
+    </mat-card-content>
+  </mat-card>
+</div>
+

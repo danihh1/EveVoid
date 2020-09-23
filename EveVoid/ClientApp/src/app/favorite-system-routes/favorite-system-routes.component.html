@@ -1,0 +1,8 @@
+<div *ngFor="let item of dto">
+  <a (click)="goToSystem(item.systemId)">{{item.systemName}}</a> - <mat-icon *ngIf="item.distanceInJumps < 0" style="vertical-align: middle;">all_inclusive</mat-icon>{{item.distanceInJumps > 0 ? item.distanceInJumps : ''}}
+  <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="2px grid">
+    <div *ngFor="let routeNode of item.route" [matTooltip]="routeNode.systemName">
+      <div style="width: 8px; height: 8px;" [style.backgroundColor]="routeNode.color"></div>
+    </div>
+  </div>
+</div>

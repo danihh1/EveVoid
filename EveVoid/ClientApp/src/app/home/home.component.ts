@@ -1,3 +1,4 @@
+import { RouteTypes } from './../control/constants/route-types';
 import { PreferencesControl } from './../control/preferences-control';
 import { Component, ViewChild } from '@angular/core';
 import { AuthControl } from '../control/auth-control';
@@ -18,6 +19,7 @@ export class HomeComponent {
   fetchingLink = true;
   mainDto: MainCharacterDto;
   opened = false;
+  routeTypes = RouteTypes;
 
   get auth(): AuthControl {
     return this.authControl;
@@ -38,6 +40,16 @@ export class HomeComponent {
   set overlay(position: string) {
     this.preferencesControl.setOverlayPosition(position);
   }
+
+  get routeType(): string {
+    return this.preferencesControl.getRouteType();
+  }
+
+  set routeType(type: string) {
+    this.preferencesControl.setRouteType(type);
+  }
+
+  baseUrl = '';
 
   constructor(
     public preferencesControl: PreferencesControl,
@@ -68,6 +80,9 @@ export class HomeComponent {
           this.authControl.logout();
         }
       );
+      this.appDataService.getApiAppDataGetBaseUrl().subscribe(x => {
+        this.baseUrl = x;
+      });
   }
   updateMask(value: number) {
     this.characterService.postApiCharacterUpdateMaskType({mainToken: this.authControl.getMainToken(), maskType: value})

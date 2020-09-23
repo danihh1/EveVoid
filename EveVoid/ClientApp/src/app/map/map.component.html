@@ -5,7 +5,7 @@
       <div fxLayout="row" fxLayoutAlign="space-around start" style="width:100%">
         <mat-card-header>
           <mat-card-title>{{solarSystem.name}}</mat-card-title>
-          <mat-card-subtitle>{{solarSystem.constellaionName}}</mat-card-subtitle>
+          <mat-card-subtitle>{{solarSystem.constellationName}}</mat-card-subtitle>
           <mat-card-subtitle>{{solarSystem.regionName}}</mat-card-subtitle>
         </mat-card-header>
         <mat-card-content *ngIf="solarSystem.tags.length > 0" >
@@ -27,7 +27,7 @@
       <mat-tab-group dynamicHeight style="width:100%;">
         <mat-tab label="Signatures">
           <div fxLayout="row" fxLayoutAlign="space-around start" style="width:100%;">
-            <button mat-button (click)="openSigDialog(0)">Add Sig</button>
+            <button mat-button (click)="openSigDialog(0)" color="accent">Add Sig</button>
           </div>
           <table mat-table [dataSource]="dataSource" style="width:100%; white-space: pre-wrap" matSort>
             <ng-container matColumnDef="signatureId">
@@ -83,6 +83,12 @@
         </mat-tab>
         <mat-tab label="Notes">
           <app-system-note [solarSystemId]="solarSystem.id" [noteList]="solarSystem.notes"></app-system-note>
+        </mat-tab>
+        <mat-tab label="Routes">
+          <app-favorite-system-routes [solarSystemId]="solarSystem.id"></app-favorite-system-routes>
+        </mat-tab>
+        <mat-tab label="D-Scan">
+          <app-system-d-scan [dscans]="solarSystem.dscans"></app-system-d-scan>
         </mat-tab>
       </mat-tab-group>
     </div>

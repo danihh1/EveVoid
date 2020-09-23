@@ -18,14 +18,14 @@ namespace EveVoid.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SolarySystemController : ControllerBase
+    public class SolarSystemController : ControllerBase
     {
         private readonly ISolarSystemService _solarSystemService;
         private readonly ICharacterService _characterService;
         private readonly ISignatureService _signatureService;
         private readonly IMapper _mapper;
 
-        public SolarySystemController(ISolarSystemService solarSystemService,
+        public SolarSystemController(ISolarSystemService solarSystemService,
             ICharacterService characterService,
             IMapper mapper,
             ISignatureService signatureService)
@@ -50,6 +50,20 @@ namespace EveVoid.Controllers
             res.Tags = _mapper.Map<List<SolarSystemTagDto>>(system.Tags.Where(x => x.MaskId == maskId));
             res.Structures = _mapper.Map<List<SolarSystemStructureDto>>(system.Structures.Where(x => x.MaskId == maskId));
             res.IsFavorite = main.FavoriteSystems.Any(x => x.SolarSystemId == systemId);
+            res.Dscans = system.Dscans.Where(x => x.MaskId == maskId).OrderByDescending(x => x.CreationDate).Select(x => new DscanDto
+            {
+                Id = x.Id,
+                SolarSystemId = x.SolarSystemId,
+                DscanShipGroups = x.DscanShips.GroupBy(s => s.ShipType.ItemGroup.Name).Select(s => new DscanShipGroupDto
+                {
+                    GroupName = s.Key,
+                    GroupCount = s.Count(),
+                    ShipTypes = s.GroupBy(r => r.ShipType.Name).ToDictionary(r => r.Key, r => r.Count())
+                }).ToList(),
+                CreationDate = x.CreationDate
+            }).ToList();
+            res.Dscans.ForEach(d => d.DscanShipGroups = d.DscanShipGroups.OrderByDescending(x => x.GroupCount).ToList());
+
             return res;
         }
 
@@ -102,6 +116,7 @@ namespace EveVoid.Controllers
                     systemSig.Name = updateSig.Name;
                     systemSig.SignatureType = updateSig.SignatureType;
                 }
+                _solarSystemService.UpdateSystem(system);
                 _signatureService.WormholeSigUpdate(updateSig, systemSig, maskId);
             }
 

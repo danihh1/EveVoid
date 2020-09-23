@@ -48,12 +48,12 @@ export class SystemNoteComponent implements OnInit {
       data: {
         title: '',
         body: '',
-        data: note,
+        data: JSON.parse(JSON.stringify(note)),
       },
     });
   }
 
-  deleteNote(id: number){
+  deleteNote(id: number) {
     this.solarSystemNoteService.deleteApiSolarSystemNote(id)
     .subscribe(x => {
       this.dataControl.forceMapUpdate();

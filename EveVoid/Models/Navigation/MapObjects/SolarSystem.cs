@@ -16,7 +16,7 @@ namespace EveVoid.Models.Navigation.MapObjects
         public int Class { get; set; }
         public double Security { get; set; }
         public int SystemTypeId { get; set; }
-        public int ConstellaionId { get; set; }
+        public int ConstellationId { get; set; }
         public DateTime LastUpdate { get; set; }
         public string SystemEffect { get; set; }
         public virtual SystemType SystemType { get; set; }
@@ -24,10 +24,11 @@ namespace EveVoid.Models.Navigation.MapObjects
         public virtual List<Signature> Signatures { get; set; }
         public virtual List<EsiCharacter> Pilots { get; set; }
         public virtual List<Stargate> Gates { get; set; }
-        public virtual Constellation Constellaion { get; set; }
+        public virtual Constellation Constellation { get; set; }
         public virtual List<SolarSystemNote> Notes { get; set; }
         public virtual List<SolarSystemTag> Tags { get; set; }
         public virtual List<SolarSystemStructure> Structures { get; set; }
+        public virtual List<Dscan> Dscans { get; set; }
 
         public SolarSystem()
         {
@@ -38,6 +39,7 @@ namespace EveVoid.Models.Navigation.MapObjects
             Notes = new List<SolarSystemNote>();
             Tags = new List<SolarSystemTag>();
             Structures = new List<SolarSystemStructure>();
+            Dscans = new List<Dscan>();
         }
     }
 }

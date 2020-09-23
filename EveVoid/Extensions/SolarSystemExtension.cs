@@ -9,11 +9,11 @@ namespace EveVoid.Extensions
 {
     public static class SolarSystemExtension
     {
-        public static List<SolarySystemConnection> GetConnections(this SolarSystem system, int maskId, bool includeGates = false)
+        public static List<SolarSystemConnection> GetConnections(this SolarSystem system, int maskId, bool includeGates = false)
         {
             var unknownIndex = (system.Id % 1000000) * 100;
             var wormholeConnections = system.Signatures.Where(x => x.MaskId == maskId && x.SignatureType == SignatureType.Wormhole)
-                .Select(x => new SolarySystemConnection
+                .Select(x => new SolarSystemConnection
                 {
                     Signature = x,
                     SolarSystem = x.DestinationId == null ?
@@ -28,12 +28,12 @@ namespace EveVoid.Extensions
             if (includeGates)
             {
                 wormholeConnections = wormholeConnections.Union(system.Gates.Where(x => x.DestinationId != null)
-                    .Select(x => new SolarySystemConnection { SolarSystem = x.Destination.SolarSystem }));
+                    .Select(x => new SolarSystemConnection { SolarSystem = x.Destination.SolarSystem }));
             }
             return wormholeConnections.ToList();
         }
     }
-    public class SolarySystemConnection
+    public class SolarSystemConnection
     {
         public SolarSystem SolarSystem { get; set; }
         public Signature Signature { get; set; }

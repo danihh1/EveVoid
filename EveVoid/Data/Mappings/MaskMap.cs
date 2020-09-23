@@ -13,6 +13,13 @@ namespace EveVoid.Data.Mappings
     {
         public void Build(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Mask>().HasData(new Mask
+            {
+                Id = -1,
+                AllianceId = null,
+                CorporationId = null
+            });
+
             modelBuilder.Entity<Mask>()
                   .HasOne(x => x.Corporation)
                   .WithMany()

@@ -11,10 +11,10 @@ import { SolarSystemDto } from '../models/solar-system-dto';
 @Injectable({
   providedIn: 'root',
 })
-class SolarySystemService extends __BaseService {
-  static readonly getApiSolarySystemGetSolarSystemByIdPath = '/api/SolarySystem/GetSolarSystemById';
-  static readonly putApiSolarySystemUpdateSolarSystemSignaturesPath = '/api/SolarySystem/UpdateSolarSystemSignatures';
-  static readonly getApiSolarySystemFindPath = '/api/SolarySystem/Find';
+class SolarSystemService extends __BaseService {
+  static readonly getApiSolarSystemGetSolarSystemByIdPath = '/api/SolarSystem/GetSolarSystemById';
+  static readonly putApiSolarSystemUpdateSolarSystemSignaturesPath = '/api/SolarSystem/UpdateSolarSystemSignatures';
+  static readonly getApiSolarSystemFindPath = '/api/SolarSystem/Find';
 
   constructor(
     config: __Configuration,
@@ -24,7 +24,7 @@ class SolarySystemService extends __BaseService {
   }
 
   /**
-   * @param params The `SolarySystemService.GetApiSolarySystemGetSolarSystemByIdParams` containing the following parameters:
+   * @param params The `SolarSystemService.GetApiSolarSystemGetSolarSystemByIdParams` containing the following parameters:
    *
    * - `systemId`:
    *
@@ -32,7 +32,7 @@ class SolarySystemService extends __BaseService {
    *
    * @return Success
    */
-  getApiSolarySystemGetSolarSystemByIdResponse(params: SolarySystemService.GetApiSolarySystemGetSolarSystemByIdParams): __Observable<__StrictHttpResponse<SolarSystemDto>> {
+  getApiSolarSystemGetSolarSystemByIdResponse(params: SolarSystemService.GetApiSolarSystemGetSolarSystemByIdParams): __Observable<__StrictHttpResponse<SolarSystemDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -40,7 +40,7 @@ class SolarySystemService extends __BaseService {
     if (params.mainToken != null) __params = __params.set('mainToken', params.mainToken.toString());
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/api/SolarySystem/GetSolarSystemById`,
+      this.rootUrl + `/api/SolarSystem/GetSolarSystemById`,
       __body,
       {
         headers: __headers,
@@ -56,7 +56,7 @@ class SolarySystemService extends __BaseService {
     );
   }
   /**
-   * @param params The `SolarySystemService.GetApiSolarySystemGetSolarSystemByIdParams` containing the following parameters:
+   * @param params The `SolarSystemService.GetApiSolarSystemGetSolarSystemByIdParams` containing the following parameters:
    *
    * - `systemId`:
    *
@@ -64,14 +64,14 @@ class SolarySystemService extends __BaseService {
    *
    * @return Success
    */
-  getApiSolarySystemGetSolarSystemById(params: SolarySystemService.GetApiSolarySystemGetSolarSystemByIdParams): __Observable<SolarSystemDto> {
-    return this.getApiSolarySystemGetSolarSystemByIdResponse(params).pipe(
+  getApiSolarSystemGetSolarSystemById(params: SolarSystemService.GetApiSolarSystemGetSolarSystemByIdParams): __Observable<SolarSystemDto> {
+    return this.getApiSolarSystemGetSolarSystemByIdResponse(params).pipe(
       __map(_r => _r.body as SolarSystemDto)
     );
   }
 
   /**
-   * @param params The `SolarySystemService.PutApiSolarySystemUpdateSolarSystemSignaturesParams` containing the following parameters:
+   * @param params The `SolarSystemService.PutApiSolarSystemUpdateSolarSystemSignaturesParams` containing the following parameters:
    *
    * - `mainToken`:
    *
@@ -79,7 +79,7 @@ class SolarySystemService extends __BaseService {
    *
    * @return Success
    */
-  putApiSolarySystemUpdateSolarSystemSignaturesResponse(params: SolarySystemService.PutApiSolarySystemUpdateSolarSystemSignaturesParams): __Observable<__StrictHttpResponse<SolarSystemDto>> {
+  putApiSolarSystemUpdateSolarSystemSignaturesResponse(params: SolarSystemService.PutApiSolarSystemUpdateSolarSystemSignaturesParams): __Observable<__StrictHttpResponse<SolarSystemDto>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
@@ -87,7 +87,7 @@ class SolarySystemService extends __BaseService {
     __body = params.body;
     let req = new HttpRequest<any>(
       'PUT',
-      this.rootUrl + `/api/SolarySystem/UpdateSolarSystemSignatures`,
+      this.rootUrl + `/api/SolarSystem/UpdateSolarSystemSignatures`,
       __body,
       {
         headers: __headers,
@@ -103,7 +103,7 @@ class SolarySystemService extends __BaseService {
     );
   }
   /**
-   * @param params The `SolarySystemService.PutApiSolarySystemUpdateSolarSystemSignaturesParams` containing the following parameters:
+   * @param params The `SolarSystemService.PutApiSolarSystemUpdateSolarSystemSignaturesParams` containing the following parameters:
    *
    * - `mainToken`:
    *
@@ -111,8 +111,8 @@ class SolarySystemService extends __BaseService {
    *
    * @return Success
    */
-  putApiSolarySystemUpdateSolarSystemSignatures(params: SolarySystemService.PutApiSolarySystemUpdateSolarSystemSignaturesParams): __Observable<SolarSystemDto> {
-    return this.putApiSolarySystemUpdateSolarSystemSignaturesResponse(params).pipe(
+  putApiSolarSystemUpdateSolarSystemSignatures(params: SolarSystemService.PutApiSolarSystemUpdateSolarSystemSignaturesParams): __Observable<SolarSystemDto> {
+    return this.putApiSolarSystemUpdateSolarSystemSignaturesResponse(params).pipe(
       __map(_r => _r.body as SolarSystemDto)
     );
   }
@@ -121,14 +121,14 @@ class SolarySystemService extends __BaseService {
    * @param name undefined
    * @return Success
    */
-  getApiSolarySystemFindResponse(name?: string): __Observable<__StrictHttpResponse<Array<SolarSystemDto>>> {
+  getApiSolarSystemFindResponse(name?: string): __Observable<__StrictHttpResponse<Array<SolarSystemDto>>> {
     let __params = this.newParams();
     let __headers = new HttpHeaders();
     let __body: any = null;
     if (name != null) __params = __params.set('name', name.toString());
     let req = new HttpRequest<any>(
       'GET',
-      this.rootUrl + `/api/SolarySystem/Find`,
+      this.rootUrl + `/api/SolarSystem/Find`,
       __body,
       {
         headers: __headers,
@@ -147,30 +147,30 @@ class SolarySystemService extends __BaseService {
    * @param name undefined
    * @return Success
    */
-  getApiSolarySystemFind(name?: string): __Observable<Array<SolarSystemDto>> {
-    return this.getApiSolarySystemFindResponse(name).pipe(
+  getApiSolarSystemFind(name?: string): __Observable<Array<SolarSystemDto>> {
+    return this.getApiSolarSystemFindResponse(name).pipe(
       __map(_r => _r.body as Array<SolarSystemDto>)
     );
   }
 }
 
-module SolarySystemService {
+module SolarSystemService {
 
   /**
-   * Parameters for getApiSolarySystemGetSolarSystemById
+   * Parameters for getApiSolarSystemGetSolarSystemById
    */
-  export interface GetApiSolarySystemGetSolarSystemByIdParams {
+  export interface GetApiSolarSystemGetSolarSystemByIdParams {
     systemId?: number;
     mainToken?: string;
   }
 
   /**
-   * Parameters for putApiSolarySystemUpdateSolarSystemSignatures
+   * Parameters for putApiSolarSystemUpdateSolarSystemSignatures
    */
-  export interface PutApiSolarySystemUpdateSolarSystemSignaturesParams {
+  export interface PutApiSolarSystemUpdateSolarSystemSignaturesParams {
     mainToken?: string;
     body?: SolarSystemDto;
   }
 }
 
-export { SolarySystemService }
+export { SolarSystemService }

@@ -13,6 +13,8 @@ using NLog;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using EveVoid.Dto;
 using Microsoft.EntityFrameworkCore;
+using EveVoid.Extensions;
+using EveVoid.Models.Navigation.Matrix;
 
 namespace EveVoid.Data
 {
@@ -60,8 +62,8 @@ namespace EveVoid.Data
             var systemTypes = json.wormholes.Select(x => x.Value.leadsTo).Distinct().ToList();
             if (!context.SystemTypes.Any())
             {
-                context.SystemTypes.AddRange(systemTypes.Select(s => new SystemType { Name = s }));
-                context.SystemTypes.Add(new SystemType { Name = "Unknown" });
+                context.SystemTypes.AddRange(systemTypes.Select(s => new SystemType { Name = s, Color = SystemTypeColor(s) }));
+                context.SystemTypes.Add(new SystemType { Name = "Unknown", Color = SystemTypeColor("Unknown") });
                 context.SaveChanges();
             }
             if (!context.WormholeTypes.Any())
@@ -92,7 +94,7 @@ namespace EveVoid.Data
                 }));
                 context.SaveChanges();
             }
-            if (!context.Constellaions.Any())
+            if (!context.Constellations.Any())
             {
                 var addList = new List<Constellation>();
                 var constellationIdList = universeApi.GetUniverseConstellations(null, null);
@@ -110,7 +112,7 @@ namespace EveVoid.Data
                         LastUpdate = DateTime.Now.AddDays(-2)
                     });
                 }
-                context.Constellaions.AddRange(addList);
+                context.Constellations.AddRange(addList);
                 context.SaveChanges();
             }
             if (!context.SolarSystems.Any())
@@ -128,7 +130,7 @@ namespace EveVoid.Data
                         WormholeTypeId = context.WormholeTypes.FirstOrDefault(e => e.Name == s).Id
                     }).ToList(),
                     SystemTypeId = context.SystemTypes.FirstOrDefault(e => e.Name == getSystemTypeForCombine(x.Value)).Id,
-                    ConstellaionId = int.Parse(x.Value.constellationID)
+                    ConstellationId = int.Parse(x.Value.constellationID)
                 }));
                 context.SaveChanges();
             }
@@ -144,6 +146,27 @@ namespace EveVoid.Data
                 foreach (var stargate in json.stargates)
                 {
                     stargates[int.Parse(stargate.Key)].DestinationId = stargate.Value.destinationId;
+                }
+                context.SaveChanges();
+            }
+            if (!context.AdjacencyMatrix.Any())
+            {
+                var systems = context.SolarSystems.ToList();
+                var matrix = new Dictionary<int, Dictionary<int, int>>();
+                foreach (var system in systems)
+                {
+                    var maskId = -1;
+                    var adjs = system.GetConnections(maskId, true).Select(x => x.SolarSystem);
+                    foreach (var adj in adjs)
+                    {
+                        context.AdjacencyMatrix.Add(new AdjacencyMatrix
+                        {
+                            RowNumber = system.Id,
+                            ColumnNumber = adj.Id,
+                            Distance = system.Security < 0.5 || adj.Security < 0.5 ? 100 : 1,
+                            MaskId = maskId
+                        });
+                    }
                 }
                 context.SaveChanges();
             }
@@ -225,6 +248,66 @@ namespace EveVoid.Data
                 }
                 return "Null-Sec";
             }
+        }
+
+        private static string SystemTypeColor(string systemType)
+        {
+            var res = "";
+            switch (systemType)
+            {
+
+                case "Class 3":
+                case "Unknown":
+                case "Class 1":
+                case "Class 2":
+                case "Class 15":
+                case "Class 17":
+                case "Class 18":
+                case "Class 14":
+                case "Class 16":
+                case "Class 13":
+                default:
+                    {
+                        res = "#1f88ff";
+                        break;
+                    }
+                case "High-Sec":
+                    {
+                        res = "#1fff1f";
+                        break;
+                    }
+                case "Low-Sec":
+                    {
+                        res = "#ffc71f";
+                        break;
+                    }
+                case "Thera":
+                    {
+                        res = "#fffb1f";
+                        break;
+                    }
+                case "Class 5":
+                    {
+                        res = "#ff7d1f";
+                        break;
+                    }
+                case "Class 6":
+                    {
+                        res = "#ff1f4c";
+                        break;
+                    }
+                case "Class 4":
+                    {
+                        res = "#b81fff";
+                        break;
+                    }
+                case "Null-Sec":
+                    {
+                        res = "#ff1f1f";
+                        break;
+                    }
+            };
+            return res;
         }
     }
 }

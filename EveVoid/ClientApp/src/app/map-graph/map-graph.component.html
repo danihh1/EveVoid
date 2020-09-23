@@ -14,14 +14,14 @@
                 <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%;">
                   <label style="margin: 0; font-size: smaller; white-space: nowrap;" [style.color]="node.data.systemTypeColor">
                     <mat-icon *ngIf="node.data.effect" style="font-size: 14px; width: inherit;height: inherit; vertical-align: sub;" matTooltipPosition="left"
-                    [matTooltip]="node.data.effect" [style.color]="getEffectColor(node.data.effect)">
+                    [matTooltip]="node.data.effect" matTooltipClass="material-tooltip" [style.color]="getEffectColor(node.data.effect)">
                       {{getEffectIcon(node.data.effect)}}
                     </mat-icon>
                     {{node.data.systemType}}
                   </label>
                   <span class="mat-badge-content mat-badge-active" style="position: inherit; width: 16px; height: 16px; line-height: 16px; pointer-events: all;"
                   *ngIf="node.data.pilotCount > 0" matTooltipPosition="after" [style.background]="isCharHere(node.id) ? 'cyan' : ''"
-                  [matTooltip]="node.data.pilots">
+                  [matTooltip]="node.data.pilots" matTooltipClass="material-tooltip">
                     {{node.data.pilotCount}}
                   </span>
                 </div>
@@ -40,7 +40,8 @@
                 </div>
                 <div fxFlex fxLayout="row" fxLayoutAlign="start start" style="width: 100%;">
                   <span *ngFor="let tag of node.data.tags" [style.color]="tag.color" style="margin-right: 1px;">
-                    <mat-icon style="font-size: 20px; width: inherit;" matTooltipPosition="below" [matTooltip]="tag.name">{{tag.icon}}</mat-icon>
+                    <mat-icon style="font-size: 20px; width: inherit;" matTooltipPosition="below" matTooltipClass="material-tooltip"
+                    [matTooltip]="tag.name">{{tag.icon}}</mat-icon>
                   </span>
                 </div>
             </mat-card>

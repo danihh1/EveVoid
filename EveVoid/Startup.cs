@@ -30,6 +30,8 @@ namespace EveVoid
 
         public IConfiguration Configuration { get; }
 
+        private string AllowAllCorsPolicy = "AllowAllCorsPolicy";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -64,8 +66,9 @@ namespace EveVoid
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<ISolarSystemStructureService, SolarSystemStructureService>();
             services.AddScoped<ISolarSystemNoteService, SolarSystemNoteService>();
+            services.AddScoped<IRouteService, RouteService>();
+            services.AddScoped<IDscanService, DscanService>();
             
-
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 var profiles = Assembly.GetExecutingAssembly().GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x));
@@ -83,6 +86,17 @@ namespace EveVoid
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddSwaggerGen();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: AllowAllCorsPolicy,
+                                  builder =>
+                                  {
+                                      builder.AllowAnyOrigin();
+                                      builder.AllowAnyMethod();
+                                      builder.AllowAnyHeader();
+                                  });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -110,6 +124,12 @@ namespace EveVoid
                 c.SerializeAsV2 = true;
             });
             app.UseRouting();
+
+            if (env.IsDevelopment())
+            {
+                app.UseCors(AllowAllCorsPolicy);
+            }
+
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "EveVoid API v1");
@@ -128,10 +148,10 @@ namespace EveVoid
 
                 spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
+                //if (env.IsDevelopment())
+                //{
+                //    spa.UseAngularCliServer(npmScript: "start");
+                //}
             });
         }
     }

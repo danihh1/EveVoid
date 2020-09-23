@@ -29,9 +29,9 @@ namespace EveVoid.Data.Mappings
                 .HasForeignKey(e => e.SystemTypeId);
 
             modelBuilder.Entity<SolarSystem>()
-                .HasOne(e => e.Constellaion)
+                .HasOne(e => e.Constellation)
                 .WithMany(e => e.SolarSystems)
-                .HasForeignKey(e => e.ConstellaionId);
+                .HasForeignKey(e => e.ConstellationId);
 
             modelBuilder.Entity<SolarSystem>()
                 .HasMany(e => e.Notes)

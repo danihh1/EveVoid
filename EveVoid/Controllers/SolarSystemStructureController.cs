@@ -6,7 +6,9 @@ using EveVoid.Services.EveObjects;
 using EveVoid.Services.Navigation.MapObjects;
 using EveVoid.Services.Pilots;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Internal;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace EveVoid.Controllers
 {
@@ -18,16 +20,19 @@ namespace EveVoid.Controllers
         private readonly ICharacterService _characterService;
         private readonly ISolarSystemStructureService _solarSystemStructureService;
         private readonly IItemTypeService _itemTypeService;
+        private readonly IDscanService _dscanService;
 
         public SolarSystemStructureController(IMapper mapper,
             ICharacterService characterService,
             ISolarSystemStructureService solarSystemStructureService,
-            IItemTypeService itemTypeService)
+            IItemTypeService itemTypeService,
+            IDscanService dscanService)
         {
             _mapper = mapper;
             _characterService = characterService;
             _solarSystemStructureService = solarSystemStructureService;
             _itemTypeService = itemTypeService;
+            _dscanService = dscanService;
         }
 
         [HttpPost("Insert")]
@@ -85,6 +90,7 @@ namespace EveVoid.Controllers
             var main = _characterService.GetMainCharacterByToken(mainToken);
             var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
             var addList = new List<SolarSystemStructure>();
+            var shipList = new List<DscanShip>();
             foreach (var dto in dtos)
             {
                 var itemType = _itemTypeService.GetItemTypeById(dto.ItemTypeId);
@@ -99,6 +105,24 @@ namespace EveVoid.Controllers
                         ItemTypeId = dto.ItemTypeId,
                     });
                 }
+                if (itemType.ItemGroup.ItemCategory.Name == "Ship")
+                {
+                    shipList.Add(new DscanShip
+                    {
+                        ShipName = dto.Name,
+                        ShipTypeId = dto.ItemTypeId,
+                    });
+                }
+            }
+            if (shipList.Any())
+            {
+                var dscan = new Dscan
+                {
+                    DscanShips = shipList,
+                    MaskId = maskId,
+                    SolarSystemId = dtos.First().SolarSystemId
+                };
+                _dscanService.Insert(dscan);
             }
             _solarSystemStructureService.InsertBulk(addList);
             return Ok();

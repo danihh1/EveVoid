@@ -4,7 +4,7 @@ import { TabDailogRequestData, DialogResult } from '../signature-dialog/confim-d
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { SolarSystemDto } from '../api/models';
-import { SolarySystemService } from '../api/services';
+import { SolarSystemService } from '../api/services';
 import { debounceTime, distinctUntilChanged, startWith, switchMap, map } from 'rxjs/operators';
 
 @Component({
@@ -20,7 +20,7 @@ export class TabDialogComponent implements OnInit {
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: TabDailogRequestData,
   public dialogRef: MatDialogRef<TabDialogComponent>,
-  private solarSystemService: SolarySystemService) { }
+  private solarSystemService: SolarSystemService) { }
 
   ngOnInit(): void {
     this.filteredSystems = this.tabSystemControl.valueChanges.pipe(
@@ -28,7 +28,7 @@ export class TabDialogComponent implements OnInit {
       distinctUntilChanged(),
       startWith(''),
       switchMap(value => {
-        return this.solarSystemService.getApiSolarySystemFind(value); }
+        return this.solarSystemService.getApiSolarSystemFind(value); }
     )).pipe(
       debounceTime(300),
       distinctUntilChanged(),

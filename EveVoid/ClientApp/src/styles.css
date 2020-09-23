@@ -88,3 +88,17 @@ a:active {
   min-width: 0px !important;
   padding: 0px 12px !important;
 }
+
+.ck-editor__editable,
+.ck-editor__editable_inline
+{
+  overflow-y: auto;
+  /* width: 500px; */
+  min-height: 250px;
+  max-height: 500px;
+}
+
+
+tr.mat-row:hover, tr.mat-footer-row:hover {
+  background: #00bbd423;
+}

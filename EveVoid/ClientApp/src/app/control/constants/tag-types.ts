@@ -5,7 +5,8 @@ export interface TagType {
 }
 export const TagTypes: TagType[] = [
   {name: 'Danger', color: 'red', icon: 'local_fire_department'},
-  {name: 'Warning', color: 'yellow', icon: 'warning'},
+  {name: 'Group Up', color: 'yellow', icon: 'mediation'},
+  {name: 'Target', color: 'orange', icon: 'gps_fixed'},
   {name: 'Safe', color: 'cyan', icon: 'eco'},
 ];
 
@@ -13,15 +14,18 @@ export const TagIconOptions: string[] = [
   'warning',
   'eco',
   'local_fire_department',
+  'gps_fixed',
   'star',
   'navigation',
-  'tour'
+  'tour',
+  'mediation'
 ];
 
 export const TagColorOptions: string[] = [
   'red',
   'yellow',
   'cyan',
+  'orange',
   'blueviolet',
   'chartreuse',
   'white'

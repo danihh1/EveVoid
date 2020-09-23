@@ -13,8 +13,8 @@ namespace EveVoid.Dto
         public int Class { get; set; }
         public double Security { get; set; }
         public int SystemTypeId { get; set; }
-        public int ConstellaionId { get; set; }
-        public string ConstellaionName { get; set; }
+        public int ConstellationId { get; set; }
+        public string ConstellationName { get; set; }
         public int RegionId { get; set; }
         public string RegionName { get; set; }
         public string SystemType { get; set; }
@@ -26,6 +26,7 @@ namespace EveVoid.Dto
         public List<SolarSystemNoteDto> Notes { get; set; }
         public List<SolarSystemTagDto> Tags { get; set; }
         public List<SolarSystemStructureDto> Structures { get; set; }
+        public List<DscanDto> Dscans { get; set; }
 
         public SolarSystemDto()
         {
@@ -36,6 +37,7 @@ namespace EveVoid.Dto
             Notes = new List<SolarSystemNoteDto>();
             Tags = new List<SolarSystemTagDto>();
             Structures = new List<SolarSystemStructureDto>();
+            Dscans = new List<DscanDto>();
         }
     }
 }

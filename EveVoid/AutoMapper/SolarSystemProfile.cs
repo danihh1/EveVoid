@@ -15,14 +15,15 @@ namespace EveVoid.AutoMapper
         public SolarSystemProfile()
         {
             CreateMap<SolarSystem, SolarSystemDto>()
-                .ForMember(src => src.RegionId, dst => dst.MapFrom(x => x.Constellaion.RegionId))
-                .ForMember(src => src.RegionName, dst => dst.MapFrom(x => x.Constellaion.Region.Name))
+                .ForMember(src => src.RegionId, dst => dst.MapFrom(x => x.Constellation.RegionId))
+                .ForMember(src => src.RegionName, dst => dst.MapFrom(x => x.Constellation.Region.Name))
                 .ForMember(src => src.Statics, dst => dst.MapFrom(x => x.Statics.Select(x => x.WormholeType.LeadsTo.Name).ToList()))
                 .ForMember(src => src.Signatures, dst => dst.Ignore())
                 .ForMember(src => src.Pilots, dst => dst.Ignore())
                 .ForMember(src => src.Notes, dst => dst.Ignore())
                 .ForMember(src => src.Tags, dst => dst.Ignore())
-                .ForMember(src => src.Structures, dst => dst.Ignore());
+                .ForMember(src => src.Structures, dst => dst.Ignore())
+                .ForMember(src => src.Dscans, dst => dst.Ignore());
 
             CreateMap<Signature, SignatureDto>()
                 .ForMember(src => src.DestinationSystemId, dst => dst.MapFrom(x => x.Destination.SystemId))
