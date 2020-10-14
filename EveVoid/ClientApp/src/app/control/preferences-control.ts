@@ -6,6 +6,7 @@ const OVERLAY_POSITION = 'overlay_position';
 const MAP_SYSTEM = 'map_system';
 const SELECTED_SYSTEM = 'selected_system';
 const ROUTE_TYPE = 'route_type';
+const MAP_LAYOUT = 'map_layout';
 
 @Injectable({
   // we declare that this service should be created
@@ -69,9 +70,19 @@ export class PreferencesControl {
     localStorage.setItem(ROUTE_TYPE, count);
   }
   public getRouteType(): string {
-    if (localStorage.getItem(ROUTE_TYPE) == null) {
-      this.setGateCount('0');
+    if (localStorage.getItem(ROUTE_TYPE) === null) {
+      this.setRouteType('0');
     }
     return localStorage.getItem(ROUTE_TYPE);
+  }
+
+  public setMapLayout(count: string) {
+    localStorage.setItem(MAP_LAYOUT, count);
+  }
+  public getMapLayout(): string {
+    if (localStorage.getItem(MAP_LAYOUT) === null) {
+      this.setMapLayout('dagre');
+    }
+    return localStorage.getItem(MAP_LAYOUT);
   }
 }

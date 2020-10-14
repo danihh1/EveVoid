@@ -60,6 +60,9 @@ import { SystemNoteDialogComponent } from './system-note-dialog/system-note-dial
 import { NoSanitizePipe } from './pipes/no-sanitize';
 import { FavoriteSystemRoutesComponent } from './favorite-system-routes/favorite-system-routes.component';
 import { SystemDScanComponent } from './system-d-scan/system-d-scan.component';
+import { MapLayoutsComponent } from './map-layouts/map-layouts.component';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+
 
 const routes: Routes = [
   { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -110,7 +113,8 @@ const routes: Routes = [
     SystemNoteDialogComponent,
     NoSanitizePipe,
     FavoriteSystemRoutesComponent,
-    SystemDScanComponent
+    SystemDScanComponent,
+    MapLayoutsComponent
   ],
   imports: [
     MatBadgeModule,
@@ -148,7 +152,8 @@ const routes: Routes = [
     MatPaginatorModule,
     ContextMenuModule.forRoot(),
     MatTabsModule,
-    CKEditorModule
+    CKEditorModule,
+    MatCheckboxModule
   ],
   providers: [NumberAbbreviatePipe, AlphabetDirective, DurationLeftPipe, NoSanitizePipe],
   bootstrap: [AppComponent]

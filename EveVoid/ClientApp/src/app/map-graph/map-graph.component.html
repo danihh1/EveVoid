@@ -1,12 +1,12 @@
 <div style="height: calc(100vh - 64px);width: 100vw;">
   <ngx-graph class="chart-container" [draggingEnabled]="false" [showMiniMap]="true" [animate]="false"
-    [miniMapPosition]="miniMapPosition"
+    [miniMapPosition]="miniMapPosition" [center$]="center$" [update$]="update$"
     [links]="links" [layoutSettings]="layoutSettings" [nodes]="nodes" [miniMapMaxWidth]="300" [miniMapMaxHeight]="300"
-    layout="dagre">
+    [layout]="mapLayout === 'void' ? voidLayout: mapLayout === 'pavlo' ? pavloLayout : 'dagre'">
     <ng-template #nodeTemplate let-node>
       <svg:g class="node">
-        <svg:foreignObject [style.width]="getNodeWith(node)"
-          [style.height]="44 + (node.data.statics.length > 0 ? 22 : 0) + (node.data.tags.length > 0 ? 22 : 0)">
+        <svg:foreignObject [attr.width]="getNodeWidth(node)"
+        [attr.height]="44 + (node.data.statics.length > 0 ? 22 : 0) + (node.data.tags.length > 0 ? 22 : 0)">
           <xhtml:div style="height:100%">
             <mat-card [style.background]="node.data.customColor" fxFlex fxLayout="column" fxLayoutAlign="space-around start"
               style="padding:3px;" [contextMenu]="systemMenu" [contextMenuSubject]="node.id"
@@ -94,8 +94,11 @@
     <div>Nagivation</div>
   </ng-template>
   <context-menu #tagSubMenu2>
-    <ng-template contextMenuItem (execute)="addTag($event.item, tag)" *ngFor="let tag of tags" >
-      {{tag.name}}
+    <ng-template contextMenuItem>
+      Soon™
     </ng-template>
+    <!-- <ng-template contextMenuItem (execute)="addTag($event.item, tag)" *ngFor="let tag of tags" >
+      {{tag.name}}
+    </ng-template> -->
   </context-menu>
 </context-menu>

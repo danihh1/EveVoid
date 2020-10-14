@@ -1,0 +1,14 @@
+
+Layout
+<mat-chip-list
+  class="example-chip">
+  <mat-chip
+    class="example-box"
+    *ngFor="let layout of layouts"
+    [color]="'accent'"
+    [matTooltip]="layout.tooltip"
+    [selected]="getCurrentLayout() && getCurrentLayout() === layout.id"
+    (click)="changeMapLayout(layout)">
+    {{layout.name}}
+  </mat-chip>
+</mat-chip-list>

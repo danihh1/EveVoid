@@ -76,7 +76,7 @@ namespace EveVoid.Controllers
             var dtoSigIds = dto.Signatures.Select(x => x.Id).ToHashSet();
             var systemSigIds = system.Signatures.Where(x => x.MaskId == maskId).Select(x => x.Id).ToHashSet();
             //to delete
-            foreach (var toDeleteId in systemSigIds.Where(x => !dtoSigIds.Contains(x)))
+            foreach (var toDeleteId in systemSigIds.Where(x => !dtoSigIds.Contains(x)).ToList())
             {
                 var toDelete = _signatureService.GetBySignatureId(toDeleteId);
                 if (toDelete.DestinationId != null)

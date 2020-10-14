@@ -36,6 +36,7 @@ namespace EveVoid.Dto
         public string SystemTypeColor { get; set; }
         public bool HasStructureData { get; set; }
         public string WormholeEffect { get; set; }
+        public int Rank { get; set; }
         public List<WormholeTypeMapDto> Statics { get; set; }
         public List<ActivePilotDto> Pilots { get; set; }
         public List<SolarSystemTagDto> Tags { get; set; }

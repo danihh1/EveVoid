@@ -6,6 +6,7 @@ using IO.Swagger.Api;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -94,7 +95,8 @@ namespace EveVoid.Services.Navigation.MapObjects
                     {
                         if (gateId.HasValue)
                         {
-                            var gate = _stargateService.AddOrUpdateStargateToSystemId(gateId.Value, id);
+                            var gate = _stargateService.AddOrUpdateStargateToSystemId(gateId.Value, esiResult);
+
                         }
                     }
                 }
@@ -116,6 +118,16 @@ namespace EveVoid.Services.Navigation.MapObjects
             if (name == "Thera")
             {
                 return _context.SystemTypes.FirstOrDefault(x => x.Name == "Thera").Id;
+            }
+            var TrigSystemNames = new List<string>
+            {
+                "Urhinichi", "Nani", "Skarkon", "Raravoss", "Niarja", "Harva", "Tunudan", "Kuharah", "Ahtila", 
+                "Senda", "Wirashoda", "Ala", "Vale", "Archee", "Angymonne", "Ichoriya", "Kaunokka", "Arvasaras",
+                "Sakenta", "Komo", "Ignebaener", "Otela", "Kino", "Nalvula", "Konola", "Krirald", "Otanuomi"
+            };
+            if (TrigSystemNames.Contains(name))
+            {
+                return _context.SystemTypes.FirstOrDefault(x => x.Name == "Trig").Id;
             }
             if (Regex.Match(name, "(J[0-9]{6})").Success)
             {

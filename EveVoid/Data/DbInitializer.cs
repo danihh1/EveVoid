@@ -27,10 +27,11 @@ namespace EveVoid.Data
             context.Database.Migrate();
             //context.Database.EnsureCreated();
 
-            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\combine.json");
+            var path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data/combine.json");
+            //_logger.Info("Combine Path: " + path);
             var jsonText = File.ReadAllText(path);
+            //_logger.Info("Combine jsonText: " + jsonText);
             var json = JsonConvert.DeserializeObject<CombineDump>(jsonText);
-
             if (!context.Regions.Any())
             {
                 var addList = new List<Region>();
@@ -60,13 +61,13 @@ namespace EveVoid.Data
             }
 
             var systemTypes = json.wormholes.Select(x => x.Value.leadsTo).Distinct().ToList();
-            if (!context.SystemTypes.Any())
+            if (context.SystemTypes.FirstOrDefault(x => x.Name == "Unknown") == null)
             {
                 context.SystemTypes.AddRange(systemTypes.Select(s => new SystemType { Name = s, Color = SystemTypeColor(s) }));
                 context.SystemTypes.Add(new SystemType { Name = "Unknown", Color = SystemTypeColor("Unknown") });
                 context.SaveChanges();
             }
-            if (!context.WormholeTypes.Any())
+            if (context.WormholeTypes.FirstOrDefault(x => x.Name == "????") == null)
             {
                 context.WormholeTypes.Add(new WormholeType
                 {
@@ -133,7 +134,16 @@ namespace EveVoid.Data
                     ConstellationId = int.Parse(x.Value.constellationID)
                 }));
                 context.SaveChanges();
+                context.Database.ExecuteSqlRaw(@"update SolarSystems 
+                    set systemTypeId = (select id from systemTypes where name like 'Trig')
+                    where id in
+                    (30000021,30000157,30000192,30000206,30001372,30001381,30001413,30001445,30002079,30002225,30002411,30002652,30002702,30002737,30002770,30002797,30003046,30003495,
+                    30003504,30005005,30005029,30010141,30020141,30031392,30040141,30045328,30045329)");
+                context.Database.ExecuteSqlRaw(@"update SolarSystems set LastUpdate = '2020-01-01' where id in
+                    (30000021,30000157,30000192,30000206,30001372,30001381,30001413,30001445,30002079,30002225,30002411,30002652,30002702,30002737,30002770,30002797,30003046,30003495,
+                    30003504,30005005,30005029,30010141,30020141,30031392,30040141,30045328,30045329)");
             }
+            
             if (!context.Stargates.Any())
             {
                 context.Stargates.AddRange(json.stargates.Select(x => new Stargate
@@ -148,6 +158,15 @@ namespace EveVoid.Data
                     stargates[int.Parse(stargate.Key)].DestinationId = stargate.Value.destinationId;
                 }
                 context.SaveChanges();
+                context.Database.ExecuteSqlRaw(@"delete Stargates where DestinationId in 
+                    (
+                    select id from Stargates where systemid in 
+                    (30000021,30000157,30000192,30000206,30001372,30001381,30001413,30001445,30002079,30002225,30002411,30002652,30002702,30002737,30002770,30002797,30003046,30003495,
+                    30003504,30005005,30005029,30010141,30020141,30031392,30040141,30045328,30045329))
+                     or id in (select id from Stargates where systemid in 
+                    (30000021,30000157,30000192,30000206,30001372,30001381,30001413,30001445,30002079,30002225,30002411,30002652,30002702,30002737,30002770,30002797,30003046,30003495,
+                    30003504,30005005,30005029,30010141,30020141,30031392,30040141,30045328,30045329))");
+
             }
             if (!context.AdjacencyMatrix.Any())
             {
@@ -169,6 +188,12 @@ namespace EveVoid.Data
                     }
                 }
                 context.SaveChanges();
+                context.Database.ExecuteSqlRaw(@"delete [EveVoid].[dbo].[AdjacencyMatrix]
+                    where RowNumber in (30000021,30000157,30000192,30000206,30001372,30001381,30001413,30001445,30002079,30002225,30002411,30002652,30002702,30002737,30002770,30002797,30003046,30003495,
+                    30003504,30005005,30005029,30010141,30020141,30031392,30040141,30045328,30045329)
+                    or ColumnNumber in (30000021,30000157,30000192,30000206,30001372,30001381,30001413,30001445,30002079,30002225,30002411,30002652,30002702,30002737,30002770,30002797,30003046,30003495,
+                    30003504,30005005,30005029,30010141,30020141,30031392,30040141,30045328,30045329)");
+                _logger.Info("Seeded Adjacency");
             }
             //var _universeApi = new UniverseApi();
             //var index = 1;
@@ -238,11 +263,11 @@ namespace EveVoid.Data
             else
             {
                 var secStatus = double.Parse(system.security);
-                if (secStatus >= 0.5)
+                if (secStatus > 0.45)
                 {
                     return "High-Sec";
                 }
-                if (secStatus > 0)
+                if (secStatus > -0.05)
                 {
                     return "Low-Sec";
                 }
@@ -304,6 +329,11 @@ namespace EveVoid.Data
                 case "Null-Sec":
                     {
                         res = "#ff1f1f";
+                        break;
+                    }
+                case "Trig":
+                    {
+                        res = "#ff4800";
                         break;
                     }
             };

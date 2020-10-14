@@ -131,7 +131,7 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
       this.preferencesControl.setSelectedSystem({solarSystemId: systemId});
       this.dataControl.forceMapUpdate();
       this.dataControl.setCharLocation({ id: this.esiChar.id, locationId: systemId.toString()});
-      //this.router.navigate(['./map/' + systemId]);
+      // this.router.navigate(['./map/' + systemId]);
     }
   }
 }

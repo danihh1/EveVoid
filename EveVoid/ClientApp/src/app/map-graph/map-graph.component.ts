@@ -10,13 +10,15 @@ import { AuthControl } from '../control/auth-control';
 import { MapDto, SignatureDto } from '../api/models';
 import { MapService, TagService } from '../api/services';
 import { Subject, interval, Subscription, combineLatest } from 'rxjs';
-import { Node, Edge, ClusterNode } from '@swimlane/ngx-graph';
+import { Node, Edge, ClusterNode, Alignment } from '@swimlane/ngx-graph';
 import { DataControl } from '../control/data-control';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { SignatureDialogComponent } from '../signature-dialog/signature-dialog.component';
 import { TagTypes, TagType, EffectIcons } from '../control/constants/tag-types';
 import * as moment from 'moment';
+import { VoidLayout } from '../control/void-layout';
+import { PavloLayout } from '../control/pavlo-layout';
 
 @Component({
   selector: 'app-map-graph',
@@ -27,6 +29,9 @@ export class MapGraphComponent implements OnInit, OnDestroy {
   maps: MapDto[];
   systemObserver: Subscription;
   unsubscribe$: Subject<boolean> = new Subject();
+  center$: Subject<boolean> = new Subject();
+  update$: Subject<boolean> = new Subject();
+  firstLoad = true;
   tags = TagTypes;
   effectIcons = EffectIcons;
   layoutSettings = {
@@ -37,7 +42,12 @@ export class MapGraphComponent implements OnInit, OnDestroy {
   };
   nodes: Node[];
   links: Edge[];
+  voidLayout = new VoidLayout();
+  pavloLayout = new PavloLayout();
 
+  get mapLayout(): string {
+    return this.preferencesControl.getMapLayout();
+  }
   get miniMapPosition(): string {
     return this.preferencesControl.getOverlayPosition() === 'left' ? 'UpperRight' : 'UpperLeft';
   }
@@ -106,11 +116,11 @@ export class MapGraphComponent implements OnInit, OnDestroy {
   }
 
   buildMap(newMaps: MapDto[]) {
-    this.links = [];
-    this.nodes = [];
+    const newLinks = [];
+    const newNodes = [];
     newMaps.forEach(newMap => {
       newMap.nodes.forEach(x => {
-        this.nodes.push({
+        newNodes.push({
           id: x.id,
           label: x.name,
           data: {
@@ -123,12 +133,13 @@ export class MapGraphComponent implements OnInit, OnDestroy {
             statics: x.statics,
             tags: x.tags,
             effect: x.wormholeEffect,
-            hasStructureData: x.hasStructureData
+            hasStructureData: x.hasStructureData,
+            rank: x.rank
           }
         });
       });
       newMap.edges.forEach(x => {
-        this.links.push({
+        newLinks.push({
           id: 'e' + x.id,
           source: x.source,
           target: x.target,
@@ -142,13 +153,16 @@ export class MapGraphComponent implements OnInit, OnDestroy {
             sourceName: x.sourceName,
             targetName: x.targetName,
           },
-          line: 'test'
         });
       });
     });
-    this.nodes = [...this.nodes];
-    this.links = [...this.links];
-
+    this.nodes = [...newNodes];
+    this.links = [...newLinks];
+    // this.update$.next(true);
+    if (this.firstLoad) {
+      this.center$.next(true);
+      this.firstLoad = false;
+    }
   }
 
   getTooltipForStatic(p: WormholeTypeMapDto): string {
@@ -209,7 +223,7 @@ export class MapGraphComponent implements OnInit, OnDestroy {
     });
   }
 
-  getNodeWith(node: any): number {
+  getNodeWidth(node: any): number {
     return Math.max(node.label.length > 5 ? (node.label.length * 11) + 24 : 0, 90, node.data.tags.length * 23);
   }
 

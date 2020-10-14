@@ -51,17 +51,12 @@
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="space-between center" fxLayoutGap="10px">
       <mat-form-field style="width:100px" *ngIf="signature.signatureType === 1">
-        <mat-label>Life</mat-label>
-        <mat-select [(value)]="signature.timeRemainingIndicator">
-          <mat-option *ngFor="let type of wormholeLifeTypes" [value]="type.id">{{type.name}}</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field style="width:100px" *ngIf="signature.signatureType === 1">
         <mat-label>Mass</mat-label>
         <mat-select [(value)]="signature.massIndicator">
           <mat-option *ngFor="let type of massTypes" [value]="type.id">{{type.name}}</mat-option>
         </mat-select>
       </mat-form-field>
+      <mat-checkbox *ngIf="signature.signatureType === 1" matInput [(ngModel)]="sigEol">End of Life</mat-checkbox>
     </div>
     <div fxLayout="row wrap" fxLayoutAlign="start start" fxLayoutGap="10px">
       <mat-form-field style="width:200px">

@@ -196,9 +196,11 @@ openSigDialog(id: number) {
         });
       return;
     }
-    const sigReg = /^(\w{3})-(\d{3})\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)\t([^\n\r\t]+)/gm;
+    console.log('test');
+    const sigReg = /^(\w{3})-(\d{3})\t([^\n\r\t]+)\t([^\n\r\t]*)\t([^\n\r\t]*)\t([^\n\r\t]+)\t([^\n\r\t]+)/gm;
     const pastedSigReg = pasteText.match(sigReg);
     if (pastedSigReg) {
+      console.log('test2');
       // Signature Paste
       const pastedSigs: SignatureDto[] = [];
       pasteLines.forEach(x => {
@@ -229,7 +231,7 @@ openSigDialog(id: number) {
       });
       pastedSigs.forEach(x => {
         const existIndex = this.solarSystem.signatures.findIndex(s => s.signatureId === x.signatureId);
-        if (existIndex > -1) {
+        if (existIndex > -1 && x.signatureType > 0) {
           const existSig = this.solarSystem.signatures[existIndex];
           existSig.signatureType = x.signatureType;
           if (x.signatureType !== 1) {

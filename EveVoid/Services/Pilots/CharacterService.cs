@@ -30,6 +30,7 @@ namespace EveVoid.Services.Pilots
         public ISolarSystemService _solarSystemService { get; set; }
         public ISignatureService _signatureService { get; set; }
         public IStargateService _stargateService { get; set; }
+        public IRouteService _routeService { get; set; }
 
         public CharacterService(EveVoidContext context,
             ICorporationService corporationService,
@@ -38,8 +39,9 @@ namespace EveVoid.Services.Pilots
             ITokenService tokenService,
             ISolarSystemService solarSystemService,
             IItemTypeService itemTypeService,
-            ISignatureService signatureService, 
-            IStargateService stargateService)
+            ISignatureService signatureService,
+            IStargateService stargateService, 
+            IRouteService routeService)
         {
             _context = context;
             _corporationService = corporationService;
@@ -50,6 +52,7 @@ namespace EveVoid.Services.Pilots
             _itemTypeService = itemTypeService;
             _signatureService = signatureService;
             _stargateService = stargateService;
+            _routeService = routeService;
         }
 
         public MainCharacter CreateOrUpdateMain(MainLoginDto dto)
@@ -172,6 +175,7 @@ namespace EveVoid.Services.Pilots
                 {
                     var maskId = esi.MainCharacter.MaskType == MaskType.Alliance ? esi.MainCharacter.Corporation.Alliance.MaskId : esi.MainCharacter.Corporation.MaskId;
                     var destoSystem = _solarSystemService.GetSystemById(dto.CurrentSystemId.GetValueOrDefault());
+                    var originSystem = _solarSystemService.GetSystemById(esi.CurrentSystemId.Value);
                     var connection = _stargateService.GetStargateByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault());
                     if (connection == null)
                     {
@@ -213,6 +217,10 @@ namespace EveVoid.Services.Pilots
                             wormhole.DestinationId = destoWormhole.Id;
                             _signatureService.Update(wormhole, commit: true);
                         }
+                        _routeService.AddAdjacency(esi.CurrentSystemId.Value, dto.CurrentSystemId.Value, maskId,
+                            destoSystem.Class > 0 || originSystem.Class > 0 ? 10 : // J Space Connection = 10
+                            destoSystem.Security <= 0.45 || originSystem.Security <= 0.45 ? 100 : // Null/Low sec connection = 100
+                            1); // Hisec to Hisec = 1
                         //var wormhole = _signatureService.GetOrAddWormholeByOriginAndDestoId(esi.CurrentSystemId.GetValueOrDefault(), dto.CurrentSystemId.GetValueOrDefault(), maskId, sigId);
                         //wormhole.Wormhole.Jumps.Add(new Jump
                         //{

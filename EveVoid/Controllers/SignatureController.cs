@@ -61,7 +61,7 @@ namespace EveVoid.Controllers
             var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
             var sig = _signatureService.GetBySignatureId(dto.Id);
             sig.SignatureId = dto.SignatureId;
-            sig.ExpiryDate = dto.ExpiryDate;
+            //sig.ExpiryDate = dto.ExpiryDate;
             sig.Name = dto.Name;
             sig.SignatureType = dto.SignatureType;
             _signatureService.WormholeSigUpdate(dto, sig, maskId);

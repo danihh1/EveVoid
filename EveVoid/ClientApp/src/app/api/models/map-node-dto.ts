@@ -13,4 +13,5 @@ export interface MapNodeDto {
   systemTypeColor?: string;
   tags?: Array<SolarSystemTagDto>;
   wormholeEffect?: string;
+  rank?: number;
 }

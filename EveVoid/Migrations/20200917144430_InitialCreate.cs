@@ -1,5 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using EveVoid.Data;
+using EveVoid.Extensions;
+using EveVoid.Models.Combine;
+using EveVoid.Models.Navigation;
+using EveVoid.Models.Navigation.MapObjects;
+using EveVoid.Models.Navigation.Matrix;
+using IO.Swagger.Api;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace EveVoid.Migrations
 {

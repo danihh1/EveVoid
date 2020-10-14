@@ -53,6 +53,10 @@ namespace EveVoid.Services.Navigation
         public void Delete(int id, bool commit = false)
         {
             var sig = _context.Signatures.FirstOrDefault(x => x.Id == id);
+            if (sig == null)
+            {
+                return;
+            }
             if (sig.DestinationId != null)
             {
                 var dest = sig.Destination;
@@ -109,8 +113,8 @@ namespace EveVoid.Services.Navigation
                                 if (sig.WormholeType != null)
                                 {
                                     baseHours = int.Parse(Regex.Replace(sig.WormholeType.Duration, "[^0-9]+", string.Empty));
-                                    sig.ExpiryDate = sig.CreationDate.AddHours(baseHours);
                                 }
+                                sig.ExpiryDate = sig.CreationDate.AddHours(baseHours);
                                 break;
                             }
                     }
@@ -143,7 +147,7 @@ namespace EveVoid.Services.Navigation
                         desto.Signatures.Add(destoSig);
                         _routeService.AddAdjacency(sig.SystemId, desto.Id, sig.MaskId, 
                             desto.Class > 0 || origin.Class > 0 ? 10 : // J Space Connection = 10
-                            desto.Security < 0.5 || origin.Security < 0.5 ? 100 : // Null/Low sec connection = 100
+                            desto.Security <= 0.45 || origin.Security <= 0.45 ? 100 : // Null/Low sec connection = 100
                             1); // Hisec to Hisec = 1
                         _solarSystemService.UpdateSystem(desto);
                     }

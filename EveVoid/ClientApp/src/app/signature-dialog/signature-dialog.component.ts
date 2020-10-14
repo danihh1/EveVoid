@@ -23,6 +23,7 @@ import {
 } from 'rxjs/operators';
 import { SignatureService, SolarSystemService } from '../api/services';
 import { DataControl } from '../control/data-control';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-signature-dialog',
@@ -42,6 +43,17 @@ export class SignatureDialogComponent implements OnInit {
 
   massTypes = MassTypes;
   wormholeLifeTypes = WormholeLifeTypes;
+
+  get sigEol(): boolean {
+    const start = moment.utc(Date.now());
+    const expiry = moment.utc(this.signature.expiryDate);
+    const duration = moment.duration(expiry.diff(start));
+    const hours = duration.asHours();
+    return this.signature.timeRemainingIndicator === 1 || hours < 4;
+  }
+  set sigEol(value: boolean) {
+    this.signature.timeRemainingIndicator = value ? 1 : 0;
+  }
 
   signature: SignatureDto = {
     signatureType: 0,

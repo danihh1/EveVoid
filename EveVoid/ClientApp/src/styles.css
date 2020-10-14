@@ -102,3 +102,14 @@ a:active {
 tr.mat-row:hover, tr.mat-footer-row:hover {
   background: #00bbd423;
 }
+
+.background-image {
+  position: absolute;
+  background-color: #060606;
+  background-image: url(assets/background_ID_77700868042.jpg);
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  background-attachment: fixed;
+}

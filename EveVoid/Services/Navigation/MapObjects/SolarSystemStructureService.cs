@@ -18,7 +18,7 @@ namespace EveVoid.Services.Navigation.MapObjects
 
         public void Insert(SolarSystemStructure structure, bool commit = true)
         {
-            var duplicates = _context.SolarSystemStructures.Where(x => x.Name == structure.Name && x.ItemTypeId == structure.ItemTypeId && x.SolarSystemId == structure.SolarSystemId);
+            var duplicates = _context.SolarSystemStructures.Where(x => x.Name == structure.Name && x.ItemTypeId == structure.ItemTypeId && x.SolarSystemId == structure.SolarSystemId).ToList();
             if (duplicates.Count() == 0)
             {
                 _context.SolarSystemStructures.Add(structure);

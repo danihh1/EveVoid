@@ -1,5 +1,6 @@
 ﻿using DotNetty.Common;
 using DotNetty.Common.Concurrency;
+using EveVoid.Services.Navigation;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -46,26 +47,26 @@ namespace EveVoid.Data
 
             using (var scope = scopeFactory.CreateScope())
             {
-                var context = scope.ServiceProvider.GetService<EveVoidContext>();
-                var fourHoursAgo = DateTime.UtcNow.AddHours(-4);
-                var expiredSignatures = context.Signatures.Where(x => x.ExpiryDate <= fourHoursAgo);
-                foreach (var sig in expiredSignatures)
+                try
                 {
-                    if (sig.Destination != null)
+                    var context = scope.ServiceProvider.GetService<EveVoidContext>();
+                    var sigService = scope.ServiceProvider.GetService<ISignatureService>();
+                    var fourHoursAgo = DateTime.UtcNow.AddHours(-4);
+                    var expiredSignatures = context.Signatures.Where(x => x.ExpiryDate <= fourHoursAgo).ToList();
+                    foreach (var sig in expiredSignatures)
                     {
-                        sig.Destination.DestinationId = null;
+                        sigService.Delete(sig.Id, commit: true);
                     }
-                    sig.DestinationId = null;
-                }
-                context.UpdateRange(expiredSignatures);
-                context.SaveChanges();
-                context.Signatures.RemoveRange(expiredSignatures);
-                context.SaveChanges();
 
-                var now = DateTime.UtcNow;
-                var expiredTags = context.SolarSystemTags.Where(x => x.ExpiryDate <= now);
-                context.SolarSystemTags.RemoveRange(expiredTags);
-                context.SaveChanges();
+                    var now = DateTime.UtcNow;
+                    var expiredTags = context.SolarSystemTags.Where(x => x.ExpiryDate <= now);
+                    context.SolarSystemTags.RemoveRange(expiredTags);
+                    context.SaveChanges();
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e.ToString());
+                }
             }
             
         }

@@ -44,7 +44,7 @@ namespace EveVoid.Controllers
             return res;
         }
 
-        private void RecurseMap(SolarSystem system, string customName, int maskId, MapDto map, int level, int maxGateLevel)
+        private void RecurseMap(SolarSystem system, string customName, int maskId, MapDto map, int level, int gateLevel, int maxGateLevel)
         {
             map.Nodes.Add(new MapNodeDto
             {
@@ -69,13 +69,15 @@ namespace EveVoid.Controllers
                     Name = x.Name,
                     ShipName = x.CurrentShipName,
                     ShipTypeName = x.CurrentShip?.Name
-                }).ToList()
+                }).ToList(),
+                Rank = level
             });
+            level++;
             if (system.Gates.Any())
             {
-                level++;
+                gateLevel++;
             }
-            foreach (var connection in system.GetConnections(maskId, includeGates: level <= maxGateLevel))
+            foreach (var connection in system.GetConnections(maskId, includeGates: gateLevel <= maxGateLevel))
             {
                 if (!map.EdgeExists(system.Id.ToString(), connection.SolarSystem.Id.ToString()))
                 {
@@ -116,7 +118,7 @@ namespace EveVoid.Controllers
                 }
                 if (!map.NodeExists(connection.SolarSystem.Id.ToString()))
                 {
-                    RecurseMap(connection.SolarSystem, connection.Signature.Name, maskId, map, level, maxGateLevel);
+                    RecurseMap(connection.SolarSystem, connection.Signature.Name, maskId, map, level, gateLevel, maxGateLevel);
                 }
             }
         }
@@ -127,11 +129,96 @@ namespace EveVoid.Controllers
             {
                 RootNodeId = system.Id
             };
-            RecurseMap(system, customName, maskId, res, 0, maxGateLevel);
+            var queue = new Stack<BFSNode>();
+            queue.Push(new BFSNode
+            {
+                SolarSystem = system,
+                Rank = 0,
+                Name = customName
+            });
+            while (queue.Any())
+            {
+                var pop = queue.Pop();
+
+                BFSMap(pop.SolarSystem, pop.Name, maskId, res, pop.Rank, queue);
+            }
+            //RecurseMap(system, customName, maskId, res, 0, 0, maxGateLevel);
             return res;
         }
 
-        
+        private class BFSNode
+        {
+            public SolarSystem SolarSystem { get; set; }
+            public int Rank { get; set; }
+            public string Name { get; set; }
+        }
+
+        private void BFSMap(SolarSystem system, string customName, int maskId, MapDto map, int level, Stack<BFSNode> queue)
+        {
+            if (map.NodeExists(system.Id.ToString()))
+            {
+                return;
+            }
+            map.Nodes.Add(new MapNodeDto
+            {
+                Id = system.Id.ToString(),
+                Color = "#121212",
+                Name = customName.IsNullOrEmpty() ? system.Name : customName,
+                SystemType = system.SystemType?.Name,
+                HasStructureData = system.Structures.Any(x => x.MaskId == maskId),
+                WormholeEffect = system.SystemEffect,
+                Tags = system.Tags.Where(x => x.MaskId == maskId).Select(x => _mapper.Map<SolarSystemTagDto>(x)).ToList(),
+                Statics = system.Statics.Select(x => new WormholeTypeMapDto
+                {
+                    Name = x.WormholeType.Name,
+                    Duration = x.WormholeType.Duration,
+                    MaxJump = x.WormholeType.MaxJump,
+                    MaxMass = x.WormholeType.MaxMass,
+                    LeadsTo = x.WormholeType.LeadsTo.Name,
+                    Color = x.WormholeType.LeadsTo.Color
+                }).ToList(),
+                SystemTypeColor = system.SystemType?.Color,
+                Pilots = system.Pilots.Select(x => new ActivePilotDto
+                {
+                    Name = x.Name,
+                    ShipName = x.CurrentShipName,
+                    ShipTypeName = x.CurrentShip?.Name
+                }).ToList(),
+                Rank = level
+            });
+            foreach (var connection in system.GetConnections(maskId, includeGates: false))
+            {
+                if (!map.EdgeExists(system.Id.ToString(), connection.SolarSystem.Id.ToString()))
+                {
+                    var signature = connection.Signature;
+                    if (signature != null)
+                    {
+                        map.Edges.Add(new MapEdgeDto
+                        {
+                            Id = signature.Id.ToString(),
+                            SourceName = signature.Destination == null ? "???" : signature.Destination.SignatureId,
+                            TargetName = signature.SignatureId,
+                            TargetId = signature.DestinationId?.ToString(),
+                            LineWidth = WormholeWidthBasedOnMaxJump(signature.WormholeType?.MaxJump),
+                            Color = WormholeColorBasedOnRemainingMass(signature),
+                            Source = system.Id.ToString(),
+                            Target = connection.SolarSystem.Id.ToString(),
+                            LineType = signature.ExpiryDate >= DateTime.UtcNow.AddHours(4) ? "" : "10"
+                        });
+                    }
+                }
+                if (!map.NodeExists(connection.SolarSystem.Id.ToString()))
+                {
+                    queue.Push(new BFSNode
+                    {
+                        SolarSystem = connection.SolarSystem,
+                        Rank = level + 1,
+                        Name = connection.Signature.Name
+                    });
+                }
+            }
+        }
+
         private string WormholeColorBasedOnRemainingMass(Signature signature)
         {
             var dto = _mapper.Map<SignatureDto>(signature);

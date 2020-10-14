@@ -44,7 +44,7 @@ namespace EveVoid
             if (Configuration.GetValue<string>("SqlProvider") == "MySql")
             {
                 services.AddDbContext<EveVoidContext>(options =>
-                    options.UseLazyLoadingProxies().UseMySQL(Configuration.GetConnectionString("MySqlConnectionString")));
+                    options.UseLazyLoadingProxies().UseMySql(Configuration.GetConnectionString("MySqlConnectionString")));
             }
             services.AddScoped<ICharacterApi, CharacterApi>();
             services.AddScoped<ICharacterService, CharacterService>();
@@ -87,14 +87,16 @@ namespace EveVoid
             });
             services.AddSwaggerGen();
 
+            services.AddSignalR();
+
             services.AddCors(options =>
             {
                 options.AddPolicy(name: AllowAllCorsPolicy,
-                                  builder =>
+                                  options =>
                                   {
-                                      builder.AllowAnyOrigin();
-                                      builder.AllowAnyMethod();
-                                      builder.AllowAnyHeader();
+                                      options.AllowAnyOrigin()
+                                      .AllowAnyMethod()
+                                      .AllowAnyHeader();
                                   });
             });
         }
@@ -114,6 +116,7 @@ namespace EveVoid
             }
 
             app.UseHttpsRedirection();
+            app.UseDefaultFiles();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
