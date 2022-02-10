@@ -18,13 +18,13 @@ export class MainCharacterComponent implements OnInit {
   @Input() mainChar: MainCharacterDto;
   portraitSize = 64;
   get portrait(): string {
-    return this.imageControl.getPortraitForCharacter(this.mainChar.id, this.portraitSize);
+    return this.imageControl.getPortraitForCharacter(this.mainChar.pilotId, this.portraitSize);
   }
   get corpLogo(): string {
-    return this.imageControl.getCorpLogo(this.mainChar.id, this.portraitSize / 2);
+    return this.imageControl.getCorpLogo(this.mainChar.corporationId, this.portraitSize / 2);
   }
   get allianceLogo(): string {
-    return this.imageControl.getAllianceLogo(this.mainChar.id, this.portraitSize / 2);
+    return this.imageControl.getAllianceLogo(this.mainChar.allianceId, this.portraitSize / 2);
   }
 
   control = new FormControl();

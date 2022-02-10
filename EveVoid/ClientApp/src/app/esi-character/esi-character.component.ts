@@ -3,7 +3,7 @@ import { SignatureDto } from './../api/models/signature-dto';
 import { AuthControl } from './../control/auth-control';
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ImageControl } from '../control/image-control';
-import { Observable, interval, Subscription, combineLatest } from 'rxjs';
+import { Observable, interval, Subscription, combineLatest, timer, Subject } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { EsiCharacterDto } from '../api/models';
 import { CharacterService, SolarSystemService, SignatureService } from '../api/services';
@@ -12,6 +12,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AutoJumpDailogResponseData, DialogResult } from '../signature-dialog/confim-dialog.model';
 import { PreferencesControl } from '../control/preferences-control';
 import { DataControl } from '../control/data-control';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -25,15 +26,16 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
   locationObserver: Subscription;
   shipObserver: Subscription;
   reportingLocation = false;
+  private destroyed$ = new Subject();
 
   get portrait(): string {
-    return this.imageControl.getPortraitForCharacter(this.esiChar.id, this.portraitSize);
+    return this.imageControl.getPortraitForCharacter(this.esiChar.pilotId, this.portraitSize);
   }
   get corpLogo(): string {
-    return this.imageControl.getCorpLogo(this.esiChar.id, this.portraitSize / 2);
+    return this.imageControl.getCorpLogo(this.esiChar.corporationId, this.portraitSize / 2);
   }
   get allianceLogo(): string {
-    return this.imageControl.getAllianceLogo(this.esiChar.id, this.portraitSize / 2);
+    return this.imageControl.getAllianceLogo(this.esiChar.allianceId, this.portraitSize / 2);
   }
   constructor(private imageControl: ImageControl,
     public preferencesControl: PreferencesControl,
@@ -47,8 +49,11 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
    }
 
   ngOnInit() {
-    this.shipObserver = interval(15000).subscribe(() => {
-      this._locationApi.getCharactersCharacterIdShip({characterId: this.esiChar.id,
+    // this.shipObserver = interval(15000)
+    timer(0, 25000).pipe(
+      takeUntil(this.destroyed$)
+    ).subscribe(() => {
+      this._locationApi.getCharactersCharacterIdShip({characterId: this.esiChar.pilotId,
       token: this.esiChar.esiToken, datasource: null, IfNoneMatch: null}).subscribe(ship => {
         this.esiChar.currentShipTypeId = ship.ship_type_id;
         if (ship.ship_name.startsWith('u\'') && ship.ship_name.endsWith('\'')) {
@@ -68,9 +73,12 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
       });
     });
 
-    this.locationObserver = interval(5000).subscribe(() => {
+    // this.locationObserver = interval(5000)
+    timer(0, 5000).pipe(
+      takeUntil(this.destroyed$)
+    ).subscribe(() => {
       this.reportingLocation = true;
-      this._locationApi.getCharactersCharacterIdLocation({characterId: this.esiChar.id,
+      this._locationApi.getCharactersCharacterIdLocation({characterId: this.esiChar.pilotId,
         token: this.esiChar.esiToken, datasource: null, IfNoneMatch: null}).subscribe(loc => {
           if (this.esiChar.currentSystemId && loc.solar_system_id !== this.esiChar.currentSystemId) {
             this.signatureService
@@ -116,12 +124,15 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.locationObserver.unsubscribe();
     this.shipObserver.unsubscribe();
+    this.destroyed$.next();
+    this.destroyed$.complete();
   }
 
   updateWithSigId(sigId: number) {
     this._characterService.postApiCharacterUpdateEsiCharacter({mainToken: this.authControl.getMainToken(),
       body: this.esiChar, sigId}).subscribe(res => {
       this.esiChar = res;
+      this.dataControl.setCharLocation({ id: this.esiChar.id, locationId: this.esiChar.currentSystemId.toString()});
       this.reportingLocation = false;
     });
   }
@@ -130,7 +141,6 @@ export class EsiCharacterComponent implements OnInit, OnDestroy {
     if (systemId > 10000000) {
       this.preferencesControl.setSelectedSystem({solarSystemId: systemId});
       this.dataControl.forceMapUpdate();
-      this.dataControl.setCharLocation({ id: this.esiChar.id, locationId: systemId.toString()});
       // this.router.navigate(['./map/' + systemId]);
     }
   }

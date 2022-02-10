@@ -33,6 +33,10 @@ namespace EveVoid.Controllers
         [HttpGet("GetMainCharacter")]
         public ActionResult<MainCharacterDto> GetMainCharacter(string token)
         {
+            if (token == null)
+            {
+                return NotFound();
+            }
             var main = _characterService.GetMainCharacterByToken(token);
             if (main == null)
             {

@@ -39,7 +39,7 @@ namespace EveVoid.Controllers
         public ActionResult Insert(string mainToken, SolarSystemStructureDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             _itemTypeService.GetItemTypeById(dto.ItemTypeId);
             var newStructure = new SolarSystemStructure
             {
@@ -57,7 +57,7 @@ namespace EveVoid.Controllers
         public ActionResult Update(string mainToken, SolarSystemStructureDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var solarSystemStructure = _solarSystemStructureService.GetById(dto.Id);
             if (solarSystemStructure == null || solarSystemStructure.MaskId != maskId)
             {
@@ -88,7 +88,7 @@ namespace EveVoid.Controllers
         public ActionResult InsertBulk(string mainToken, List<SolarSystemStructureDto> dtos)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var addList = new List<SolarSystemStructure>();
             var shipList = new List<DscanShip>();
             foreach (var dto in dtos)

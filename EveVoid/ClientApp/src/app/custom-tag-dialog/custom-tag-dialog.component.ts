@@ -60,7 +60,7 @@ export class CustomTagDialogComponent implements OnInit {
 
   confirm() {
     this.tagService.postApiTagInsert({mainToken: this.authControl.getMainToken(), body: this.newTag}).subscribe(x => {
-      console.log(x);
+      // console.log(x);
       this.dataControl.forceMapUpdate();
       this.dialogRef.close({
         result: DialogResult.confirmed,

@@ -11,5 +11,6 @@ export interface EsiCharacterDto {
   currentSystemName?: string;
   esiToken?: string;
   id?: number;
-  name?: string;
+  pilotId?: number;
+  pilotName?: string;
 }

@@ -35,7 +35,7 @@ namespace EveVoid.Controllers
         public ActionResult InsertTag(string mainToken, SolarSystemTagDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var newTag = new SolarSystemTag
             {
                 Color = dto.Color,
@@ -53,7 +53,7 @@ namespace EveVoid.Controllers
         public ActionResult UpdateTag(string mainToken, SolarSystemTagDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var tag = _tagService.GetById(dto.Id);
             if (tag == null || tag.MaskId != maskId)
             {

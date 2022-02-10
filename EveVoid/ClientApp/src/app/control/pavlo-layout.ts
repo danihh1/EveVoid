@@ -5,7 +5,7 @@ export class PavloLayout implements Layout {
   inputGraph: Graph;
   outputGraph: Graph;
 
-  radius = 150;
+  radius = 120;
 
   run(graph: Graph): Graph {
     this.inputGraph = graph;

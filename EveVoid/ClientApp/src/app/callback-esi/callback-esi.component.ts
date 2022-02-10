@@ -24,12 +24,12 @@ export class CallbackEsiComponent implements OnInit {
           this._code = code;
           if (this.authConrol.isLoggedIn()){
             let dto = {mainCharacterToken: this.authConrol.getMainToken(), accessCode: this._code} as EsiLoginDto;
-            console.log(dto);
+            // console.log(dto);
             this.ssoService.postApiSSOExchangeCodeForTokenEsi(dto)
               .subscribe(res => {
                 this.router.navigate(['']);
               }, err => {
-                console.log(err);
+                // console.log(err);
                 this.router.navigate(['']);
               });
           }

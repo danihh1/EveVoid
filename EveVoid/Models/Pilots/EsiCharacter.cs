@@ -6,15 +6,14 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using EveVoid.Models.Navigation.Masks;
+using System.ComponentModel.DataAnnotations;
 
 namespace EveVoid.Models.Pilots
 {
     public class EsiCharacter: IEsiEntity, IHasUpdateTime
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int Id { get; set; }
-        public string Name { get; set; }
-        public int? CorporationId { get; set; }
+        public int PilotId { get; set; }
         public string AccessToken { get; set; }
         public string RefreshToken { get; set; }
         public int MainCharacterId { get; set; }
@@ -24,15 +23,14 @@ namespace EveVoid.Models.Pilots
         public DateTime LastUpdate { get; set; }
         public DateTime TokenExpiresIn { get; set; }
 
-        public virtual List<Jump> Jumps { get; set; }
         public virtual MainCharacter MainCharacter { get; set; }
-        public virtual Corporation Corporation { get; set; }
         public virtual SolarSystem CurrentSystem { get; set; }
         public virtual ItemType CurrentShip { get; set; }
+        public virtual Pilot Pilot { get; set; }
 
         public EsiCharacter()
         {
-            Jumps = new List<Jump>();
+
         }
     }
 }

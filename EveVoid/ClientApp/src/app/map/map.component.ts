@@ -22,6 +22,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { WormholeTypeMapDto } from '../api/models';
 import { NumberAbbreviatePipe } from '../pipes/number-abbreviate.pipe';
+import { timer } from 'rxjs/internal/observable/timer';
 
 @Component({
   selector: 'app-map',
@@ -65,13 +66,18 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    timer(0, 10000).pipe(
+      takeUntil(this.unsubscribe$)
+    ).subscribe(() => {
+      this.fetch();
+    });
     // this.dataControl.forceMapUpdate();
     this.dataControl.getMapUpdateObs().pipe(takeUntil(this.unsubscribe$)).subscribe(update => {
       if (update) {
         this.fetch();
-        if (this.systemObserver) {
-          this.systemObserver.unsubscribe();
-        }
+        // if (this.systemObserver) {
+        //   this.systemObserver.unsubscribe();
+        // }
         // this.systemObserver = interval(10000).subscribe(() => {
         //   this.fetch();
         // });
@@ -94,8 +100,10 @@ fetch() {
     });
 }
 goToSystem(systemId: number) {
-  this.preferencesControl.setSelectedSystem({solarSystemId: systemId});
-  this.dataControl.forceMapUpdate();
+  if (systemId) {
+    this.preferencesControl.setSelectedSystem({solarSystemId: systemId});
+    this.dataControl.forceMapUpdate();
+  }
   // this.router.navigate(['./map/' + systemId]);
 }
 openSigDialog(id: number) {
@@ -196,11 +204,9 @@ openSigDialog(id: number) {
         });
       return;
     }
-    console.log('test');
     const sigReg = /^(\w{3})-(\d{3})\t([^\n\r\t]+)\t([^\n\r\t]*)\t([^\n\r\t]*)\t([^\n\r\t]+)\t([^\n\r\t]+)/gm;
     const pastedSigReg = pasteText.match(sigReg);
     if (pastedSigReg) {
-      console.log('test2');
       // Signature Paste
       const pastedSigs: SignatureDto[] = [];
       pasteLines.forEach(x => {
@@ -230,10 +236,12 @@ openSigDialog(id: number) {
         // console.log(sig[0].split('-')[0]);
       });
       pastedSigs.forEach(x => {
-        const existIndex = this.solarSystem.signatures.findIndex(s => s.signatureId === x.signatureId);
-        if (existIndex > -1 && x.signatureType > 0) {
+        const existIndex = this.solarSystem.signatures.findIndex(s => s.signatureId.toLowerCase() === x.signatureId.toLowerCase());
+        if (existIndex > -1) {
           const existSig = this.solarSystem.signatures[existIndex];
-          existSig.signatureType = x.signatureType;
+          if (x.signatureType !== 0) {
+            existSig.signatureType = x.signatureType;
+          }
           if (x.signatureType !== 1) {
             existSig.name = x.name;
           }
@@ -242,7 +250,7 @@ openSigDialog(id: number) {
         }
       });
       if (this.solarSystem.signatures.some(x =>
-        pastedSigs.findIndex(p => p.signatureId === x.signatureId) === -1 && x.signatureId !== '???')) {
+        pastedSigs.findIndex(p => p.signatureId.toLowerCase() === x.signatureId.toLowerCase()) === -1 && x.signatureId !== '???')) {
           const deleteSnack =  this.snackBar.openFromComponent(DeleteSigsSnackComponent, {
             data: {signatures: this.solarSystem.signatures,
               pastedData: pastedSigs
@@ -251,7 +259,7 @@ openSigDialog(id: number) {
           });
           deleteSnack.onAction().subscribe(() => {
             this.solarSystem.signatures = this.solarSystem.signatures.filter(x =>
-              pastedSigs.findIndex(p => p.signatureId === x.signatureId) > -1 || x.signatureId === '???');
+              pastedSigs.findIndex(p => p.signatureId.toLowerCase() === x.signatureId.toLowerCase()) > -1 || x.signatureId === '???');
               this.solarSystemService.putApiSolarSystemUpdateSolarSystemSignatures({
                 mainToken: this.authControl.getMainToken(), body: this.solarSystem}).subscribe(x => {
                   this.solarSystem = x;

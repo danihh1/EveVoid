@@ -37,7 +37,7 @@ export class VoidLayout implements Layout {
     connections.forEach(connection => {
       const neighbor = graph.nodes.find(n => n.id === connection.target);
       const rank = neighbor.data.rank > 4 ? 4 : neighbor.data.rank;
-      const edgeLength = 170 * Math.sqrt(Math.sqrt(neighborCount));
+      const edgeLength = 120 * Math.sqrt(Math.sqrt(neighborCount));
       const fatherX = father.position.x;
       const fatherY = father.position.y;
       const vectorX = node.position.x;

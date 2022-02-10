@@ -18,7 +18,6 @@ export class CallbackComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe(params => {
           let code = params['code'];
           this._code = code;
-          console.log(code);
           this.authConrol.login(code)
           .subscribe(res => {
             if (res){

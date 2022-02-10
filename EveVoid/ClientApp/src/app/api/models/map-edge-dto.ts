@@ -9,4 +9,5 @@ export interface MapEdgeDto {
   target?: string;
   targetId?: string;
   targetName?: string;
+  targetType?: string;
 }

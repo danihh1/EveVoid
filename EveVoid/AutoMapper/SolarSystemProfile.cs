@@ -58,7 +58,7 @@ namespace EveVoid.AutoMapper
                 .ForMember(src => src.LeadsTo, dst => dst.MapFrom(x => x.LeadsTo.Name));
 
             CreateMap<Jump, JumpDto>()
-                .ForMember(src => src.CharacterName, dst => dst.MapFrom(x => x.EsiCharacter.Name))
+                .ForMember(src => src.CharacterName, dst => dst.MapFrom(x => x.Pilot.Name))
                 .ForMember(src => src.Mass, dst => dst.MapFrom(x => x.Ship.Mass))
                 .ForMember(src => src.ShipType, dst => dst.MapFrom(x => x.Ship.Name));
         }

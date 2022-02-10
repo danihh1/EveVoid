@@ -47,7 +47,8 @@ namespace EveVoid.Data
         public DbSet<AdjacencyMatrix> AdjacencyMatrix { get; set; }
         public DbSet<Dscan> Dscans { get; set; }
         public DbSet<DscanShip> DscanShips { get; set; }
-        
+        public DbSet<Pilot> Pilots { get; set; }
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

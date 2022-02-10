@@ -57,6 +57,7 @@ namespace EveVoid.Dto
         public string Target { get; set; }
         public string SourceName { get; set; }
         public string TargetName { get; set; }
+        public string TargetType { get; set; }
         public string Color { get; set; }
         public string LineType { get; set; }
         public string LineWidth { get; set; }

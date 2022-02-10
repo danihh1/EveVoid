@@ -18,13 +18,18 @@
         <div fxLayout="column">
           <div fxLayout="row" fxLayoutAlign="start start" >
             <mat-form-field appearance="fill" style="width: 80px;">
-              <mat-label>Gate Count</mat-label>
+              <mat-label>Connection</mat-label>
+              <mat-select [(value)]="connectionStyle">
+                <mat-option value="Return Sig">Return Sig</mat-option>
+                <mat-option value="Wormhole Type">Wormhole Type</mat-option>
+              </mat-select>
+              <!-- <mat-label>Gate Count</mat-label>
               <mat-select [(value)]="gateCount">
                 <mat-option value="0">0</mat-option>
                 <mat-option value="1">1</mat-option>
                 <mat-option value="2">2</mat-option>
                 <mat-option value="3">3</mat-option>
-              </mat-select>
+              </mat-select> -->
             </mat-form-field>
             <mat-form-field appearance="fill" style="width: 100px;">
               <mat-label>Mask Type</mat-label>
@@ -58,7 +63,7 @@
         </div>
       </perfect-scrollbar>
     </mat-sidenav>
-    <mat-sidenav-content style="height: calc(100vh - 64px);width: auto" class="background-image">
+    <mat-sidenav-content style="height: calc(100vh - 64px);width: auto">
       <router-outlet></router-outlet>
     </mat-sidenav-content>
   </mat-sidenav-container>

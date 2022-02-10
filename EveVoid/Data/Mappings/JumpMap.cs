@@ -17,9 +17,9 @@ namespace EveVoid.Data.Mappings
                 .HasForeignKey(x => x.ShipId)
                 .OnDelete(DeleteBehavior.NoAction);
             modelBuilder.Entity<Jump>()
-                .HasOne(x => x.EsiCharacter)
+                .HasOne(x => x.Pilot)
                 .WithMany(x => x.Jumps)
-                .HasForeignKey(x => x.EsiCharacterId);
+                .HasForeignKey(x => x.PilotId);
         }
     }
 }

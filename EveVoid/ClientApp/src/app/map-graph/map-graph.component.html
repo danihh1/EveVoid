@@ -6,41 +6,41 @@
     <ng-template #nodeTemplate let-node>
       <svg:g class="node">
         <svg:foreignObject [attr.width]="getNodeWidth(node)"
-        [attr.height]="44 + (node.data.statics.length > 0 ? 22 : 0) + (node.data.tags.length > 0 ? 22 : 0)">
+        [attr.height]="28 + (node.data.statics.length > 0 ? 14 : 0) + (node.data.tags.length > 0 ? 10 : 0)">
           <xhtml:div style="height:100%">
-            <mat-card [style.background]="node.data.customColor" fxFlex fxLayout="column" fxLayoutAlign="space-around start"
+            <mat-card [style]="getBackground(node)" fxFlex fxLayout="column" fxLayoutAlign="space-around start"
               style="padding:3px;" [contextMenu]="systemMenu" [contextMenuSubject]="node.id"
               [style.border]="getBorder(node.id)">
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%;">
-                  <label style="margin: 0; font-size: smaller; white-space: nowrap;" [style.color]="node.data.systemTypeColor">
-                    <mat-icon *ngIf="node.data.effect" style="font-size: 14px; width: inherit;height: inherit; vertical-align: sub;" matTooltipPosition="left"
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%; line-height: initial;">
+                  <label style="margin: 0; font-size: xx-small; white-space: nowrap;" [style.color]="node.data.systemTypeColor">
+                    <mat-icon *ngIf="node.data.effect" style="font-size: 10px; width: inherit;height: inherit; vertical-align: sub;" matTooltipPosition="left"
                     [matTooltip]="node.data.effect" matTooltipClass="material-tooltip" [style.color]="getEffectColor(node.data.effect)">
                       {{getEffectIcon(node.data.effect)}}
                     </mat-icon>
                     {{node.data.systemType}}
                   </label>
-                  <span class="mat-badge-content mat-badge-active" style="position: inherit; width: 16px; height: 16px; line-height: 16px; pointer-events: all;"
+                  <span class="mat-badge-content mat-badge-active" style="position: inherit; width: 10px; height: 10px; line-height: 10px; pointer-events: all; font-size: xx-small;"
                   *ngIf="node.data.pilotCount > 0" matTooltipPosition="after" [style.background]="isCharHere(node.id) ? 'cyan' : ''"
                   [matTooltip]="node.data.pilots" matTooltipClass="material-tooltip">
                     {{node.data.pilotCount}}
                   </span>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%;">
-                  <a style="color:white; font-size: large;" (click)="goToSystem(node.id)"
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-between center" style="width: 100%; line-height: initial;">
+                  <a style="color:white; font-size: smaller; margin: auto;" (click)="goToSystem(node.id)"
                     matTooltipClass="material-tooltip">
                     {{node.label}}
                   </a>
-                  <span>
-                    <mat-icon *ngIf="node.data.hasStructureData" style="font-size: 14px; width: inherit; height: inherit; vertical-align: middle; margin-left: 4px;">home_work</mat-icon>
+                  <span style="height: inherit; line-height: 10px;">
+                    <mat-icon *ngIf="node.data.hasStructureData" style="font-size: 10px; width: inherit; height: inherit; vertical-align: middle; margin-left: 4px;">home_work</mat-icon>
                   </span>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="start start" style="width: 100%;">
-                  <span *ngFor="let static of node.data.statics" [style.color]="static.color" style="margin-right: 3px;"
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-around center" style="width: 100%; line-height: initial;">
+                  <span *ngFor="let static of node.data.statics" [style.color]="static.color" style="margin-right: 3px; font-size: xx-small;"
                   matTooltipPosition="above" [matTooltip]="getTooltipForStatic(static)" matTooltipClass="material-tooltip">{{static.name}}</span>
                 </div>
-                <div fxFlex fxLayout="row" fxLayoutAlign="start start" style="width: 100%;">
-                  <span *ngFor="let tag of node.data.tags" [style.color]="tag.color" style="margin-right: 1px;">
-                    <mat-icon style="font-size: 20px; width: inherit;" matTooltipPosition="below" matTooltipClass="material-tooltip"
+                <div fxFlex fxLayout="row" fxLayoutAlign="space-around center" style="width: 100%; line-height: initial;">
+                  <span *ngFor="let tag of node.data.tags" [style.color]="tag.color" style="margin-right: 1px; line-height: 10px;">
+                    <mat-icon style="font-size: 10px; width: inherit; height: inherit; vertical-align: top;" matTooltipPosition="below" matTooltipClass="material-tooltip"
                     [matTooltip]="tag.name">{{tag.icon}}</mat-icon>
                   </span>
                 </div>
@@ -59,19 +59,25 @@
       <svg:g
       class="linkMidpoint"
       *ngIf="link.midPoint"
-      [attr.transform]="'translate(' + (link.midPoint.x - 16) + ',' + (link.midPoint.y - 10) + ')'"
+      [attr.transform]="'translate(' + (link.midPoint.x - 12) + ',' + (link.midPoint.y - 10) + ')'"
       style="text-transform:uppercase; text-align: center; text-anchor: middle;">
-      <rect rx="3" ry="3" width="32" height="32" [style.fill]="link.data.color" style="stroke:black; stroke-width: 0.5;">
+      <rect rx="3" ry="3" width="22" height="22" [style.fill]="link.data.color" style="stroke:black; stroke-width: 0.5;">
 
       </rect>
       <svg:text alignment-baseline="baseline"
-      style="text-transform:uppercase; text-align: center; font-size: smaller; stroke:black; stroke-width: 0.5;">
-        <tspan x="16" dy="1.2em" (dblclick)="openSigDialog(link.data.id)">{{ link.data.targetName }}</tspan>
-        <tspan x="16" dy="1.2em" (dblclick)="openSigDialog(link.data.targetId)">{{ link.data.sourceName }}</tspan>
+      style="text-transform:uppercase; text-align: center; font-size: xx-small; stroke:black; stroke-width: 0.5;">
+        <tspan x="11" dy="1em" (dblclick)="openSigDialog(link.data.id)">{{ link.data.targetName }}</tspan>
+        <tspan x="11" dy="1em" (dblclick)="openSigDialog(link.data.targetId)">{{ connectionStyle === 'Wormhole Type' ? link.data.targetType : link.data.sourceName }}</tspan>
       </svg:text>
     </svg:g>
     </ng-template>
   </ngx-graph>
+</div>
+<div id="NameWidth" style="position: absolute; visibility: hidden; height: auto; width: auto; white-space: nowrap; font-size: smaller;">
+
+</div>
+<div id="SysTypeWidth" style="position: absolute; visibility: hidden; height: auto; width: auto; white-space: nowrap; font-size: xx-small;">
+
 </div>
 <context-menu style="color:black;" #systemMenu>
   <ng-template contextMenuItem [subMenu]="tagSubMenu">

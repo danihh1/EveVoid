@@ -4,14 +4,16 @@ using EveVoid.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EveVoid.Migrations
 {
     [DbContext(typeof(EveVoidContext))]
-    partial class EveVoidContextModelSnapshot : ModelSnapshot
+    [Migration("20201025152430_pilot-seperation-p1")]
+    partial class pilotseperationp1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -637,7 +639,7 @@ namespace EveVoid.Migrations
 
             modelBuilder.Entity("EveVoid.Models.Pilots.EsiCharacter", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Idx")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -669,7 +671,7 @@ namespace EveVoid.Migrations
                     b.Property<DateTime>("TokenExpiresIn")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("Id");
+                    b.HasKey("Idx");
 
                     b.HasIndex("CurrentShipTypeId");
 
@@ -706,7 +708,7 @@ namespace EveVoid.Migrations
 
             modelBuilder.Entity("EveVoid.Models.Pilots.MainCharacter", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("Idx")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
@@ -729,7 +731,7 @@ namespace EveVoid.Migrations
                     b.Property<string>("RefreshToken")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Idx");
 
                     b.HasIndex("CorporationId");
 

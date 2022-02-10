@@ -17,8 +17,20 @@ namespace EveVoid.Data.Mappings
                 .HasForeignKey(x => x.MainCharacterId);
 
             modelBuilder.Entity<MainCharacter>()
+                .HasOne(e => e.Pilot)
+                .WithMany()
+                .HasForeignKey(x => x.PilotId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<EsiCharacter>()
+                .HasOne(e => e.Pilot)
+                .WithMany()
+                .HasForeignKey(x => x.PilotId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Pilot>()
                 .HasOne(e => e.Corporation)
-                .WithMany(e => e.Mains)
+                .WithMany(e => e.Pilots)
                 .HasForeignKey(x => x.CorporationId);
 
             modelBuilder.Entity<MainCharacter>()
@@ -40,11 +52,6 @@ namespace EveVoid.Data.Mappings
                 .HasOne(e => e.SolarSystem)
                 .WithMany()
                 .HasForeignKey(x => x.SolarSystemId);
-
-            modelBuilder.Entity<EsiCharacter>()
-                .HasOne(e => e.Corporation)
-                .WithMany(e => e.EsiCharacters)
-                .HasForeignKey(x => x.CorporationId);
 
             modelBuilder.Entity<EsiCharacter>()
                 .HasOne(e => e.CurrentSystem)

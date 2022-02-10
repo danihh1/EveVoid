@@ -80,6 +80,10 @@ export class MapTabLayoutComponent implements OnInit, OnDestroy {
             });
           } else {
             if (response.result === DialogResult.canceld && id !== -1) {
+              if (this.preferencesControl.getMapSystem() && this.preferencesControl.getMapSystem().solarSystemId === tab.solarSystemId) {
+                this.preferencesControl.setMapSystem(null);
+                this.dataControl.forceMapUpdate();
+              }
               this.tabs.splice(this.tabs.findIndex(x => x.id === id), 1);
               this.characterService.postApiCharacterUpdateMapLayouts({mainToken: this.authControl.getMainToken(), body: this.tabs })
               .subscribe(x => {

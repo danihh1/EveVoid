@@ -40,12 +40,12 @@ namespace EveVoid.Controllers
         public SolarSystemDto GetSolarSystemById(string mainToken, int systemId)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var system = _solarSystemService.GetSystemById(systemId);
             var res = _mapper.Map<SolarSystemDto>(system);
             res.Signatures = _mapper.Map<List<SignatureDto>>(system.Signatures.Where(x => x.MaskId == maskId));
-            res.Pilots = _mapper.Map<List<ActivePilotDto>>(system.Pilots.Where(x => main.MaskType == MaskType.Corp ? (x.MainCharacter.Corporation.MaskId == maskId) :
-                x.MainCharacter.Corporation.AllianceId != null && x.MainCharacter.Corporation.Alliance.MaskId == maskId));
+            res.Pilots = _mapper.Map<List<ActivePilotDto>>(system.Pilots.Where(x => x.MainCharacter.MaskType == MaskType.Corp ? (x.MainCharacter.Pilot.Corporation.MaskId == maskId) :
+                x.MainCharacter.Pilot.Corporation.AllianceId != null && x.MainCharacter.Pilot.Corporation.Alliance.MaskId == maskId));
             res.Notes = _mapper.Map<List<SolarSystemNoteDto>>(system.Notes.Where(x => x.MaskId == maskId));
             res.Tags = _mapper.Map<List<SolarSystemTagDto>>(system.Tags.Where(x => x.MaskId == maskId));
             res.Structures = _mapper.Map<List<SolarSystemStructureDto>>(system.Structures.Where(x => x.MaskId == maskId));
@@ -71,7 +71,7 @@ namespace EveVoid.Controllers
         public SolarSystemDto UpdateSolarSystemSignatures(string mainToken, SolarSystemDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var system = _solarSystemService.GetSystemById(dto.Id);
             var dtoSigIds = dto.Signatures.Select(x => x.Id).ToHashSet();
             var systemSigIds = system.Signatures.Where(x => x.MaskId == maskId).Select(x => x.Id).ToHashSet();

@@ -3,6 +3,7 @@ import { EsiCharacterDto } from './esi-character-dto';
 import { MapLayoutDto } from './map-layout-dto';
 import { MaskType } from './mask-type';
 export interface MainCharacterDto {
+  pilotId?: number;
   allianceId?: number;
   allianceName?: string;
   corporationId?: number;
@@ -11,5 +12,5 @@ export interface MainCharacterDto {
   id?: number;
   mapLayouts?: Array<MapLayoutDto>;
   maskType?: MaskType;
-  name?: string;
+  pilotName?: string;
 }

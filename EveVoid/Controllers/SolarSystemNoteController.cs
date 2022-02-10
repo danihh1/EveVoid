@@ -30,7 +30,7 @@ namespace EveVoid.Controllers
         public ActionResult Insert(string mainToken, SolarSystemNoteDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
 
             var newNote = new SolarSystemNote
             {
@@ -47,7 +47,7 @@ namespace EveVoid.Controllers
         public ActionResult Update(string mainToken, SolarSystemNoteDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var solarSystemNote = _solarSystemNoteService.GetById(dto.Id);
             if (solarSystemNote == null || solarSystemNote.MaskId != maskId)
             {

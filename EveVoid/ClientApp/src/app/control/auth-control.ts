@@ -33,7 +33,7 @@ export class AuthControl {
                     },
                     err => {
                         if (err.status === 401 || err.status === 400) {
-                            console.log(err);
+                            // console.log(err);
                         }
                         return false;
                     }));
@@ -57,7 +57,7 @@ export class AuthControl {
             }
             return res;
         }, err => {
-          console.log(err);
+          // console.log(err);
           this.logout();
           return false;
         });

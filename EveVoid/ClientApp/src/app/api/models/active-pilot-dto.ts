@@ -1,6 +1,6 @@
 /* tslint:disable */
 export interface ActivePilotDto {
-  name?: string;
+  pilotName?: string;
   shipName?: string;
   shipTypeName?: string;
 }

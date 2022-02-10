@@ -123,13 +123,18 @@ export class SignatureDialogComponent implements OnInit {
   }
 
   private _normalizeValue(value: string): string {
+    if (!value) {
+      return '';
+    }
     return value.toLowerCase().replace(/\s/g, '');
   }
 
   leadsToSelected(name: string) {
-    const selected = this.fetchedSystems.find((x) => x.name === name);
-    this.signature.destinationSystemId = selected.id;
-    this.signature.destinationSystemName = selected.name;
+    const selected = this.fetchedSystems.find((x) => x.name.toLowerCase() === name.toLowerCase());
+    if (selected) {
+      this.signature.destinationSystemId = selected.id;
+      this.signature.destinationSystemName = selected.name;
+    }
   }
 
   onNoClick(): void {
@@ -147,6 +152,24 @@ export class SignatureDialogComponent implements OnInit {
     if (this.signature.destinationSystemName === '') {
       this.signature.destinationSystemId = null;
     }
+    if (this.signature.signatureType === 1) {
+      if (this.control.dirty) {
+        if (this.signature.wormholeType && this.signature.wormholeType !== '') {
+          this.wormholeTypeSelected(this.signature.wormholeType);
+        } else {
+          this.signature.wormholeType = null;
+          this.signature.wormholeTypeId = null;
+        }
+      }
+      if (this.leadsToControl.dirty) {
+        if (this.signature.destinationSystemName && this.signature.destinationSystemName !== '') {
+          this.leadsToSelected(this.signature.destinationSystemName);
+        } else {
+          this.signature.destinationSystemName = null;
+          this.signature.destinationSystemId = null;
+        }
+      }
+    }
     if (this.signature.id > 0) {
       this.signatureService
         .putApiSignatureUpdateSignature({
@@ -158,7 +181,7 @@ export class SignatureDialogComponent implements OnInit {
             this.dataControl.forceMapUpdate();
           },
           (err) => {
-            console.log('update failed', err);
+            // console.log('update failed', err);
           }
         );
     } else {
@@ -172,7 +195,7 @@ export class SignatureDialogComponent implements OnInit {
             this.dataControl.forceMapUpdate();
           },
           (err) => {
-            console.log('insert failed', err);
+            // console.log('insert failed', err);
           }
         );
     }
@@ -184,7 +207,7 @@ export class SignatureDialogComponent implements OnInit {
 
   wormholeTypeSelected(wormholeTypeName: string) {
     const wormholeType = this.wormholeTypes.find(
-      (x) => x.name === wormholeTypeName
+      (x) => x.name === wormholeTypeName.toUpperCase()
     );
     // this.data.data.name = wormholeType.name;
     this.signature.wormholeTypeId = wormholeType.id;
@@ -198,5 +221,9 @@ export class SignatureDialogComponent implements OnInit {
 
   typeSelected(typeId: number) {
     this.signature.name = '';
+  }
+
+  onSubmit() {
+    this.confirm();
   }
 }

@@ -68,7 +68,8 @@ namespace EveVoid
             services.AddScoped<ISolarSystemNoteService, SolarSystemNoteService>();
             services.AddScoped<IRouteService, RouteService>();
             services.AddScoped<IDscanService, DscanService>();
-            
+            services.AddScoped<IPilotService, PilotService>();
+
             var mapperConfig = new MapperConfiguration(mc =>
             {
                 var profiles = Assembly.GetExecutingAssembly().GetTypes().Where(x => typeof(Profile).IsAssignableFrom(x));

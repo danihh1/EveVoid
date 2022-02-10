@@ -8,7 +8,8 @@ namespace EveVoid.Dto
     public class EsiCharacterDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public int PilotId { get; set; }
+        public string PilotName { get; set; }
         public int? CorporationId { get; set; }
         public string CorporationName { get; set; }
         public int? AllianceId { get; set; }

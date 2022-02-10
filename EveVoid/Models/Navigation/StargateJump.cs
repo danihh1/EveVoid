@@ -12,12 +12,12 @@ namespace EveVoid.Models.Navigation
         public int Id { get; set; }
         public int ShipId { get; set; }
         public int StargateId { get; set; }
-        public int EsiCharacterId { get; set; }
+        public int PilotId { get; set; }
         public DateTime CreationDate { get; set; }
         public int MaskId { get; set; }
 
         public virtual Stargate Stargate { get; set; }
-        public virtual EsiCharacter EsiCharacter { get; set; }
+        public virtual Pilot Pilot { get; set; }
         public virtual ItemType Ship { get; set; }
         public virtual Mask Mask { get; set; }
     }

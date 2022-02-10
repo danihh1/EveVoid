@@ -75,6 +75,14 @@
     <Compile Remove="Migrations\20200917132107_MatrixIdRemove.Designer.cs" />
     <Compile Remove="Migrations\20201013140823_TrigInvasion.cs" />
     <Compile Remove="Migrations\20201013140823_TrigInvasion.Designer.cs" />
+    <Compile Remove="Migrations\20201025143703_pilot-seperation.cs" />
+    <Compile Remove="Migrations\20201025143703_pilot-seperation.Designer.cs" />
+    <Compile Remove="Migrations\20201025151618_pilot-seperation-p1.cs" />
+    <Compile Remove="Migrations\20201025151618_pilot-seperation-p1.Designer.cs" />
+    <Compile Remove="Migrations\20201025151729_pilot-seperation-p2.cs" />
+    <Compile Remove="Migrations\20201025151729_pilot-seperation-p2.Designer.cs" />
+    <Compile Remove="Migrations\20201025152029_pilot-seperation-p2.cs" />
+    <Compile Remove="Migrations\20201025152029_pilot-seperation-p2.Designer.cs" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

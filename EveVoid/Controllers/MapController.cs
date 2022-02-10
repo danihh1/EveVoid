@@ -37,91 +37,92 @@ namespace EveVoid.Controllers
         public MapDto GetMapForRootId(string mainToken, int systemId, string customName, int maxGateLevel)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var system = _solarSystemService.GetSystemById(systemId);
 
             var res = Map(system, customName, maskId, maxGateLevel);
             return res;
         }
 
-        private void RecurseMap(SolarSystem system, string customName, int maskId, MapDto map, int level, int gateLevel, int maxGateLevel)
-        {
-            map.Nodes.Add(new MapNodeDto
-            {
-                Id = system.Id.ToString(),
-                Color = "#121212",
-                Name = customName.IsNullOrEmpty() ? system.Name : customName,
-                SystemType = system.SystemType?.Name,
-                HasStructureData = system.Structures.Any(x => x.MaskId == maskId),
-                WormholeEffect = system.SystemEffect,
-                Tags = system.Tags.Where(x => x.MaskId == maskId).Select(x => _mapper.Map<SolarSystemTagDto>(x)).ToList(),
-                Statics = system.Statics.Select(x => new WormholeTypeMapDto {
-                    Name = x.WormholeType.Name,
-                    Duration = x.WormholeType.Duration,
-                    MaxJump = x.WormholeType.MaxJump,
-                    MaxMass = x.WormholeType.MaxMass,
-                    LeadsTo = x.WormholeType.LeadsTo.Name,
-                    Color = x.WormholeType.LeadsTo.Color
-                }).ToList(),
-                SystemTypeColor = system.SystemType?.Color,
-                Pilots = system.Pilots.Select(x => new ActivePilotDto
-                {
-                    Name = x.Name,
-                    ShipName = x.CurrentShipName,
-                    ShipTypeName = x.CurrentShip?.Name
-                }).ToList(),
-                Rank = level
-            });
-            level++;
-            if (system.Gates.Any())
-            {
-                gateLevel++;
-            }
-            foreach (var connection in system.GetConnections(maskId, includeGates: gateLevel <= maxGateLevel))
-            {
-                if (!map.EdgeExists(system.Id.ToString(), connection.SolarSystem.Id.ToString()))
-                {
-                    var gate = system.Gates.FirstOrDefault(x => x.Destination.SystemId == connection.SolarSystem.Id);
-                    if (gate != null)
-                    {
-                        map.Edges.Add(new MapEdgeDto
-                        {
-                            Id = 'g'+gate.Id.ToString(),
-                            SourceName = "Gate",
-                            TargetName = "Gate",
-                            Color = "lightblue",
-                            Source = system.Id.ToString(),
-                            Target = connection.SolarSystem.Id.ToString(),
-                            LineWidth = "4",
-                            LineType = ""
-                        });
-                    }
-                    else
-                    {
-                        var signature = connection.Signature;
-                        if (signature != null)
-                        {
-                            map.Edges.Add(new MapEdgeDto
-                            {
-                                Id = signature.Id.ToString(),
-                                SourceName = signature.Destination == null ? "???" : signature.Destination.SignatureId,
-                                TargetName = signature.SignatureId,
-                                TargetId = signature.DestinationId?.ToString(),
-                                LineWidth = WormholeWidthBasedOnMaxJump(signature.WormholeType?.MaxJump),
-                                Color = WormholeColorBasedOnRemainingMass(signature),
-                                Source = system.Id.ToString(),
-                                Target = connection.SolarSystem.Id.ToString(),
-                                LineType = signature.ExpiryDate >= DateTime.UtcNow.AddHours(4) ? "" : "10"
-                            });
-                        }
-                    }
-                }
-                if (!map.NodeExists(connection.SolarSystem.Id.ToString()))
-                {
-                    RecurseMap(connection.SolarSystem, connection.Signature.Name, maskId, map, level, gateLevel, maxGateLevel);
-                }
-            }
-        }
+        //private void RecurseMap(SolarSystem system, string customName, int maskId, MapDto map, int level, int gateLevel, int maxGateLevel)
+        //{
+        //    map.Nodes.Add(new MapNodeDto
+        //    {
+        //        Id = system.Id.ToString(),
+        //        Color = "#121212",
+        //        Name = customName.IsNullOrEmpty() ? system.Name : customName,
+        //        SystemType = system.SystemType?.Name,
+        //        HasStructureData = system.Structures.Any(x => x.MaskId == maskId),
+        //        WormholeEffect = system.SystemEffect,
+        //        Tags = system.Tags.Where(x => x.MaskId == maskId).Select(x => _mapper.Map<SolarSystemTagDto>(x)).ToList(),
+        //        Statics = system.Statics.Select(x => new WormholeTypeMapDto {
+        //            Name = x.WormholeType.Name,
+        //            Duration = x.WormholeType.Duration,
+        //            MaxJump = x.WormholeType.MaxJump,
+        //            MaxMass = x.WormholeType.MaxMass,
+        //            LeadsTo = x.WormholeType.LeadsTo.Name,
+        //            Color = x.WormholeType.LeadsTo.Color
+        //        }).ToList(),
+        //        SystemTypeColor = system.SystemType?.Color,
+        //        Pilots = system.Pilots.Select(x => new ActivePilotDto
+        //        {
+        //            Name = x.Name,
+        //            ShipName = x.CurrentShipName,
+        //            ShipTypeName = x.CurrentShip?.Name
+        //        }).ToList(),
+        //        Rank = level
+        //    });
+        //    level++;
+        //    if (system.Gates.Any())
+        //    {
+        //        gateLevel++;
+        //    }
+        //    foreach (var connection in system.GetConnections(maskId, includeGates: gateLevel <= maxGateLevel))
+        //    {
+        //        if (!map.EdgeExists(system.Id.ToString(), connection.SolarSystem.Id.ToString()))
+        //        {
+        //            var gate = system.Gates.FirstOrDefault(x => x.Destination.SystemId == connection.SolarSystem.Id);
+        //            if (gate != null)
+        //            {
+        //                map.Edges.Add(new MapEdgeDto
+        //                {
+        //                    Id = 'g'+gate.Id.ToString(),
+        //                    SourceName = "Gate",
+        //                    TargetName = "Gate",
+        //                    Color = "lightblue",
+        //                    Source = system.Id.ToString(),
+        //                    Target = connection.SolarSystem.Id.ToString(),
+        //                    LineWidth = "4",
+        //                    LineType = ""
+        //                });
+        //            }
+        //            else
+        //            {
+        //                var signature = connection.Signature;
+        //                if (signature != null)
+        //                {
+        //                    map.Edges.Add(new MapEdgeDto
+        //                    {
+        //                        Id = signature.Id.ToString(),
+        //                        SourceName = signature.Destination == null ? "???" : signature.Destination.SignatureId,
+        //                        TargetName = signature.SignatureId,
+        //                        TargetType = signature.WormholeType.Name,
+        //                        TargetId = signature.DestinationId?.ToString(),
+        //                        LineWidth = WormholeWidthBasedOnMaxJump(signature.WormholeType?.MaxJump),
+        //                        Color = WormholeColorBasedOnRemainingMass(signature),
+        //                        Source = system.Id.ToString(),
+        //                        Target = connection.SolarSystem.Id.ToString(),
+        //                        LineType = signature.ExpiryDate >= DateTime.UtcNow.AddHours(4) ? "" : "10"
+        //                    });
+        //                }
+        //            }
+        //        }
+        //        if (!map.NodeExists(connection.SolarSystem.Id.ToString()))
+        //        {
+        //            RecurseMap(connection.SolarSystem, connection.Signature.Name, maskId, map, level, gateLevel, maxGateLevel);
+        //        }
+        //    }
+        //}
 
         private MapDto Map(SolarSystem system, string customName, int maskId, int maxGateLevel)
         {
@@ -180,7 +181,7 @@ namespace EveVoid.Controllers
                 SystemTypeColor = system.SystemType?.Color,
                 Pilots = system.Pilots.Select(x => new ActivePilotDto
                 {
-                    Name = x.Name,
+                    PilotName = x.Pilot.Name,
                     ShipName = x.CurrentShipName,
                     ShipTypeName = x.CurrentShip?.Name
                 }).ToList(),
@@ -198,12 +199,13 @@ namespace EveVoid.Controllers
                             Id = signature.Id.ToString(),
                             SourceName = signature.Destination == null ? "???" : signature.Destination.SignatureId,
                             TargetName = signature.SignatureId,
+                            TargetType = signature.WormholeType != null ? signature.WormholeType.Name : "????",
                             TargetId = signature.DestinationId?.ToString(),
                             LineWidth = WormholeWidthBasedOnMaxJump(signature.WormholeType?.MaxJump),
                             Color = WormholeColorBasedOnRemainingMass(signature),
                             Source = system.Id.ToString(),
                             Target = connection.SolarSystem.Id.ToString(),
-                            LineType = signature.ExpiryDate >= DateTime.UtcNow.AddHours(4) ? "" : "10"
+                            LineType = signature.ExpiryDate >= DateTime.UtcNow.AddHours(4) ? "" : "4"
                         });
                     }
                 }

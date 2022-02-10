@@ -19,13 +19,13 @@ namespace EveVoid.Models.EveObjects
 
         public virtual Alliance Alliance { get; set; }
         public virtual List<MainCharacter> Mains { get; set; }
-        public virtual List<EsiCharacter> EsiCharacters { get; set; }
+        public virtual List<Pilot> Pilots { get; set; }
         public virtual Mask Mask { get; set; }
 
         public Corporation()
         {
             Mains = new List<MainCharacter>();
-            EsiCharacters = new List<EsiCharacter>();
+            Pilots = new List<Pilot>();
         }
     }
 }

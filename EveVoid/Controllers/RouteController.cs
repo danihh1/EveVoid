@@ -33,7 +33,7 @@ namespace EveVoid.Controllers
         public List<FavoriteDistanceDto> GetRouteToFavorites(string mainToken, int originSystemId, RouteType routeType)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var favorites = main.FavoriteSystems.Where(x=>x.SolarSystemId != originSystemId).ToList();
             var res = new List<FavoriteDistanceDto>();
             foreach (var fav in favorites)

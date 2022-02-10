@@ -39,7 +39,7 @@ namespace EveVoid.Controllers
         public ActionResult InsertSignature(string mainToken, SignatureDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var newSig = new Signature
             {
                 SignatureId = dto.SignatureId.ToUpper(),
@@ -58,7 +58,7 @@ namespace EveVoid.Controllers
         public ActionResult UpdateSignature(string mainToken, SignatureDto dto)
         {
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var sig = _signatureService.GetBySignatureId(dto.Id);
             sig.SignatureId = dto.SignatureId;
             //sig.ExpiryDate = dto.ExpiryDate;
@@ -86,7 +86,7 @@ namespace EveVoid.Controllers
         {
             var res = new List<SignatureDto>();
             var main = _characterService.GetMainCharacterByToken(mainToken);
-            var maskId = main.MaskType == MaskType.Alliance && main.Corporation.AllianceId != null ? main.Corporation.Alliance.MaskId : main.Corporation.MaskId;
+            var maskId = main.MaskType == MaskType.Alliance && main.Pilot.Corporation.AllianceId != null ? main.Pilot.Corporation.Alliance.MaskId : main.Pilot.Corporation.MaskId;
             var originSystem = _solarSystemService.GetSystemById(originId);
             var destoSystem = _solarSystemService.GetSystemById(destoId);
             var originSigs = originSystem.Signatures.Where(x => x.MaskId == maskId).Select(x => x).ToList();

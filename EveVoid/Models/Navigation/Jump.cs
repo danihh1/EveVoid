@@ -14,11 +14,11 @@ namespace EveVoid.Models.Navigation
         public int Id { get; set; }
         public int ShipId { get; set; }
         public int WormholeId { get; set; }
-        public int EsiCharacterId { get; set; }
+        public int PilotId { get; set; }
         public DateTime CreationDate { get; set; }
 
         public virtual Signature Wormhole { get; set; }
-        public virtual EsiCharacter EsiCharacter { get; set; }
+        public virtual Pilot Pilot { get; set; }
         public virtual ItemType Ship { get; set; }
     }
 }

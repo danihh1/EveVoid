@@ -49,6 +49,14 @@ export class HomeComponent {
     this.preferencesControl.setRouteType(type);
   }
 
+  get connectionStyle(): string {
+    return this.preferencesControl.getConnectionStyle();
+  }
+
+  set connectionStyle(type: string) {
+    this.preferencesControl.setConnectionStyle(type);
+  }
+
   baseUrl = '';
 
   constructor(

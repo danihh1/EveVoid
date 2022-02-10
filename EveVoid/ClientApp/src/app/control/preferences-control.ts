@@ -7,6 +7,7 @@ const MAP_SYSTEM = 'map_system';
 const SELECTED_SYSTEM = 'selected_system';
 const ROUTE_TYPE = 'route_type';
 const MAP_LAYOUT = 'map_layout';
+const CONNECTION_STYLE = 'connection_style';
 
 @Injectable({
   // we declare that this service should be created
@@ -84,5 +85,15 @@ export class PreferencesControl {
       this.setMapLayout('dagre');
     }
     return localStorage.getItem(MAP_LAYOUT);
+  }
+
+  public setConnectionStyle(count: string) {
+    localStorage.setItem(CONNECTION_STYLE, count);
+  }
+  public getConnectionStyle(): string {
+    if (localStorage.getItem(CONNECTION_STYLE) === null) {
+      this.setConnectionStyle('Wormhole Type');
+    }
+    return localStorage.getItem(CONNECTION_STYLE);
   }
 }
